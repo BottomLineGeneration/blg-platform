@@ -4251,120 +4251,300 @@ function CommissionsDashboard() {
 
   // ── P&L TAB ─────────────────────────────────────────────────────────────────
   const PLTab = () => {
-    const [expenses, setExpenses] = useState({
-      subagent: 0, platforms: 0, travel: 0, operating: 0, other: 0
-    });
-    const [expLabels] = useState({
-      subagent:'Sub-Agent Payouts (auto)', platforms:'Platforms & Tools', travel:'Travel & Marketing', operating:'Operating Costs', other:'Other'
-    });
-    const [spiffTotal] = useState(0);
-
     const $n = (n) => (n<0?'-':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 
-    const houseFeb   = PARTNER_RECORDS.filter(r=>r.dealType==='house').reduce((s,r)=>s+r.feb,0);
-    const partnerFeb = PARTNER_RECORDS.filter(r=>r.dealType==='partner').reduce((s,r)=>s+r.feb,0);
-    const rmFeb      = COMM_MO['February 2026'].rm;
-
-    const opsFee   = partnerFeb * 0.20;
-    const gross    = partnerFeb * 0.80;
-    const autoPartnerPP = PARTNER_RECORDS.reduce((s,r)=>s+r.febPP,0);
-    const blgPartnerNet = gross - autoPartnerPP;
-    const blgGross = houseFeb + opsFee + blgPartnerNet;
-
-    const manualExpenses = expenses.platforms + expenses.travel + expenses.operating + expenses.other;
-    const netIncome = blgGross - manualExpenses;
-
-    const rows = [
-      {label:'BLG Commission (AppDirect + Telarus)', value:houseFeb+partnerFeb, color:C.green, indent:0, bold:false},
-      {label:'House Accounts (BLG keeps 100%)',      value:houseFeb,            color:C.accent,indent:1, bold:false},
-      {label:'Partner Deals (gross)',                value:partnerFeb,          color:C.accent,indent:1, bold:false},
-      {label:'− 20% Ops Fee (auto)',                 value:-opsFee,             color:C.red,   indent:2, bold:false},
-      {label:'= Partner Gross Profit',               value:gross,               color:C.text,  indent:2, bold:false},
-      {label:'− Wolf Mentality Payout (50%)',        value:-PARTNERS.find(p=>p.id==='wolf')?.febPayout||0, color:C.red, indent:2, bold:false},
-      {label:'− Neutro Corp Payout (50%)',           value:-PARTNERS.find(p=>p.id==='neutro')?.febPayout||0, color:C.red, indent:2, bold:false},
-      {label:'BLG Gross Profit',                     value:blgGross,            color:C.green, indent:0, bold:true},
-      {label:'Reignmaker Revenue (reference)',        value:rmFeb,               color:C.gold,  indent:0, bold:false},
+    // ── Expense Categories (custom, add/remove) ──────────────────────────────
+    const DEFAULT_CATS = [
+      {id:'platforms', label:'Platforms & Tools'},
+      {id:'travel',    label:'Travel & Entertainment'},
+      {id:'operating', label:'Operating Costs'},
+      {id:'other',     label:'Other'},
     ];
+    const [cats,    setCats]    = useState(DEFAULT_CATS);
+    const [newCat,  setNewCat]  = useState('');
+
+    // ── Expense entries ──────────────────────────────────────────────────────
+    const [expenses, setExpenses] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [form, setForm] = useState({
+      catId:'platforms', desc:'', amount:'', date:'', vendor:'', receipt:null, receiptName:''
+    });
+    const [receiptModal, setReceiptModal] = useState(null); // base64 string to preview
+
+    const handleReceiptUpload = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => setForm(f => ({...f, receipt: ev.target.result, receiptName: file.name}));
+      reader.readAsDataURL(file);
+    };
+
+    const saveExpense = () => {
+      if (!form.amount || !form.desc) return;
+      setExpenses(ex => [...ex, {
+        ...form,
+        id: Date.now(),
+        amount: parseFloat(form.amount) || 0,
+      }]);
+      setForm({catId:'platforms', desc:'', amount:'', date:'', vendor:'', receipt:null, receiptName:''});
+      setShowForm(false);
+    };
+
+    const deleteExpense = (id) => setExpenses(ex => ex.filter(e => e.id !== id));
+
+    const addCategory = () => {
+      if (!newCat.trim()) return;
+      const id = newCat.trim().toLowerCase().replace(/\s+/g,'-');
+      setCats(c => [...c, {id, label: newCat.trim()}]);
+      setNewCat('');
+    };
+
+    const removeCategory = (id) => {
+      setCats(c => c.filter(c2 => c2.id !== id));
+      setExpenses(ex => ex.filter(e => e.catId !== id));
+    };
+
+    // ── Revenue numbers ──────────────────────────────────────────────────────
+    const houseFeb    = PARTNER_RECORDS.filter(r=>r.dealType==='house').reduce((s,r)=>s+r.feb,0);
+    const partnerFeb  = PARTNER_RECORDS.filter(r=>r.dealType==='partner').reduce((s,r)=>s+r.feb,0);
+    const rmFeb       = COMM_MO['February 2026'].rm;
+    const opsFee      = partnerFeb * 0.20;
+    const gross       = partnerFeb * 0.80;
+    const autoPartnerPP = PARTNER_RECORDS.reduce((s,r)=>s+r.febPP,0);
+    const blgGross    = houseFeb + opsFee + (gross - autoPartnerPP);
+
+    // ── Expense totals ───────────────────────────────────────────────────────
+    const manualTotal = expenses.reduce((s,e) => s + e.amount, 0);
+    const totalExp    = autoPartnerPP + manualTotal;
+    const netIncome   = blgGross - manualTotal;
+
+    // ── By category ─────────────────────────────────────────────────────────
+    const byCat = cats.map(c => ({
+      ...c,
+      total: expenses.filter(e=>e.catId===c.id).reduce((s,e)=>s+e.amount,0),
+      items: expenses.filter(e=>e.catId===c.id),
+    }));
 
     return (
       <div>
+        {/* KPI Row */}
         <div className="grid-4 mb-16">
           <MetricTile label="BLG Gross Profit" value={$n(blgGross)} delta="After ops fee & partner payouts" color="green"/>
           <MetricTile label="Partner Payouts Owed" value={$n(autoPartnerPP)} delta="Wolf Mentality + Neutro Corp" color="gold"/>
-          <MetricTile label="Net Income" value={$n(netIncome)} delta="After all expenses" color={netIncome>0?'green':'red'}/>
-          <MetricTile label="Reignmaker (ref)" value={$n(rmFeb)} delta="Tracked separately" color="purple"/>
+          <MetricTile label="Total Expenses" value={$n(totalExp)} delta="Partner payouts + operating" color="red"/>
+          <MetricTile label="Net Income" value={$n(netIncome)} delta="BLG gross after expenses" color={netIncome>=0?'green':'red'}/>
         </div>
 
-        <div className="grid-2 gap-20">
-          {/* Revenue breakdown */}
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+
+          {/* ── Revenue Breakdown ──────────────────────────────────────────── */}
           <div className="card">
-            <div className="card-header"><div><div className="card-title">Revenue Breakdown</div><div className="card-sub">Feb 2026 · BLG entity</div></div></div>
-            {rows.map((row,i)=>(
-              <div key={i} style={{
-                padding:'8px 0',borderBottom:`1px solid ${C.border}`,
-                display:'flex',justifyContent:'space-between',alignItems:'center',
-                paddingLeft:row.indent*16,
-                background:row.bold?`${C.green}08`:'transparent'
-              }}>
-                <span style={{fontSize:row.bold?13:11,color:row.bold?C.text:C.textDim,fontWeight:row.bold?700:400}}>{row.label}</span>
-                <span style={{fontSize:row.bold?14:12,fontWeight:row.bold?700:600,fontFamily:"'IBM Plex Mono',monospace",color:row.color}}>
-                  {$n(row.value)}
-                </span>
+            <div className="card-header">
+              <div><div className="card-title">Revenue Breakdown</div><div className="card-sub">Feb 2026 · BLG entity</div></div>
+            </div>
+            {[
+              ['BLG Commission Total',           houseFeb+partnerFeb, C.green,  0, false],
+              ['  House Accounts (100%)',         houseFeb,            C.accent, 1, false],
+              ['  Partner Deals (gross)',         partnerFeb,          C.accent, 1, false],
+              ['    − 20% Ops Fee',               -opsFee,             C.red,    2, false],
+              ['    − Wolf Mentality (50%)',      -(PARTNERS.find(p=>p.id==='wolf')?.febPayout||0), C.red, 2, false],
+              ['    − Neutro Corp (50%)',         -(PARTNERS.find(p=>p.id==='neutro')?.febPayout||0), C.red, 2, false],
+              ['BLG Gross Profit',               blgGross,            C.green,  0, true],
+              ['Reignmaker (reference)',          rmFeb,               C.gold,   0, false],
+            ].map(([l,v,col,ind,bold],i) => (
+              <div key={i} style={{padding:'7px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',paddingLeft:ind*14,background:bold?`${C.green}08`:'transparent'}}>
+                <span style={{fontSize:bold?12:11,color:bold?C.text:C.textDim,fontWeight:bold?700:400}}>{l}</span>
+                <span style={{fontSize:bold?14:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:col}}>{$n(v)}</span>
               </div>
             ))}
             <div style={{padding:'10px 0',display:'flex',justifyContent:'space-between',borderTop:`2px solid ${C.border}`}}>
-              <span style={{fontSize:13,fontWeight:700,color:C.green}}>BLG Net (before other expenses)</span>
-              <span style={{fontSize:14,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.green}}>{$n(blgGross)}</span>
+              <span style={{fontSize:13,fontWeight:700,color:C.green}}>Net Income (after all expenses)</span>
+              <span style={{fontSize:15,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:netIncome>=0?C.green:C.red}}>{$n(netIncome)}</span>
             </div>
           </div>
 
-          {/* Expense inputs */}
+          {/* ── Category Summary + Manage Categories ───────────────────────── */}
           <div className="card">
-            <div className="card-header"><div><div className="card-title">Expenses</div><div className="card-sub">Enter monthly costs to unlock net income</div></div></div>
+            <div className="card-header">
+              <div><div className="card-title">Expense Categories</div><div className="card-sub">Manage categories · running totals</div></div>
+            </div>
 
-            {/* Auto-calculated */}
-            <div style={{padding:'8px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',background:`${C.red}08`,borderRadius:4}}>
-              <span style={{fontSize:11,color:C.textDim}}>Partner Payouts (auto-calculated)</span>
+            {/* Auto line */}
+            <div style={{padding:'8px 10px',borderRadius:7,background:`${C.red}12`,border:`1px solid ${C.red}33`,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{fontSize:11,color:C.textDim}}>🤝 Partner Payouts (auto)</span>
               <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.red}}>{$n(autoPartnerPP)}</span>
             </div>
 
-            {/* Manual inputs */}
-            {Object.entries(expenses).filter(([k])=>k!=='subagent').map(([key,val])=>(
-              <div key={key} style={{padding:'8px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',gap:12}}>
-                <span style={{fontSize:11,color:C.textDim,flex:1}}>{expLabels[key]}</span>
-                <div style={{display:'flex',alignItems:'center',gap:4}}>
-                  <span style={{fontSize:11,color:C.textDim}}>$</span>
-                  <input
-                    type="number" value={val||''}
-                    onChange={e=>setExpenses(ex=>({...ex,[key]:parseFloat(e.target.value)||0}))}
-                    placeholder="0"
-                    style={{width:90,padding:'4px 6px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surfaceHigh,color:C.text,fontSize:12,textAlign:'right'}}
-                  />
-                </div>
+            {byCat.map(cat => (
+              <div key={cat.id} style={{padding:'7px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',gap:8}}>
+                <span style={{fontSize:11,color:C.textMid,flex:1}}>{cat.label}</span>
+                <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:cat.total>0?C.red:C.textDim}}>{$n(cat.total)}</span>
+                <button onClick={()=>removeCategory(cat.id)} style={{background:'transparent',border:'none',color:C.textDim,cursor:'pointer',fontSize:12,padding:'0 4px'}}>✕</button>
               </div>
             ))}
 
-            <div style={{height:1,background:C.border,margin:'12px 0'}}/>
-            {[
-              ['Total Expenses',  autoPartnerPP + manualExpenses, C.red],
-              ['BLG Gross',       blgGross,                       C.accent],
-              ['Net Income',      netIncome,                      netIncome>=0?C.green:C.red],
-            ].map(([l,v,c])=>(
-              <div key={l} style={{padding:'7px 0',display:'flex',justifyContent:'space-between'}}>
-                <span style={{fontSize:l==='Net Income'?13:11,fontWeight:l==='Net Income'?700:400,color:l==='Net Income'?c:C.textDim}}>{l}</span>
-                <span style={{fontSize:l==='Net Income'?15:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:c}}>{$n(v)}</span>
-              </div>
-            ))}
+            {/* Add category */}
+            <div style={{display:'flex',gap:6,marginTop:10}}>
+              <input value={newCat} onChange={e=>setNewCat(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&addCategory()}
+                placeholder="+ New category name..."
+                style={{flex:1,padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surfaceHigh,color:C.text,fontSize:11}}/>
+              <button onClick={addCategory} style={{padding:'6px 12px',borderRadius:6,background:C.accent,color:'#000',border:'none',fontSize:11,fontWeight:700,cursor:'pointer'}}>Add</button>
+            </div>
+
+            <div style={{marginTop:14,padding:'8px 0',borderTop:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between'}}>
+              <span style={{fontSize:11,color:C.textDim}}>Total Operating Expenses</span>
+              <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.red}}>{$n(manualTotal)}</span>
+            </div>
+            <div style={{padding:'4px 0',display:'flex',justifyContent:'space-between'}}>
+              <span style={{fontSize:11,fontWeight:700,color:C.textDim}}>All Expenses (incl. partner payouts)</span>
+              <span style={{fontSize:13,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.red}}>{$n(totalExp)}</span>
+            </div>
           </div>
         </div>
 
-        {/* RPM Telco placeholder */}
-        <div className="card" style={{marginTop:20,border:`1px dashed ${C.border}`}}>
-          <div style={{padding:'20px',textAlign:'center'}}>
-            <div style={{fontSize:13,fontWeight:700,color:C.gold,marginBottom:6}}>RPM Telco Integration — Coming Next Session</div>
-            <div style={{fontSize:11,color:C.textDim,lineHeight:1.8}}>
-              Upload RPM Telco reports to reconcile against distributor statements · Historical data loader (1–2 years) · BLG vs Reignmaker combined BI view · SPIFF history over time
+        {/* ── Expense Ledger ──────────────────────────────────────────────────── */}
+        <div className="card">
+          <div className="card-header">
+            <div><div className="card-title">Expense Ledger</div><div className="card-sub">All entries · with receipts</div></div>
+            <button onClick={()=>setShowForm(!showForm)} style={{
+              padding:'7px 14px',borderRadius:8,fontSize:11,fontWeight:700,cursor:'pointer',
+              background:C.accent,color:'#000',border:'none'
+            }}>+ Add Expense</button>
+          </div>
+
+          {/* Add Expense Form */}
+          {showForm && (
+            <div style={{padding:'14px',background:`${C.surfaceHigh}`,borderRadius:8,marginBottom:14,border:`1px solid ${C.border}`}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:10}}>
+                {/* Category */}
+                <div>
+                  <div style={{fontSize:10,color:C.textDim,marginBottom:3}}>Category</div>
+                  <select value={form.catId} onChange={e=>setForm(f=>({...f,catId:e.target.value}))}
+                    style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11}}>
+                    {cats.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}
+                  </select>
+                </div>
+                {/* Vendor */}
+                <div>
+                  <div style={{fontSize:10,color:C.textDim,marginBottom:3}}>Vendor / Payee</div>
+                  <input value={form.vendor} onChange={e=>setForm(f=>({...f,vendor:e.target.value}))}
+                    placeholder="e.g. AT&T, Delta, Starbucks"
+                    style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,boxSizing:'border-box'}}/>
+                </div>
+                {/* Amount */}
+                <div>
+                  <div style={{fontSize:10,color:C.textDim,marginBottom:3}}>Amount ($)</div>
+                  <input type="number" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))}
+                    placeholder="0.00"
+                    style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,boxSizing:'border-box'}}/>
+                </div>
+                {/* Description */}
+                <div style={{gridColumn:'1/3'}}>
+                  <div style={{fontSize:10,color:C.textDim,marginBottom:3}}>Description</div>
+                  <input value={form.desc} onChange={e=>setForm(f=>({...f,desc:e.target.value}))}
+                    placeholder="Brief description of this expense"
+                    style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,boxSizing:'border-box'}}/>
+                </div>
+                {/* Date */}
+                <div>
+                  <div style={{fontSize:10,color:C.textDim,marginBottom:3}}>Date</div>
+                  <input type="date" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))}
+                    style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,boxSizing:'border-box'}}/>
+                </div>
+              </div>
+
+              {/* Receipt Upload */}
+              <div style={{marginBottom:12}}>
+                <div style={{fontSize:10,color:C.textDim,marginBottom:6}}>Receipt (photo or PDF)</div>
+                <label style={{
+                  display:'inline-flex',alignItems:'center',gap:8,padding:'8px 14px',
+                  borderRadius:7,border:`1px dashed ${form.receipt?C.green:C.border}`,
+                  cursor:'pointer',fontSize:11,color:form.receipt?C.green:C.textDim,
+                  background:form.receipt?`${C.green}10`:'transparent'
+                }}>
+                  <span>{form.receipt ? '✓ '+form.receiptName : '📎 Upload receipt image or PDF'}</span>
+                  <input type="file" accept="image/*,application/pdf" onChange={handleReceiptUpload} style={{display:'none'}}/>
+                </label>
+                {form.receipt && form.receipt.startsWith('data:image') && (
+                  <img src={form.receipt} alt="receipt preview"
+                    style={{display:'block',marginTop:8,maxHeight:120,maxWidth:300,borderRadius:6,border:`1px solid ${C.border}`}}/>
+                )}
+              </div>
+
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={saveExpense} style={{padding:'7px 16px',borderRadius:7,background:C.green,color:'#000',border:'none',fontWeight:700,fontSize:11,cursor:'pointer'}}>Save Expense</button>
+                <button onClick={()=>setShowForm(false)} style={{padding:'7px 12px',borderRadius:7,background:'transparent',color:C.textDim,border:`1px solid ${C.border}`,fontSize:11,cursor:'pointer'}}>Cancel</button>
+              </div>
             </div>
+          )}
+
+          {/* Expense list by category */}
+          {expenses.length === 0
+            ? <div style={{padding:'24px 0',textAlign:'center',color:C.textDim,fontSize:12}}>No expenses logged yet — click + Add Expense above</div>
+            : byCat.filter(c=>c.items.length>0).map(cat => (
+                <div key={cat.id} style={{marginBottom:12}}>
+                  <div style={{fontSize:10,color:C.textDim,textTransform:'uppercase',letterSpacing:'.07em',padding:'6px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between'}}>
+                    <span>{cat.label}</span>
+                    <span style={{fontFamily:"'IBM Plex Mono',monospace",color:C.red}}>{$n(cat.total)}</span>
+                  </div>
+                  {cat.items.map(exp => (
+                    <div key={exp.id} style={{padding:'8px 0',borderBottom:`1px solid ${C.border}22`,display:'flex',gap:10,alignItems:'center'}}>
+                      {/* Receipt thumbnail */}
+                      {exp.receipt && exp.receipt.startsWith('data:image') ? (
+                        <img src={exp.receipt} alt="receipt"
+                          onClick={()=>setReceiptModal(exp.receipt)}
+                          style={{width:36,height:36,objectFit:'cover',borderRadius:4,border:`1px solid ${C.border}`,cursor:'pointer',flexShrink:0}}/>
+                      ) : exp.receipt ? (
+                        <div onClick={()=>setReceiptModal(exp.receipt)}
+                          style={{width:36,height:36,borderRadius:4,border:`1px solid ${C.border}`,background:`${C.accent}22`,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,fontSize:16}}>
+                          📄
+                        </div>
+                      ) : (
+                        <div style={{width:36,height:36,borderRadius:4,border:`1px dashed ${C.border}`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:16,color:C.textDim}}>
+                          🧾
+                        </div>
+                      )}
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:11,fontWeight:600,color:C.text}}>{exp.desc}</div>
+                        <div style={{fontSize:9,color:C.textDim}}>{exp.vendor&&exp.vendor+' · '}{exp.date}</div>
+                      </div>
+                      <span style={{fontSize:13,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.red,flexShrink:0}}>{$n(exp.amount)}</span>
+                      <button onClick={()=>deleteExpense(exp.id)} style={{background:'transparent',border:'none',color:C.textDim,cursor:'pointer',fontSize:12,flexShrink:0}}>✕</button>
+                    </div>
+                  ))}
+                </div>
+              ))
+          }
+
+          {expenses.length > 0 && (
+            <div style={{padding:'10px 0',borderTop:`2px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{fontSize:12,color:C.textDim}}>{expenses.length} expense{expenses.length!==1?'s':''} logged</span>
+              <span style={{fontSize:14,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.red}}>{$n(manualTotal)}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Receipt full-screen modal */}
+        {receiptModal && (
+          <div onClick={()=>setReceiptModal(null)} style={{
+            position:'fixed',inset:0,background:'rgba(0,0,0,.85)',display:'flex',alignItems:'center',
+            justifyContent:'center',zIndex:1000,cursor:'pointer'
+          }}>
+            <div onClick={e=>e.stopPropagation()} style={{maxWidth:'90vw',maxHeight:'90vh',position:'relative'}}>
+              <img src={receiptModal} alt="Receipt"
+                style={{maxWidth:'85vw',maxHeight:'85vh',borderRadius:8,border:`2px solid ${C.border}`}}/>
+              <button onClick={()=>setReceiptModal(null)}
+                style={{position:'absolute',top:-12,right:-12,width:28,height:28,borderRadius:'50%',background:C.red,border:'none',color:'#fff',fontSize:14,cursor:'pointer',fontWeight:700}}>✕</button>
+            </div>
+          </div>
+        )}
+
+        {/* RPM Telco placeholder */}
+        <div className="card" style={{marginTop:16,border:`1px dashed ${C.border}`}}>
+          <div style={{padding:'16px',textAlign:'center'}}>
+            <div style={{fontSize:13,fontWeight:700,color:C.gold,marginBottom:4}}>RPM Telco Integration — Coming Next Session</div>
+            <div style={{fontSize:11,color:C.textDim}}>Upload RPM Telco reports · Historical data loader · BLG vs Reignmaker combined BI view · SPIFF history</div>
           </div>
         </div>
       </div>
