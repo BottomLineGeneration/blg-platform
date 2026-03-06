@@ -3290,7 +3290,7 @@ function CommissionsDashboard() {
             <div style={{fontSize:10,color:C.textDim}}><span style={{color:C.green}}>■</span> BLG actual &nbsp;<span style={{color:C.gold}}>■</span> RM actual &nbsp;<span style={{color:`${C.accent}55`}}>■</span> BLG forecast</div>
           </div>
           {allMos.map((d,i)=>(
-            <div key={d.month} style={{marginBottom:11,opacity:d.forecast?.75:1}}>
+            <div key={d.month} style={{marginBottom:11,opacity:d.forecast ? 0.75 : 1}}>
               <div style={{display:'flex',justifyContent:'space-between',marginBottom:3,alignItems:'center'}}>
                 <span style={{fontSize:11,color:d.forecast?C.textMid:C.text,fontStyle:d.forecast?'italic':'normal'}}>{d.month}{d.forecast?' (est.)':''}</span>
                 <div style={{display:'flex',gap:12,alignItems:'center'}}>
