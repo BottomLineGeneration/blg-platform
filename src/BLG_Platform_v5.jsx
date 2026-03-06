@@ -683,10 +683,7 @@ function DocumentIntelligence({ clientCtx }) {
                           <textarea
                             value={bulkText}
                             onChange={e=>{setBulkText(e.target.value);setOdError('');}}
-                            placeholder={"https://1drv.ms/b/s!AaBbCcDd...
-https://1drv.ms/b/s!AaBbCcEe...
-https://1drv.ms/b/s!AaBbCcFf...
-(paste as many as you need)"}
+                            placeholder={"https://1drv.ms/b/s!AaBbCcDd...\nhttps://1drv.ms/b/s!AaBbCcEe...\nhttps://1drv.ms/b/s!AaBbCcFf...\n(paste as many as you need)"}
                             rows={6}
                             style={{
                               width:'100%',padding:'8px 10px',borderRadius:7,
