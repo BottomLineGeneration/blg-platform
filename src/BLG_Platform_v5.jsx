@@ -2023,6 +2023,250 @@ function ExportModal({ onClose }) {
   );
 }
 
+// ── REAL COMMISSION DATA — Feb 2026 ───────────────────────────────────────────
+const COMMISSION_DATA = [
+  { name: "Kinwest Senior Care LLC", revenue: 1825247.00, commission: 6388.37, providers: ["BOX Broker Online Exchange"], products: ["Wholesale"], lineItems: 1, type: "Senior Living" },
+  { name: "LaFontaine Cadillac Buick GMC, Inc.", revenue: 28271.62, commission: 4080.65, providers: ["CommandLink"], products: ["Dedicated Internet"], lineItems: 84, type: "Automotive" },
+  { name: "HIGHWOODS REALTY LIMITED PARTNERSHIP", revenue: 76234.31, commission: 2744.51, providers: ["Lingo Management, LLC"], products: ["Voice / SafeLine"], lineItems: 853, type: "REIT · Commercial" },
+  { name: "HIGHWOODS PROPERTIES INC", revenue: 18055.84, commission: 1625.02, providers: ["Lumen Technologies"], products: ["LCC Specialty Lines", "True Up"], lineItems: 4, type: "REIT · Commercial" },
+  { name: "Shea Buick GMC", revenue: 0, commission: 1250.00, providers: ["Everstream Solutions LLC"], products: ["SPIFF"], lineItems: 1, type: "Automotive" },
+  { name: "Real Floors (aka Arbor Carpet)", revenue: 8009.28, commission: 1214.97, providers: ["CommandLink"], products: ["Dedicated Internet"], lineItems: 72, type: "Commercial" },
+  { name: "PIEDMONT OFFICE REALTY TRUST", revenue: 6564.30, commission: 788.86, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 117, type: "REIT · Commercial" },
+  { name: "LaFontaine Automotive Group-ZNS", revenue: 2289.16, commission: 428.08, providers: ["Zayo"], products: ["Ethernet"], lineItems: 8, type: "Automotive" },
+  { name: "Somerby Peachtree City", revenue: 0, commission: 360.00, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 1, type: "Senior Living" },
+  { name: "PIEDMONT OFFICE REALTY TRUST INC DBA THE MEDICI", revenue: 1402.80, commission: 168.36, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 24, type: "REIT · Commercial" },
+  { name: "ONE METRO CENTER CORP", revenue: 985.95, commission: 125.58, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 21, type: "Commercial" },
+  { name: "Edge Business", revenue: 705.00, commission: 101.52, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
+  { name: "Bridge Senior Living - Fleming Farms", revenue: 567.73, commission: 86.87, providers: ["CommandLink"], products: ["Broadband"], lineItems: 3, type: "Senior Living" },
+  { name: "DDRTC Birkdale Village dba Birkdale Village", revenue: 601.00, commission: 80.47, providers: ["Lingo Management, LLC"], products: ["Fiber / Cable"], lineItems: 3, type: "Retail" },
+  { name: "JPPF WATERFRONT PLAZA LP DBA WATERFRONT PLAZA", revenue: 545.35, commission: 69.55, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 26, type: "Commercial" },
+  { name: "DBA LANDSTREET SS LLC", revenue: 449.00, commission: 68.70, providers: ["Spectrum Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
+  { name: "JPPF HPC LP DBA HOME PLATE CENTER", revenue: 378.40, commission: 48.24, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 8, type: "Commercial" },
+  { name: "JAMESTOWN PREMIER GHRSQ LP DBA GHIRARDELLI SQUARE", revenue: 335.60, commission: 42.80, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 16, type: "REIT · Commercial" },
+  { name: "AMSQ LP DBA AMERICA'S SQUARE", revenue: 370.80, commission: 39.83, providers: ["Lingo Management, LLC"], products: ["Cable / Voice"], lineItems: 6, type: "Commercial" },
+  { name: "SOMERBY PEACHTREE CITY", revenue: 293.65, commission: 37.45, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 14, type: "Senior Living" },
+  { name: "PECO Fasteners Inc.", revenue: 215.00, commission: 36.55, providers: ["AT&T"], products: ["Fiber Internet"], lineItems: 1, type: "Industrial" },
+  { name: "JAMESTOWN DORAL COMMONS, LP", revenue: 302.00, commission: 30.80, providers: ["Lingo Management, LLC"], products: ["Cable"], lineItems: 2, type: "REIT · Commercial" },
+  { name: "EAST UNION PROPERTY OWNER, LLC DBA UNION TERMINAL", revenue: 114.03, commission: 30.33, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Commercial" },
+  { name: "STATE STREET ASSISTED LIVING", revenue: 251.75, commission: 30.19, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 10, type: "Senior Living" },
+  { name: "CME Wire and Cable", revenue: 189.90, commission: 29.05, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Industrial" },
+  { name: "Bridge Senior Living - Newell Senior Care LLC", revenue: 183.30, commission: 28.04, providers: ["CommandLink"], products: ["Broadband"], lineItems: 1, type: "Senior Living" },
+  { name: "VILLAGES AT WEST LAUREL", revenue: 164.10, commission: 27.92, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 6, type: "Multi-Family" },
+  { name: "JAMESTOWN PREMIER BERKELEY GROTTO LP", revenue: 284.90, commission: 27.79, providers: ["Lingo Management, LLC"], products: ["Fiber / SafeLine"], lineItems: 8, type: "REIT · Commercial" },
+  { name: "SOMERBY SANTA ROSA BEACH", revenue: 215.85, commission: 25.89, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 6, type: "Senior Living" },
+  { name: "AVENTON ALAIRA II OWNER, LLC", revenue: 96.59, commission: 25.55, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "EXCHANGE PLACE ALL CAPP II REIT INC.", revenue: 95.09, commission: 25.27, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "REIT · Commercial" },
+  { name: "EDGE BUSINESS SYSTEMS LL", revenue: 149.99, commission: 24.00, providers: ["Spectrum Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
+  { name: "BGA JAX SOUTH OWNER LLC DBA AVENTON HIGHGROVE", revenue: 95.09, commission: 23.78, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "PARK WEST END APARTMENTS", revenue: 126.62, commission: 23.42, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 5, type: "Multi-Family" },
+  { name: "KID KEMPER LLC", revenue: 154.95, commission: 22.31, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
+  { name: "MALLORY SQUARE", revenue: 85.15, commission: 21.55, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "JPPF 55 FRANCISCO LP DBA 55 FRANCISCO", revenue: 167.80, commission: 21.40, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 8, type: "REIT · Commercial" },
+  { name: "LATITUDE AT GODLEY STATION", revenue: 89.14, commission: 21.32, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "AVENTON GWYNN", revenue: 76.65, commission: 20.32, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "LVA4 ATLANTA COLONY SQUARE LP", revenue: 231.00, commission: 19.64, providers: ["Lingo Management, LLC"], products: ["Fiber Ethernet"], lineItems: 1, type: "REIT · Commercial" },
+  { name: "AVENTON CARY", revenue: 76.15, commission: 19.03, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "CRP REPUBLIC MELBOURNE GREENS OWNER LLC", revenue: 76.15, commission: 19.03, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "Lehigh Storage LLC", revenue: 123.95, commission: 18.96, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
+  { name: "JPPF 360 E SECOND LP", revenue: 175.07, commission: 18.78, providers: ["Lingo Management, LLC"], products: ["Fiber / SafeLine"], lineItems: 21, type: "REIT · Commercial" },
+  { name: "JPPF 116 NEW MONTGOMERY LP", revenue: 158.95, commission: 15.30, providers: ["Lingo Management, LLC"], products: ["Fiber / SafeLine"], lineItems: 4, type: "REIT · Commercial" },
+  { name: "STATION AT LAKE MURRAY, LLC", revenue: 76.32, commission: 15.17, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 2, type: "Multi-Family" },
+  { name: "THE COTTAGES AT SUGAR MILL POND", revenue: 73.46, commission: 15.16, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "PIEDMONT 999 PEACHTREE", revenue: 114.90, commission: 13.79, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 2, type: "REIT · Commercial" },
+  { name: "JT INVEST 1 DAIRIES LLC DBA SOUTHERN DAIRIES", revenue: 162.00, commission: 13.77, providers: ["Lingo Management, LLC"], products: ["Fiber Ethernet"], lineItems: 1, type: "Commercial" },
+  { name: "NORTH AMERICAN PARKING, LLC", revenue: 160.00, commission: 13.60, providers: ["Lingo Management, LLC"], products: ["Fiber Ethernet"], lineItems: 1, type: "Commercial" },
+  { name: "KID KEMPER LLC DBA IFLEX STRETCH STUDIOS", revenue: 47.32, commission: 10.30, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Retail" },
+  { name: "L'ATTITUDE 34 - VINES CREEK", revenue: 45.27, commission: 9.60, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "COTTAGES AT MORGANFIELD", revenue: 44.77, commission: 9.51, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
+  { name: "SANTA ROSA FL LLC DBA ARTISAN LIVING NORTH BEACH", revenue: 50.88, commission: 9.51, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 2, type: "Multi-Family" },
+  { name: "SOMERBY SANDY SPRINGS", revenue: 48.85, commission: 6.23, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 4, type: "Senior Living" },
+  { name: "JAMESTOWN PREMIER SLO RETAIL LP", revenue: 41.95, commission: 5.35, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 2, type: "REIT · Commercial" },
+  { name: "WIM Resources, LLC", revenue: 30.00, commission: 5.10, providers: ["AT&T"], products: ["Fiber Broadband"], lineItems: 1, type: "Commercial" },
+  { name: "VENTURE AT LONG SHOALS", revenue: 25.44, commission: 4.76, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 2, type: "Multi-Family" },
+];
+
+const COMMISSION_META = {
+  month: "February 2026",
+  totalRevenue: 1976202.88,
+  totalCommission: 20506.93,
+  totalClients: 59,
+  totalLineItems: 1412,
+  advisor: "BCCJ Communications LLC",
+  salesRep: "Byron Braun",
+};
+
+function CommissionsDashboard() {
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("commission");
+  const [filterType, setFilterType] = useState("All");
+  const [selected, setSelected] = useState(null);
+
+  const types = ["All", ...Array.from(new Set(COMMISSION_DATA.map(c => c.type))).sort()];
+  const providerTotals = COMMISSION_DATA.reduce((acc, c) => {
+    c.providers.forEach(p => { acc[p] = (acc[p] || 0) + c.commission; });
+    return acc;
+  }, {});
+
+  const filtered = COMMISSION_DATA
+    .filter(c => (filterType === "All" || c.type === filterType) &&
+      c.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => b[sortBy] - a[sortBy]);
+
+  const filteredTotal = filtered.reduce((s, c) => s + c.commission, 0);
+  const top5 = [...COMMISSION_DATA].sort((a, b) => b.commission - a.commission).slice(0, 5);
+
+  return (
+    <div>
+      {/* KPI Row */}
+      <div className="grid-4 mb-16">
+        <MetricTile label="Feb 2026 Commission" value={`$${COMMISSION_META.totalCommission.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2})}`} delta="59 clients · 1,412 line items" color="green" />
+        <MetricTile label="Provider Revenue" value="$1.97M" delta="Billed through AppDirect" color="cyan" />
+        <MetricTile label="Active Providers" value="9" delta="Lingo leads by volume" color="gold" />
+        <MetricTile label="Avg Commission/Client" value={`$${(COMMISSION_META.totalCommission / COMMISSION_META.totalClients).toFixed(0)}`} delta="Range: $4.76 – $6,388" color="purple" />
+      </div>
+
+      <div className="grid-2 gap-20 mb-16">
+        {/* Provider Breakdown */}
+        <div className="card">
+          <div className="card-header">
+            <div>
+              <div className="card-title">Commission by Provider</div>
+              <div className="card-sub">Feb 2026 · All clients</div>
+            </div>
+          </div>
+          {Object.entries(providerTotals).sort((a,b) => b[1]-a[1]).map(([prov, amt]) => {
+            const pct = (amt / COMMISSION_META.totalCommission * 100).toFixed(1);
+            const barColor = prov.includes("Lingo") ? C.accent : prov.includes("CommandLink") ? C.gold : prov.includes("Lumen") ? C.green : prov.includes("BOX") ? C.purple : C.textMid;
+            return (
+              <div key={prov} style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, color: C.text, fontWeight: 600 }}>{prov}</span>
+                  <span style={{ fontSize: 12, fontFamily: "'IBM Plex Mono',monospace", color: barColor }}>${amt.toFixed(2)} <span style={{ color: C.textDim }}>({pct}%)</span></span>
+                </div>
+                <div style={{ height: 6, background: C.border, borderRadius: 3 }}>
+                  <div style={{ height: "100%", width: `${pct}%`, background: barColor, borderRadius: 3, transition: "width .4s ease" }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Top 5 Clients */}
+        <div className="card">
+          <div className="card-header">
+            <div>
+              <div className="card-title">Top 5 Clients by Commission</div>
+              <div className="card-sub">Feb 2026</div>
+            </div>
+          </div>
+          {top5.map((c, i) => (
+            <div key={c.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < 4 ? `1px solid ${C.border}` : "none", cursor: "pointer" }}
+              onClick={() => setSelected(selected?.name === c.name ? null : c)}>
+              <div style={{ width: 28, height: 28, borderRadius: "50%", background: `rgba(0,212,255,${0.15 - i * 0.02})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: C.accent, flexShrink: 0 }}>{i+1}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</div>
+                <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>{c.providers[0]} · {c.type}</div>
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: C.green, fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>${c.commission.toLocaleString("en-US", {minimumFractionDigits:2})}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Selected client detail */}
+      {selected && (
+        <div className="card mb-16" style={{ border: `1px solid rgba(0,229,160,.3)`, background: "rgba(0,229,160,.04)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: C.green, marginBottom: 4 }}>{selected.name}</div>
+              <div style={{ fontSize: 11, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>{selected.type} · {selected.providers.join(", ")}</div>
+            </div>
+            <button className="btn btn-ghost btn-sm" onClick={() => setSelected(null)}>✕</button>
+          </div>
+          <div className="grid-4" style={{ marginTop: 16 }}>
+            {[
+              ["Commission Earned", `$${selected.commission.toFixed(2)}`, C.green],
+              ["Provider Revenue", selected.revenue > 0 ? `$${selected.revenue.toLocaleString("en-US",{minimumFractionDigits:2})}` : "SPIFF/NRR", C.accent],
+              ["Line Items", selected.lineItems, C.gold],
+              ["Products", selected.products.slice(0,2).join(", "), C.purple],
+            ].map(([label, val, color]) => (
+              <div key={label} style={{ background: C.surfaceHigh, borderRadius: 8, padding: "10px 12px" }}>
+                <div style={{ fontSize: 10, color: C.textDim, marginBottom: 4, textTransform: "uppercase", letterSpacing: ".08em" }}>{label}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color, fontFamily: "'IBM Plex Mono',monospace" }}>{val}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Full client table */}
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <div className="card-title">All Clients — Commission Detail</div>
+            <div className="card-sub">{filtered.length} records · Total shown: <span style={{ color: C.green, fontFamily: "'IBM Plex Mono',monospace" }}>${filteredTotal.toFixed(2)}</span></div>
+          </div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <input
+              placeholder="Search clients..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ padding: "6px 12px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, width: 180, outline: "none" }}
+            />
+            <select value={filterType} onChange={e => setFilterType(e.target.value)}
+              style={{ padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.textMid, fontSize: 12, outline: "none", cursor: "pointer" }}>
+              {types.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)}
+              style={{ padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.textMid, fontSize: 12, outline: "none", cursor: "pointer" }}>
+              <option value="commission">Sort: Commission ↓</option>
+              <option value="revenue">Sort: Revenue ↓</option>
+              <option value="lineItems">Sort: Line Items ↓</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                {["Client", "Type", "Provider", "Products", "Rev. Billed", "Commission", "Lines"].map(h => (
+                  <th key={h} style={{ padding: "8px 10px", textAlign: "left", fontSize: 10, color: C.textDim, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c, i) => (
+                <tr key={c.name}
+                  onClick={() => setSelected(selected?.name === c.name ? null : c)}
+                  style={{ borderBottom: `1px solid ${C.border}`, cursor: "pointer", background: selected?.name === c.name ? "rgba(0,229,160,.04)" : i % 2 === 0 ? "transparent" : "rgba(255,255,255,.01)", transition: "background .1s" }}
+                  onMouseEnter={e => { if (selected?.name !== c.name) e.currentTarget.style.background = C.surfaceHigh; }}
+                  onMouseLeave={e => { if (selected?.name !== c.name) e.currentTarget.style.background = i % 2 === 0 ? "transparent" : "rgba(255,255,255,.01)"; }}>
+                  <td style={{ padding: "9px 10px", fontWeight: 600, color: C.text, maxWidth: 220, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</td>
+                  <td style={{ padding: "9px 10px" }}>
+                    <span style={{ padding: "2px 8px", borderRadius: 12, fontSize: 10, fontWeight: 600,
+                      background: c.type.includes("REIT") ? "rgba(168,85,247,.15)" : c.type.includes("Senior") ? "rgba(0,229,160,.12)" : c.type.includes("Multi") ? "rgba(0,212,255,.12)" : c.type.includes("Auto") ? "rgba(245,166,35,.12)" : "rgba(138,155,191,.1)",
+                      color: c.type.includes("REIT") ? C.purple : c.type.includes("Senior") ? C.green : c.type.includes("Multi") ? C.accent : c.type.includes("Auto") ? C.gold : C.textMid,
+                    }}>{c.type}</span>
+                  </td>
+                  <td style={{ padding: "9px 10px", color: C.textMid }}>{c.providers[0]}</td>
+                  <td style={{ padding: "9px 10px", color: C.textDim, maxWidth: 160, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.products[0]}</td>
+                  <td style={{ padding: "9px 10px", fontFamily: "'IBM Plex Mono',monospace", color: c.revenue > 0 ? C.textMid : C.textDim }}>{c.revenue > 0 ? `$${c.revenue.toLocaleString("en-US",{minimumFractionDigits:2})}` : "—"}</td>
+                  <td style={{ padding: "9px 10px", fontFamily: "'IBM Plex Mono',monospace", fontWeight: 800, color: c.commission >= 1000 ? C.green : c.commission >= 100 ? C.accent : C.textMid }}>${c.commission.toFixed(2)}</td>
+                  <td style={{ padding: "9px 10px", color: C.textDim, textAlign: "center" }}>{c.lineItems}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{ padding: "10px 10px 0", fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>
+          Source: AppDirect · Advisor: BCCJ Communications LLC · Sales Rep: Byron Braun · Period: February 2026
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── ROOT APP ───────────────────────────────────────────────────────────────────
 const TABS = [
   { id: "doc", label: "Document Intelligence", icon: "📄" },
@@ -2041,6 +2285,7 @@ const NAV = [
   { label: "Financial Engine", icon: "💰", id: "finance" },
   { label: "AI Assistant", icon: "🤖", id: "ai", badge: "AI" },
   { label: "Client Portal", icon: "🏢", id: "portal", badge: "5" },
+  { label: "Commissions", icon: "💵", id: "commissions", badge: "LIVE" },
 ];
 
 export default function BLGPlatform() {
@@ -2055,6 +2300,7 @@ export default function BLGPlatform() {
     ai: { title: "AI Chat Assistant", sub: "Claude-powered · Full portfolio context", comp: <AIChat /> },
     portal: { title: "Client Portal", sub: "Account management · Pipeline tracking · Deliverables", comp: <ClientPortal /> },
     dash: { title: "BLG Platform Dashboard", sub: "Executive overview · Bottom Line Generation v5", comp: <Dashboard setActive={setActive} /> },
+    commissions: { title: "Commission Intelligence", sub: "Real data · Feb 2026 · 59 clients · $20,506.93 earned", comp: <CommissionsDashboard /> },
   };
 
   const page = PAGES[active] || PAGES.dash;
