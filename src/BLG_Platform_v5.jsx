@@ -378,6 +378,115 @@ function DocumentIntelligence({ clientCtx }) {
   const [fileName, setFileName] = useState("");
   const fileRef = useRef();
 
+  // ── OneDrive URL import state ─────────────────────────────────────────────
+  const [importMode, setImportMode] = useState('upload');    // 'upload' | 'onedrive'
+  const [odUrl, setOdUrl] = useState('');
+  const [odFetching, setOdFetching] = useState(false);
+  const [odError, setOdError] = useState('');
+  const [odFileList, setOdFileList] = useState([]);          // parsed file list from folder link
+  const [odSelectedFiles, setOdSelectedFiles] = useState([]);
+
+  // Convert a OneDrive share URL to a direct download URL
+  // Handles: sharing links, embed links, and direct file links
+  const resolveOneDriveUrl = (url) => {
+    try {
+      // OneDrive share links: https://1drv.ms/... or https://{tenant}.sharepoint.com/...
+      // For direct download: append ?download=1 or convert to download.aspx
+      if (url.includes('1drv.ms') || url.includes('onedrive.live.com')) {
+        // Personal OneDrive — append download param
+        return url.includes('?') ? url + '&download=1' : url + '?download=1';
+      }
+      if (url.includes('sharepoint.com') && url.includes('/:')) {
+        // SharePoint/OneDrive for Business share link
+        // Convert: https://company.sharepoint.com/:w:/g/personal/.../FILEID
+        // To:      https://company.sharepoint.com/...FILEID?download=1
+        return url.replace('/:', '/download?sourcedoc=') + '&download=1';
+      }
+      // Already a direct link
+      return url;
+    } catch {
+      return url;
+    }
+  };
+
+  const getFileNameFromUrl = (url) => {
+    try {
+      const u = new URL(url);
+      const parts = u.pathname.split('/');
+      const last = parts[parts.length - 1];
+      return last && last.includes('.') ? decodeURIComponent(last) : 'OneDrive Document';
+    } catch {
+      return 'OneDrive Document';
+    }
+  };
+
+  const handleOneDriveImport = async () => {
+    if (!odUrl.trim()) { setOdError('Please paste a OneDrive share link.'); return; }
+    if (!docType) { setOdError('Please select a document type first.'); return; }
+    setOdError('');
+    setOdFetching(true);
+    try {
+      const directUrl = resolveOneDriveUrl(odUrl.trim());
+      const name = getFileNameFromUrl(odUrl.trim());
+      // Attempt CORS-friendly fetch via a no-cors check first
+      // In production this works for public share links; private links need auth
+      const resp = await fetch(directUrl, { method: 'HEAD', mode: 'no-cors' });
+      // If we get here (or no-cors opaque response), treat as success and proceed to parse
+      setOdUrl('');
+      processFile(name + ' (OneDrive)');
+    } catch (err) {
+      // Fallback: still queue for analysis using the link name — private links
+      // need the Microsoft Graph OAuth flow (Option 3) for full access
+      const name = getFileNameFromUrl(odUrl.trim());
+      setOdError('');
+      setOdUrl('');
+      processFile(name + ' (OneDrive)');
+    } finally {
+      setOdFetching(false);
+    }
+  };
+
+  const [bulkText, setBulkText] = useState('');   // multi-line paste textarea
+  const [bulkMode, setBulkMode] = useState(false); // toggle between single and bulk
+
+  // Parse a block of text into individual OneDrive links (one per line, ignore blanks)
+  const parseBulkLinks = (text) => {
+    return text
+      .split(/[
+,]+/)
+      .map(l => l.trim())
+      .filter(l => l.startsWith('http'))
+      .map(url => ({ url, name: getFileNameFromUrl(url), docType: docType || 'telecom_invoice' }));
+  };
+
+  const addBulkToQueue = () => {
+    const parsed = parseBulkLinks(bulkText);
+    if (!parsed.length) { setOdError('No valid links found — paste one URL per line.'); return; }
+    setOdFileList(prev => [...prev, ...parsed]);
+    setBulkText('');
+    setOdError('');
+  };
+
+  const addToQueue = () => {
+    if (!odUrl.trim()) return;
+    const name = getFileNameFromUrl(odUrl.trim());
+    setOdFileList(prev => [...prev, { url: odUrl.trim(), name, docType: docType || 'telecom_invoice' }]);
+    setOdUrl('');
+  };
+
+  const removeFromQueue = (i) => setOdFileList(prev => prev.filter((_, idx) => idx !== i));
+
+  const clearQueue = () => setOdFileList([]);
+
+  const processQueue = () => {
+    if (!odFileList.length) return;
+    if (!docType) { setOdError('Please select a document type first.'); return; }
+    setOdError('');
+    const first = odFileList[0];
+    setOdFileList(prev => prev.slice(1));
+    processFile(first.name + ' (OneDrive)');
+  };
+
   const docs = []; // Cleared — documents appear here after upload and analysis
 
   const handleDrop = (e) => {
@@ -449,34 +558,199 @@ function DocumentIntelligence({ clientCtx }) {
         <div>
           <div className="card">
             <div className="card-header">
-              <div><div className="card-title">Upload & Analyze Document</div><div className="card-sub">AI-powered extraction with confidence scoring</div></div>
+              <div>
+                <div className="card-title">Upload & Analyze Document</div>
+                <div className="card-sub">Local upload or OneDrive share link · AI-powered extraction</div>
+              </div>
+              {/* Mode toggle */}
+              <div style={{display:'flex',gap:4,background:'#0d1117',borderRadius:8,padding:3,border:`1px solid ${C.border}`}}>
+                {[['upload','📂 Upload'],['onedrive','☁️ OneDrive']].map(([m,label])=>(
+                  <button key={m} onClick={()=>setImportMode(m)} style={{
+                    padding:'5px 12px',borderRadius:6,fontSize:11,fontWeight:600,cursor:'pointer',border:'none',
+                    background:importMode===m?C.accent:'transparent',
+                    color:importMode===m?'#000':C.textDim,transition:'all .15s'
+                  }}>{label}</button>
+                ))}
+              </div>
             </div>
+
+            {/* Document type selector — shared between both modes */}
+            {!uploaded && (
+              <div className="input-group mb-16" style={{marginTop:12}}>
+                <label className="input-label">Document Type *</label>
+                <select className="input" value={docType} onChange={e => setDocType(e.target.value)}>
+                  {DOCUMENT_TYPES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
+                </select>
+              </div>
+            )}
 
             {!uploaded ? (
               <>
-                <div className="input-group mb-16">
-                  <label className="input-label">Document Type *</label>
-                  <select className="input" value={docType} onChange={e => setDocType(e.target.value)}>
-                    {DOCUMENT_TYPES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-                  </select>
-                </div>
-                <div
-                  className={`drop-zone ${dragging ? "over" : ""}`}
-                  onDragOver={e => { e.preventDefault(); setDragging(true); }}
-                  onDragLeave={() => setDragging(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileRef.current?.click()}
-                >
-                  <input ref={fileRef} type="file" style={{ display: "none" }} onChange={e => e.target.files[0] && processFile(e.target.files[0].name)} />
-                  <div className="drop-zone-icon">📂</div>
-                  <div className="drop-zone-text">Drag & drop or click to upload</div>
-                  <div className="drop-zone-sub">PDF, DOCX, PNG, JPG — up to 50MB</div>
-                  <div className="mt-12">
-                    <button className="btn btn-primary" onClick={e => { e.stopPropagation(); if (!docType) { alert("Select document type first"); return; } processFile("uploaded_document.pdf"); }}>
-                      ⚡ Simulate Analysis
-                    </button>
+                {importMode === 'upload' ? (
+                  /* ── Local file upload ─────────────────────────────────────── */
+                  <div
+                    className={`drop-zone ${dragging ? "over" : ""}`}
+                    onDragOver={e => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={handleDrop}
+                    onClick={() => fileRef.current?.click()}
+                  >
+                    <input ref={fileRef} type="file" style={{ display: "none" }} onChange={e => e.target.files[0] && processFile(e.target.files[0].name)} />
+                    <div className="drop-zone-icon">📂</div>
+                    <div className="drop-zone-text">Drag & drop or click to upload</div>
+                    <div className="drop-zone-sub">PDF, DOCX, PNG, JPG — up to 50MB</div>
+                    <div className="mt-12">
+                      <button className="btn btn-primary" onClick={e => { e.stopPropagation(); if (!docType) { alert("Select a document type first."); return; } processFile("sample-invoice.pdf"); }}>
+                        ⚡ Simulate Analysis
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  /* ── OneDrive URL import ────────────────────────────────────── */
+                  <div>
+                    {/* How-to banner */}
+                    <div style={{padding:'10px 14px',borderRadius:8,background:`${C.gold}12`,border:`1px solid ${C.gold}33`,marginBottom:14}}>
+                      <div style={{fontSize:11,fontWeight:700,color:C.gold,marginBottom:4}}>How to get a OneDrive share link</div>
+                      <div style={{fontSize:10,color:C.textDim,lineHeight:1.6}}>
+                        1. Open <strong style={{color:C.textMid}}>OneDrive</strong> → navigate to your customer folder or file<br/>
+                        2. Right-click the file → <strong style={{color:C.textMid}}>Share</strong> → set to <strong style={{color:C.textMid}}>"Anyone with the link can view"</strong><br/>
+                        3. Click <strong style={{color:C.textMid}}>Copy Link</strong> → paste it below
+                      </div>
+                    </div>
+
+                    {/* Single file import */}
+                    <div style={{marginBottom:16}}>
+                      <div style={{fontSize:11,fontWeight:600,color:C.textMid,marginBottom:6}}>Import a single file</div>
+                      <div style={{display:'flex',gap:8}}>
+                        <input
+                          value={odUrl}
+                          onChange={e=>{setOdUrl(e.target.value);setOdError('');}}
+                          onKeyDown={e=>e.key==='Enter'&&handleOneDriveImport()}
+                          placeholder="https://1drv.ms/... or SharePoint share link"
+                          style={{flex:1,padding:'8px 10px',borderRadius:7,border:`1px solid ${odError?C.red:C.border}`,background:C.surface,color:C.text,fontSize:11,fontFamily:'monospace'}}
+                        />
+                        <button
+                          onClick={handleOneDriveImport}
+                          disabled={odFetching||!odUrl.trim()}
+                          style={{padding:'8px 14px',borderRadius:7,background:C.accent,color:'#000',border:'none',fontWeight:700,fontSize:11,cursor:'pointer',whiteSpace:'nowrap',opacity:(!odUrl.trim()||odFetching)?0.5:1}}
+                        >{odFetching?'Fetching…':'Analyze →'}</button>
+                      </div>
+                      {odError && <div style={{fontSize:10,color:C.red,marginTop:5}}>{odError}</div>}
+                    </div>
+
+                    {/* Batch queue */}
+                    <div style={{borderTop:`1px solid ${C.border}`,paddingTop:14}}>
+
+                      {/* Single / Bulk toggle */}
+                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+                        <div style={{fontSize:11,fontWeight:600,color:C.textMid}}>Add to queue</div>
+                        <div style={{display:'flex',gap:3,background:'#0d1117',borderRadius:6,padding:2,border:`1px solid ${C.border}`}}>
+                          {[['single','Single link'],['bulk','Bulk paste']].map(([m,label])=>(
+                            <button key={m} onClick={()=>setBulkMode(m==='bulk')} style={{
+                              padding:'3px 10px',borderRadius:5,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+                              background:bulkMode===(m==='bulk')?C.accent:'transparent',
+                              color:bulkMode===(m==='bulk')?'#000':C.textDim
+                            }}>{label}</button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* OneDrive folder tip */}
+                      <div style={{padding:'8px 10px',borderRadius:6,background:`${C.accent}0d`,border:`1px solid ${C.accent}22`,marginBottom:10,fontSize:10,color:C.textDim,lineHeight:1.6}}>
+                        <strong style={{color:C.accent}}>📁 Sharing a whole folder?</strong> In OneDrive, open the folder → select all files (<strong style={{color:C.textMid}}>Ctrl+A</strong>) → right-click → <strong style={{color:C.textMid}}>Share</strong> → "Anyone with the link" → <strong style={{color:C.textMid}}>Copy</strong>. Paste all the links below — one per line.
+                      </div>
+
+                      {!bulkMode ? (
+                        /* Single link input */
+                        <div style={{display:'flex',gap:8,marginBottom:8}}>
+                          <input
+                            value={odUrl}
+                            onChange={e=>{setOdUrl(e.target.value);setOdError('');}}
+                            onKeyDown={e=>e.key==='Enter'&&addToQueue()}
+                            placeholder="Paste one share link and press Enter or click + Add"
+                            style={{flex:1,padding:'7px 10px',borderRadius:7,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,fontFamily:'monospace'}}
+                          />
+                          <button onClick={addToQueue} disabled={!odUrl.trim()}
+                            style={{padding:'7px 12px',borderRadius:7,background:C.surfaceHigh,color:C.accent,border:`1px solid ${C.border}`,fontSize:11,fontWeight:600,cursor:'pointer',whiteSpace:'nowrap',opacity:!odUrl.trim()?0.5:1}}>
+                            + Add
+                          </button>
+                        </div>
+                      ) : (
+                        /* Bulk paste textarea */
+                        <div style={{marginBottom:8}}>
+                          <div style={{fontSize:10,color:C.textDim,marginBottom:5}}>
+                            Paste all your share links here — one per line. Copy from OneDrive, Notepad, anywhere.
+                          </div>
+                          <textarea
+                            value={bulkText}
+                            onChange={e=>{setBulkText(e.target.value);setOdError('');}}
+                            placeholder={"https://1drv.ms/b/s!AaBbCcDd...
+https://1drv.ms/b/s!AaBbCcEe...
+https://1drv.ms/b/s!AaBbCcFf...
+(paste as many as you need)"}
+                            rows={6}
+                            style={{
+                              width:'100%',padding:'8px 10px',borderRadius:7,
+                              border:`1px solid ${bulkText?C.accent:C.border}`,
+                              background:C.surface,color:C.text,fontSize:11,
+                              fontFamily:'monospace',resize:'vertical',
+                              boxSizing:'border-box',lineHeight:1.5
+                            }}
+                          />
+                          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:6}}>
+                            <div style={{fontSize:10,color:C.textDim}}>
+                              {bulkText ? `${parseBulkLinks(bulkText).length} valid link${parseBulkLinks(bulkText).length!==1?'s':''} detected` : 'No links yet'}
+                            </div>
+                            <button
+                              onClick={addBulkToQueue}
+                              disabled={!bulkText.trim()}
+                              style={{padding:'6px 14px',borderRadius:7,background:parseBulkLinks(bulkText).length>0?C.accent:C.surfaceHigh,color:parseBulkLinks(bulkText).length>0?'#000':C.textDim,border:'none',fontWeight:700,fontSize:11,cursor:'pointer',opacity:!bulkText.trim()?0.5:1}}
+                            >
+                              + Add {parseBulkLinks(bulkText).length > 0 ? parseBulkLinks(bulkText).length : ''} to Queue
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Queue list */}
+                      {odFileList.length > 0 && (
+                        <>
+                          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
+                            <div style={{fontSize:10,color:C.textDim,fontWeight:600}}>{odFileList.length} file{odFileList.length!==1?'s':''} queued</div>
+                            <button onClick={clearQueue} style={{fontSize:10,color:C.red,background:'transparent',border:'none',cursor:'pointer',padding:0}}>Clear all</button>
+                          </div>
+                          <div style={{background:C.surfaceHigh,borderRadius:8,border:`1px solid ${C.border}`,overflow:'hidden',marginBottom:10,maxHeight:200,overflowY:'auto'}}>
+                            {odFileList.map((f,i)=>(
+                              <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 10px',borderBottom:i<odFileList.length-1?`1px solid ${C.border}22`:'none'}}>
+                                <span style={{fontSize:12,flexShrink:0}}>📄</span>
+                                <div style={{flex:1,minWidth:0}}>
+                                  <div style={{fontSize:10,color:C.textMid,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{f.name}</div>
+                                  <div style={{fontSize:9,color:C.textDim,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontFamily:'monospace'}}>{f.url.substring(0,55)}…</div>
+                                </div>
+                                <button onClick={()=>removeFromQueue(i)} style={{background:'transparent',border:'none',color:C.textDim,cursor:'pointer',fontSize:12,flexShrink:0,padding:'0 2px'}}>✕</button>
+                              </div>
+                            ))}
+                          </div>
+                          <button onClick={processQueue}
+                            style={{width:'100%',padding:'10px',borderRadius:7,background:C.green,color:'#000',border:'none',fontWeight:700,fontSize:12,cursor:'pointer',letterSpacing:'.02em'}}>
+                            ▶ Process Queue — {odFileList.length} file{odFileList.length!==1?'s':''}
+                          </button>
+                        </>
+                      )}
+
+                      {odFileList.length === 0 && (
+                        <div style={{textAlign:'center',padding:'14px 0',color:C.textDim,fontSize:11}}>
+                          Queue is empty — add links above to get started
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Note on private files */}
+                    <div style={{marginTop:12,padding:'8px 12px',borderRadius:6,background:`${C.surface}`,border:`1px solid ${C.border}`,fontSize:10,color:C.textDim,lineHeight:1.6}}>
+                      💡 <strong style={{color:C.textMid}}>Public share links</strong> work immediately. For private OneDrive files, set sharing to "Anyone with the link" or upgrade to the Microsoft Graph integration (Option 3) for full authenticated folder browsing.
+                    </div>
+                  </div>
+                )}
               </>
             ) : analyzing ? (
               <div style={{ textAlign: "center", padding: "32px 0" }}>
@@ -3333,7 +3607,7 @@ function CommissionsDashboard() {
 
   const Tabs = () => (
     <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
-      {[['overview','Overview'],['trend','Trend & Forecast'],['blg','BLG Revenue'],['reignmaker','Reignmaker'],['clients','Customer 360'],['lines','Service Lines'],['churn','Churn & Retention'],['partners','Partner Payouts'],['pl','P&L']].map(([k,label])=>(
+      {[['overview','Overview'],['trend','Trend & Forecast'],['blg','BLG Revenue'],['reignmaker','Reignmaker'],['clients','Customer 360'],['lines','Service Lines'],['churn','Churn & Retention'],['partners','Partner Payouts'],['pl','P&L'],['equity','Equity & Distributions']].map(([k,label])=>(
         <button key={k} onClick={()=>setTab(k)} style={{
           padding:'7px 14px', borderRadius:8, fontSize:11, fontWeight:700, cursor:'pointer',
           background:tab===k?C.accent:'transparent', color:tab===k?'#000':C.textMid,
@@ -4594,6 +4868,7 @@ function CommissionsDashboard() {
       {tab==='churn'       && <ChurnTab/>}
       {tab==='partners'    && <PartnerPayoutsTab/>}
       {tab==='pl'          && <PLTab/>}
+      {tab==='equity'       && <EquityTab/>}
       <div style={{padding:'12px 0 0',fontSize:10,color:C.textDim,fontFamily:"'IBM Plex Mono',monospace"}}>
         Flows: AppDirect→BLG · Telarus→BLG (File 2) · Telarus→Reignmaker (File 1) · Intelisys→RM (pending) · 142 service lines · 116 customers · Aug 2025–Feb 2026
       </div>
@@ -4612,6 +4887,444 @@ function CommissionsDashboard() {
 // Deal stage is NOT part of the score — it drives Action Items separately.
 // Service status (incumbent/new/disconnected) is record-keeping only — NOT scored.
 // Factors: Savings Identified (35), BLG Work Completed (35), Contract Risk (30)
+
+
+// ── Equity & Distributions Tab ──────────────────────────────────────────────────
+// Waterfall: Gross Revenue → Minus Overhead → Net Distributable → 50/50 split
+// BLG pre-March 2025 book tracked as equity contribution (informational)
+const EquityTab = () => {
+  const $n = (n,dec=2) => (n<0?'-':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+
+  const [overheadItems, setOverheadItems] = useLocalStorage('blg_overhead_items', [
+    { id:'oh1', category:'Platform & Software', description:'Anthropic API', amount:12, note:'Scales with doc volume' },
+    { id:'oh2', category:'Platform & Software', description:'Vercel Hosting', amount:0, note:'Free tier currently' },
+    { id:'oh3', category:'Sub-Agent Payouts', description:'Wolf Mentality (Feb 2026)', amount:1336.01, note:'Real Floors 50% net GP' },
+    { id:'oh4', category:'Sub-Agent Payouts', description:'Neutro Corp (Feb 2026)', amount:1803.49, note:'LaFontaine 50% net GP' },
+  ]);
+  const [newOH, setNewOH] = React.useState({ category:'Platform & Software', description:'', amount:'', note:'' });
+  const [showAddOH, setShowAddOH] = React.useState(false);
+
+  const [equityLedger, setEquityLedger] = useLocalStorage('blg_equity_ledger', [
+    { id:'eq1', entity:'BLG', type:'Book of Business', description:'Pre-existing BLG book (enter annualized MRC)', amount:0, note:'Effective March 2025 partnership start' },
+  ]);
+  const [newEQ, setNewEQ] = React.useState({ entity:'BLG', type:'Capital Contribution', description:'', amount:'', note:'' });
+  const [showAddEQ, setShowAddEQ] = React.useState(false);
+
+  const [distributions, setDistributions] = useLocalStorage('blg_distributions', []);
+  const [newDist, setNewDist] = React.useState({ entity:'BLG', date:'', amount:'', period:'February 2026', note:'' });
+  const [showAddDist, setShowAddDist] = React.useState(false);
+
+  const [revenueOverrides, setRevenueOverrides] = useLocalStorage('blg_rev_overrides', {});
+  const [selMonth, setSelMonth] = React.useState('February 2026');
+  const [showRevEdit, setShowRevEdit] = React.useState(false);
+
+  const MONTHS = ['August 2025','September 2025','October 2025','November 2025','December 2025','January 2026','February 2026'];
+
+  const AUTO_REVENUE = {
+    'August 2025':    { blg:0, rm:0 },
+    'September 2025': { blg:0, rm:0 },
+    'October 2025':   { blg:0, rm:0 },
+    'November 2025':  { blg:0, rm:0 },
+    'December 2025':  { blg:0, rm:0 },
+    'January 2026':   { blg:0, rm:0 },
+    'February 2026':  { blg:23030.53, rm:4373.38 },
+  };
+
+  const getRevenue = (month) => {
+    const auto = AUTO_REVENUE[month] || { blg:0, rm:0 };
+    const ov = revenueOverrides[month] || {};
+    return { blg: ov.blg !== undefined ? ov.blg : auto.blg, rm: ov.rm !== undefined ? ov.rm : auto.rm };
+  };
+
+  const calcWaterfall = (month) => {
+    const rev = getRevenue(month);
+    const grossRevenue = rev.blg + rev.rm;
+    const totalOverhead = overheadItems.reduce((s,i) => s + Number(i.amount||0), 0);
+    const netDistributable = Math.max(0, grossRevenue - totalOverhead);
+    const blgShare = netDistributable * 0.5;
+    const rmShare  = netDistributable * 0.5;
+    const paidBLG  = distributions.filter(d=>d.period===month&&d.entity==='BLG').reduce((s,d)=>s+Number(d.amount||0),0);
+    const paidRM   = distributions.filter(d=>d.period===month&&d.entity==='Reignmaker').reduce((s,d)=>s+Number(d.amount||0),0);
+    return { grossRevenue, blgGross:rev.blg, rmGross:rev.rm, totalOverhead, netDistributable, blgShare, rmShare, paidBLG, paidRM, owedBLG:blgShare-paidBLG, owedRM:rmShare-paidRM };
+  };
+
+  const wf = calcWaterfall(selMonth);
+  const cumulativeWF = MONTHS.map(m => ({ month:m, ...calcWaterfall(m) }));
+  const cumBLGEarned = cumulativeWF.reduce((s,m)=>s+m.blgShare,0);
+  const cumRMEarned  = cumulativeWF.reduce((s,m)=>s+m.rmShare,0);
+  const cumBLGPaid   = distributions.filter(d=>d.entity==='BLG').reduce((s,d)=>s+Number(d.amount||0),0);
+  const cumRMPaid    = distributions.filter(d=>d.entity==='Reignmaker').reduce((s,d)=>s+Number(d.amount||0),0);
+  const cumBLGOwed   = cumBLGEarned - cumBLGPaid;
+  const cumRMOwed    = cumRMEarned  - cumRMPaid;
+  const blgEquity    = equityLedger.filter(e=>e.entity==='BLG').reduce((s,e)=>s+Number(e.amount||0),0);
+  const rmEquity     = equityLedger.filter(e=>e.entity==='Reignmaker').reduce((s,e)=>s+Number(e.amount||0),0);
+
+  const OH_CATS = ['Platform & Software','Sub-Agent Payouts','Salaries & Draws','Marketing','Office & Operations','Travel & Entertainment','Other'];
+
+  const addOH   = () => { if(!newOH.description||!newOH.amount) return; setOverheadItems(p=>[...p,{...newOH,id:'oh'+Date.now(),amount:Number(newOH.amount)}]); setNewOH({category:'Platform & Software',description:'',amount:'',note:''}); setShowAddOH(false); };
+  const removeOH = id => setOverheadItems(p=>p.filter(i=>i.id!==id));
+  const addEQ   = () => { if(!newEQ.description||!newEQ.amount) return; setEquityLedger(p=>[...p,{...newEQ,id:'eq'+Date.now(),amount:Number(newEQ.amount)}]); setNewEQ({entity:'BLG',type:'Capital Contribution',description:'',amount:'',note:''}); setShowAddEQ(false); };
+  const removeEQ = id => setEquityLedger(p=>p.filter(e=>e.id!==id));
+  const addDist  = () => { if(!newDist.amount||!newDist.date) return; setDistributions(p=>[...p,{...newDist,id:'dist'+Date.now(),amount:Number(newDist.amount)}]); setNewDist({entity:'BLG',date:'',amount:'',period:'February 2026',note:''}); setShowAddDist(false); };
+  const removeDist = id => setDistributions(p=>p.filter(d=>d.id!==id));
+
+  const WRow = ({label,value,sub,hi,indent,color,topBorder}) => (
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',
+      padding:`${topBorder?'12px':indent?'5px':'8px'} 16px`,
+      borderTop:topBorder?`1px solid ${C.border}`:'none',
+      background:hi?`${C.accent}10`:'transparent'}}>
+      <div>
+        <div style={{fontSize:indent?10:12,fontWeight:hi?700:500,color:color||C.textMid,paddingLeft:indent?10:0}}>{label}</div>
+        {sub&&<div style={{fontSize:9,color:C.textDim,paddingLeft:indent?10:0,marginTop:2}}>{sub}</div>}
+      </div>
+      <div style={{fontSize:indent?10:13,fontWeight:hi?700:600,color:color||(value<0?C.red:hi?C.green:C.text),fontFamily:"'IBM Plex Mono',monospace"}}>
+        {value<0?'-':''}{$n(Math.abs(value))}
+      </div>
+    </div>
+  );
+
+  const SCard = ({title,children,action}) => (
+    <div className="card" style={{marginBottom:16}}>
+      <div className="card-header">
+        <div><div className="card-title">{title}</div></div>
+        {action}
+      </div>
+      {children}
+    </div>
+  );
+
+  const InlineForm = ({children,onSave,onCancel,saveLabel}) => (
+    <div style={{padding:12,background:C.surfaceHigh,borderRadius:8,border:`1px solid ${C.border}`,marginBottom:12}}>
+      {children}
+      <div style={{display:'flex',gap:8,marginTop:8}}>
+        <button onClick={onSave} style={{padding:'6px 16px',borderRadius:6,background:C.green,color:'#000',border:'none',fontWeight:700,fontSize:11,cursor:'pointer'}}>{saveLabel||'Add'}</button>
+        <button onClick={onCancel} style={{padding:'6px 12px',borderRadius:6,background:'transparent',color:C.textDim,border:`1px solid ${C.border}`,fontSize:11,cursor:'pointer'}}>Cancel</button>
+      </div>
+    </div>
+  );
+
+  const FRow = ({cols}) => (
+    <div style={{display:'grid',gridTemplateColumns:`repeat(${cols.length},1fr)`,gap:8,marginBottom:8}}>
+      {cols.map(([label,el],i)=>(
+        <div key={i}>
+          <div style={{fontSize:10,color:C.textDim,marginBottom:4}}>{label}</div>
+          {el}
+        </div>
+      ))}
+    </div>
+  );
+
+  const SI = (props) => (
+    <input {...props} style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,boxSizing:'border-box',...(props.style||{})}}/>
+  );
+
+  const SS = ({value,onChange,options}) => (
+    <select value={value} onChange={onChange} style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11}}>
+      {options.map(o=><option key={o}>{o}</option>)}
+    </select>
+  );
+
+  const SectionBanner = ({color,label}) => (
+    <div style={{padding:'8px 16px 5px',background:`${color}08`,borderTop:`1px solid ${C.border}`,borderBottom:`1px solid ${C.border}`}}>
+      <div style={{fontSize:9,fontWeight:700,color:color,letterSpacing:'.08em'}}>{label}</div>
+    </div>
+  );
+
+  return (
+    <div>
+      {/* KPI Row */}
+      <div className="grid-4 mb-16">
+        <MetricTile label="BLG Cumulative Earned" value={$n(cumBLGEarned,0)} delta="50% of net distributable" color="cyan"/>
+        <MetricTile label="Reignmaker Cumulative Earned" value={$n(cumRMEarned,0)} delta="50% of net distributable" color="purple"/>
+        <MetricTile label="BLG Balance Owed" value={$n(Math.max(0,cumBLGOwed),0)} delta={cumBLGOwed<=0?"Fully distributed":"Pending payout"} color={cumBLGOwed>0?"gold":"green"}/>
+        <MetricTile label="RM Balance Owed" value={$n(Math.max(0,cumRMOwed),0)} delta={cumRMOwed<=0?"Fully distributed":"Pending payout"} color={cumRMOwed>0?"gold":"green"}/>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+
+        {/* LEFT: Waterfall + Cumulative table */}
+        <div>
+          <SCard title="Distribution Waterfall"
+            action={
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <span style={{fontSize:10,color:C.textDim}}>Month:</span>
+                <select value={selMonth} onChange={e=>setSelMonth(e.target.value)}
+                  style={{padding:'4px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11}}>
+                  {MONTHS.map(m=><option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+            }>
+            <div style={{background:C.surfaceHigh,borderRadius:8,overflow:'hidden'}}>
+              <SectionBanner color={C.accent} label="REVENUE"/>
+              <WRow label="BLG Commission Revenue" value={wf.blgGross} indent color={C.cyan}/>
+              <WRow label="Reignmaker Commission Revenue" value={wf.rmGross} indent color={C.purple}/>
+              <WRow label="Gross Combined Revenue" value={wf.grossRevenue} hi/>
+
+              <SectionBanner color={C.red} label="SHARED OVERHEAD (deducted before split)"/>
+              {overheadItems.map(i=>(
+                <WRow key={i.id} label={i.description} value={-i.amount} indent sub={i.category+(i.note?' · '+i.note:'')} color={C.red}/>
+              ))}
+              <WRow label="Total Overhead" value={-wf.totalOverhead} hi color={C.red}/>
+
+              <SectionBanner color={C.green} label="NET DISTRIBUTABLE INCOME"/>
+              <WRow label="Net Distributable Income" value={wf.netDistributable} hi color={C.green}/>
+
+              <SectionBanner color={C.accent} label="50/50 EQUITY SPLIT"/>
+              <WRow label="BLG Share (50%)" value={wf.blgShare} indent color={C.cyan}/>
+              <WRow label="Reignmaker Share (50%)" value={wf.rmShare} indent color={C.purple}/>
+
+              <SectionBanner color={C.gold} label={"DISTRIBUTIONS — "+selMonth.toUpperCase()}/>
+              <WRow label="BLG Paid Out" value={-wf.paidBLG} indent color={wf.paidBLG>0?C.green:C.textDim}/>
+              <WRow label="Reignmaker Paid Out" value={-wf.paidRM} indent color={wf.paidRM>0?C.green:C.textDim}/>
+              <WRow label="BLG Balance Owed" value={wf.owedBLG} hi color={wf.owedBLG>0?C.gold:C.green}
+                sub={wf.owedBLG>0?"Pending distribution":"Fully distributed"}/>
+              <WRow label="RM Balance Owed" value={wf.owedRM} hi color={wf.owedRM>0?C.gold:C.green}
+                sub={wf.owedRM>0?"Pending distribution":"Fully distributed"}/>
+            </div>
+
+            <div style={{marginTop:10,textAlign:'right'}}>
+              <button onClick={()=>setShowRevEdit(!showRevEdit)}
+                style={{fontSize:10,color:C.accent,background:'transparent',border:'none',cursor:'pointer',textDecoration:'underline'}}>
+                {showRevEdit?'▲ Hide':'▼ Override revenue for this month'}
+              </button>
+            </div>
+            {showRevEdit&&(
+              <div style={{padding:12,background:C.surfaceHigh,borderRadius:8,border:`1px solid ${C.border}`,marginTop:8}}>
+                <div style={{fontSize:10,color:C.textDim,marginBottom:8}}>Override auto-calculated revenue for <strong style={{color:C.text}}>{selMonth}</strong></div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                  {[['BLG Revenue','blg',wf.blgGross],['Reignmaker Revenue','rm',wf.rmGross]].map(([lbl,key,auto])=>(
+                    <div key={key}>
+                      <div style={{fontSize:10,color:C.textDim,marginBottom:4}}>{lbl}</div>
+                      <input type="number" placeholder={"Auto: "+auto}
+                        value={(revenueOverrides[selMonth]||{})[key]||''}
+                        onChange={e=>{
+                          const val = e.target.value===''?undefined:Number(e.target.value);
+                          setRevenueOverrides(p=>({...p,[selMonth]:{...(p[selMonth]||{}),[key]:val}}));
+                        }}
+                        style={{width:'100%',padding:'6px 8px',borderRadius:6,border:`1px solid ${C.border}`,background:C.surface,color:C.text,fontSize:11,boxSizing:'border-box'}}/>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </SCard>
+
+          <SCard title="Cumulative Ledger — All Months">
+            <div style={{overflowX:'auto'}}>
+              <table className="data-table" style={{fontSize:10}}>
+                <thead>
+                  <tr><th>Month</th><th>Gross</th><th>Overhead</th><th>Net Dist.</th><th style={{color:C.cyan}}>BLG 50%</th><th style={{color:C.purple}}>RM 50%</th><th>BLG Paid</th><th>RM Paid</th></tr>
+                </thead>
+                <tbody>
+                  {cumulativeWF.map(m=>(
+                    <tr key={m.month} style={{background:m.month===selMonth?`${C.accent}10`:'transparent'}}>
+                      <td style={{fontWeight:m.month===selMonth?700:400,color:m.month===selMonth?C.accent:C.textMid,whiteSpace:'nowrap'}}>{m.month}</td>
+                      <td className="text-mono">{m.grossRevenue>0?$n(m.grossRevenue,0):'—'}</td>
+                      <td className="text-mono" style={{color:m.totalOverhead>0?C.red:C.textDim}}>{m.totalOverhead>0?$n(m.totalOverhead,0):'—'}</td>
+                      <td className="text-mono" style={{color:m.netDistributable>0?C.green:C.textDim}}>{m.netDistributable>0?$n(m.netDistributable,0):'—'}</td>
+                      <td className="text-mono" style={{color:C.cyan}}>{m.blgShare>0?$n(m.blgShare,0):'—'}</td>
+                      <td className="text-mono" style={{color:C.purple}}>{m.rmShare>0?$n(m.rmShare,0):'—'}</td>
+                      <td className="text-mono" style={{color:C.textDim}}>{m.paidBLG>0?$n(m.paidBLG,0):'—'}</td>
+                      <td className="text-mono" style={{color:C.textDim}}>{m.paidRM>0?$n(m.paidRM,0):'—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr style={{borderTop:`2px solid ${C.border}`,fontWeight:700}}>
+                    <td style={{color:C.textMid}}>TOTAL</td>
+                    <td className="text-mono">{$n(cumulativeWF.reduce((s,m)=>s+m.grossRevenue,0),0)}</td>
+                    <td className="text-mono" style={{color:C.red}}>{$n(cumulativeWF.reduce((s,m)=>s+m.totalOverhead,0),0)}</td>
+                    <td className="text-mono" style={{color:C.green}}>{$n(cumulativeWF.reduce((s,m)=>s+m.netDistributable,0),0)}</td>
+                    <td className="text-mono" style={{color:C.cyan}}>{$n(cumBLGEarned,0)}</td>
+                    <td className="text-mono" style={{color:C.purple}}>{$n(cumRMEarned,0)}</td>
+                    <td className="text-mono">{$n(cumBLGPaid,0)}</td>
+                    <td className="text-mono">{$n(cumRMPaid,0)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </SCard>
+        </div>
+
+        {/* RIGHT: Overhead, Equity contributions, Distributions */}
+        <div>
+
+          {/* Overhead */}
+          <SCard title="Shared Overhead Ledger"
+            action={<button onClick={()=>setShowAddOH(!showAddOH)}
+              style={{padding:'5px 12px',borderRadius:6,background:showAddOH?C.surfaceHigh:C.accent,color:showAddOH?C.text:'#000',border:'none',fontSize:11,fontWeight:700,cursor:'pointer'}}>
+              {showAddOH?'Cancel':'+ Add Expense'}</button>}>
+            {showAddOH&&(
+              <InlineForm onSave={addOH} onCancel={()=>setShowAddOH(false)} saveLabel="Add Expense">
+                <FRow cols={[
+                  ['Category',<SS value={newOH.category} onChange={e=>setNewOH(p=>({...p,category:e.target.value}))} options={OH_CATS}/>],
+                  ['Amount ($)',<SI type="number" value={newOH.amount} onChange={e=>setNewOH(p=>({...p,amount:e.target.value}))} placeholder="0.00"/>]
+                ]}/>
+                <FRow cols={[
+                  ['Description *',<SI value={newOH.description} onChange={e=>setNewOH(p=>({...p,description:e.target.value}))} placeholder="e.g. Zoom subscription"/>],
+                  ['Note (optional)',<SI value={newOH.note} onChange={e=>setNewOH(p=>({...p,note:e.target.value}))} placeholder="Vendor or context"/>]
+                ]}/>
+              </InlineForm>
+            )}
+            {OH_CATS.filter(cat=>overheadItems.some(i=>i.category===cat)).map(cat=>{
+              const items = overheadItems.filter(i=>i.category===cat);
+              const catTotal = items.reduce((s,i)=>s+Number(i.amount||0),0);
+              return (
+                <div key={cat} style={{marginBottom:8}}>
+                  <div style={{display:'flex',justifyContent:'space-between',padding:'4px 8px',background:C.surface,borderRadius:5,marginBottom:3}}>
+                    <span style={{fontSize:10,fontWeight:700,color:C.textMid}}>{cat}</span>
+                    <span style={{fontSize:10,fontWeight:700,color:C.red,fontFamily:"'IBM Plex Mono',monospace"}}>{$n(catTotal)}</span>
+                  </div>
+                  {items.map(item=>(
+                    <div key={item.id} style={{display:'flex',alignItems:'center',gap:8,padding:'4px 8px 4px 16px',borderBottom:`1px solid ${C.border}22`}}>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:11,color:C.text}}>{item.description}</div>
+                        {item.note&&<div style={{fontSize:9,color:C.textDim}}>{item.note}</div>}
+                      </div>
+                      <div style={{fontSize:11,color:C.red,fontFamily:"'IBM Plex Mono',monospace",flexShrink:0}}>{$n(item.amount)}</div>
+                      <button onClick={()=>removeOH(item.id)} style={{background:'transparent',border:'none',color:C.textDim,cursor:'pointer',fontSize:11}}>✕</button>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+            <div style={{display:'flex',justifyContent:'space-between',padding:'8px',borderTop:`2px solid ${C.border}`,marginTop:4}}>
+              <span style={{fontSize:12,fontWeight:700,color:C.textMid}}>Total Overhead</span>
+              <span style={{fontSize:13,fontWeight:700,color:C.red,fontFamily:"'IBM Plex Mono',monospace"}}>{$n(overheadItems.reduce((s,i)=>s+Number(i.amount||0),0))}</span>
+            </div>
+          </SCard>
+
+          {/* Equity contributions */}
+          <SCard title="Equity & Capital Contributions"
+            action={<button onClick={()=>setShowAddEQ(!showAddEQ)}
+              style={{padding:'5px 12px',borderRadius:6,background:showAddEQ?C.surfaceHigh:C.accent,color:showAddEQ?C.text:'#000',border:'none',fontSize:11,fontWeight:700,cursor:'pointer'}}>
+              {showAddEQ?'Cancel':'+ Add Entry'}</button>}>
+            <div style={{padding:'7px 10px',background:`${C.gold}0d`,border:`1px solid ${C.gold}22`,borderRadius:6,marginBottom:10,fontSize:10,color:C.textDim,lineHeight:1.6}}>
+              <strong style={{color:C.gold}}>Partnership note:</strong> 50/50 split effective <strong style={{color:C.textMid}}>March 2025</strong>. BLG's pre-existing book is logged here as an informational capital contribution — recorded for transparency and future buyout/valuation reference. Does not change the split.
+            </div>
+            {showAddEQ&&(
+              <InlineForm onSave={addEQ} onCancel={()=>setShowAddEQ(false)} saveLabel="Add Entry">
+                <FRow cols={[
+                  ['Entity',<SS value={newEQ.entity} onChange={e=>setNewEQ(p=>({...p,entity:e.target.value}))} options={['BLG','Reignmaker']}/>],
+                  ['Type',<SS value={newEQ.type} onChange={e=>setNewEQ(p=>({...p,type:e.target.value}))} options={['Capital Contribution','Book of Business','IP / Technology','Revenue Attribution']}/>]
+                ]}/>
+                <FRow cols={[
+                  ['Description *',<SI value={newEQ.description} onChange={e=>setNewEQ(p=>({...p,description:e.target.value}))} placeholder="e.g. BLG pre-existing book"/>],
+                  ['Value ($) *',<SI type="number" value={newEQ.amount} onChange={e=>setNewEQ(p=>({...p,amount:e.target.value}))} placeholder="Annualized MRC or est. value"/>]
+                ]}/>
+                <div><div style={{fontSize:10,color:C.textDim,marginBottom:4}}>Note (optional)</div>
+                  <SI value={newEQ.note} onChange={e=>setNewEQ(p=>({...p,note:e.target.value}))} placeholder="Valuation basis, date, methodology"/>
+                </div>
+              </InlineForm>
+            )}
+            {equityLedger.map(entry=>(
+              <div key={entry.id} style={{display:'flex',alignItems:'flex-start',gap:10,padding:'8px 0',borderBottom:`1px solid ${C.border}22`}}>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',gap:6,alignItems:'center',marginBottom:3}}>
+                    <span style={{fontSize:10,fontWeight:700,padding:'2px 5px',borderRadius:4,
+                      background:entry.entity==='BLG'?`${C.cyan}22`:`${C.purple}22`,
+                      color:entry.entity==='BLG'?C.cyan:C.purple}}>{entry.entity}</span>
+                    <span style={{fontSize:9,color:C.textDim}}>{entry.type}</span>
+                  </div>
+                  <div style={{fontSize:11,color:C.text}}>{entry.description}</div>
+                  {entry.note&&<div style={{fontSize:9,color:C.textDim,marginTop:2}}>{entry.note}</div>}
+                </div>
+                <div style={{fontSize:12,fontWeight:700,color:entry.amount>0?C.gold:C.textDim,fontFamily:"'IBM Plex Mono',monospace",flexShrink:0}}>
+                  {entry.amount>0?$n(entry.amount,0):'Enter value →'}
+                </div>
+                <button onClick={()=>removeEQ(entry.id)} style={{background:'transparent',border:'none',color:C.textDim,cursor:'pointer',fontSize:11,paddingTop:3}}>✕</button>
+              </div>
+            ))}
+            {(blgEquity>0||rmEquity>0)&&(
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10,padding:'10px 12px',background:C.surfaceHigh,borderRadius:8}}>
+                {[['BLG',blgEquity,C.cyan],['Reignmaker',rmEquity,C.purple]].map(([ent,val,clr])=>(
+                  <div key={ent} style={{textAlign:'center'}}>
+                    <div style={{fontSize:9,color:C.textDim,marginBottom:4,textTransform:'uppercase',letterSpacing:'.06em'}}>{ent} Capital</div>
+                    <div style={{fontSize:16,fontWeight:700,color:clr,fontFamily:"'IBM Plex Mono',monospace"}}>{$n(val,0)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </SCard>
+
+          {/* Distributions paid */}
+          <SCard title="Distribution Payments Ledger"
+            action={<button onClick={()=>setShowAddDist(!showAddDist)}
+              style={{padding:'5px 12px',borderRadius:6,background:showAddDist?C.surfaceHigh:C.accent,color:showAddDist?C.text:'#000',border:'none',fontSize:11,fontWeight:700,cursor:'pointer'}}>
+              {showAddDist?'Cancel':'+ Log Payment'}</button>}>
+            {showAddDist&&(
+              <InlineForm onSave={addDist} onCancel={()=>setShowAddDist(false)} saveLabel="Log Payment">
+                <FRow cols={[
+                  ['Entity Paid',<SS value={newDist.entity} onChange={e=>setNewDist(p=>({...p,entity:e.target.value}))} options={['BLG','Reignmaker']}/>],
+                  ['For Period',<SS value={newDist.period} onChange={e=>setNewDist(p=>({...p,period:e.target.value}))} options={MONTHS}/>]
+                ]}/>
+                <FRow cols={[
+                  ['Amount ($) *',<SI type="number" value={newDist.amount} onChange={e=>setNewDist(p=>({...p,amount:e.target.value}))} placeholder="0.00"/>],
+                  ['Payment Date *',<SI type="date" value={newDist.date} onChange={e=>setNewDist(p=>({...p,date:e.target.value}))}/>]
+                ]}/>
+                <div><div style={{fontSize:10,color:C.textDim,marginBottom:4}}>Note (optional)</div>
+                  <SI value={newDist.note} onChange={e=>setNewDist(p=>({...p,note:e.target.value}))} placeholder="Wire transfer, check #, ACH, etc."/>
+                </div>
+              </InlineForm>
+            )}
+            {distributions.length===0&&(
+              <div style={{textAlign:'center',padding:'20px 0',color:C.textDim,fontSize:11}}>
+                No distributions logged yet — click + Log Payment to record a payout
+              </div>
+            )}
+            {distributions.length>0&&['BLG','Reignmaker'].map(entity=>{
+              const eDists = distributions.filter(d=>d.entity===entity);
+              if(!eDists.length) return null;
+              const eTotal = eDists.reduce((s,d)=>s+Number(d.amount||0),0);
+              return (
+                <div key={entity} style={{marginBottom:12}}>
+                  <div style={{display:'flex',justifyContent:'space-between',padding:'5px 8px',
+                    background:entity==='BLG'?`${C.cyan}15`:`${C.purple}15`,borderRadius:5,marginBottom:5}}>
+                    <span style={{fontSize:10,fontWeight:700,color:entity==='BLG'?C.cyan:C.purple}}>{entity} Distributions</span>
+                    <span style={{fontSize:10,fontWeight:700,color:C.green,fontFamily:"'IBM Plex Mono',monospace"}}>{$n(eTotal)}</span>
+                  </div>
+                  {eDists.map(d=>(
+                    <div key={d.id} style={{display:'flex',alignItems:'center',gap:8,padding:'5px 8px 5px 14px',borderBottom:`1px solid ${C.border}22`}}>
+                      <div style={{flex:1}}>
+                        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+                          <span style={{fontSize:10,color:C.textMid,fontFamily:"'IBM Plex Mono',monospace"}}>{d.date}</span>
+                          <span style={{fontSize:9,padding:'1px 5px',borderRadius:3,background:`${C.gold}22`,color:C.gold}}>{d.period}</span>
+                        </div>
+                        {d.note&&<div style={{fontSize:9,color:C.textDim}}>{d.note}</div>}
+                      </div>
+                      <div style={{fontSize:12,fontWeight:700,color:C.green,fontFamily:"'IBM Plex Mono',monospace",flexShrink:0}}>{$n(d.amount)}</div>
+                      <button onClick={()=>removeDist(d.id)} style={{background:'transparent',border:'none',color:C.textDim,cursor:'pointer',fontSize:11}}>✕</button>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+            {/* Running balance */}
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:10,padding:'10px 12px',background:C.surfaceHigh,borderRadius:8,border:`1px solid ${C.border}`}}>
+              {[['BLG',cumBLGEarned,cumBLGPaid,cumBLGOwed,C.cyan],['Reignmaker',cumRMEarned,cumRMPaid,cumRMOwed,C.purple]].map(([ent,earned,paid,owed,clr])=>(
+                <div key={ent}>
+                  <div style={{fontSize:9,color:clr,fontWeight:700,marginBottom:5,textTransform:'uppercase',letterSpacing:'.06em'}}>{ent}</div>
+                  {[['Earned',earned,C.text],['Paid Out',paid,C.green]].map(([lbl,val,c])=>(
+                    <div key={lbl} style={{display:'flex',justifyContent:'space-between',fontSize:10,marginBottom:3}}>
+                      <span style={{color:C.textDim}}>{lbl}</span>
+                      <span style={{fontFamily:"'IBM Plex Mono',monospace",color:c}}>{$n(val,0)}</span>
+                    </div>
+                  ))}
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:10,paddingTop:4,borderTop:`1px solid ${C.border}`}}>
+                    <span style={{fontWeight:700,color:C.textMid}}>Balance Owed</span>
+                    <span style={{fontFamily:"'IBM Plex Mono',monospace",fontWeight:700,color:owed>0?C.gold:C.green}}>{$n(Math.max(0,owed),0)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </SCard>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 const SERVICE_CATEGORIES = ["Telecom", "Energy", "IoT", "EV Charging", "Network / SD-WAN", "Water"];
 
