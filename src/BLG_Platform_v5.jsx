@@ -452,8 +452,7 @@ function DocumentIntelligence({ clientCtx }) {
   // Parse a block of text into individual OneDrive links (one per line, ignore blanks)
   const parseBulkLinks = (text) => {
     return text
-      .split(/[
-,]+/)
+      .split(/[\n\r,]+/)
       .map(l => l.trim())
       .filter(l => l.startsWith('http'))
       .map(url => ({ url, name: getFileNameFromUrl(url), docType: docType || 'telecom_invoice' }));
