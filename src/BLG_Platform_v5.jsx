@@ -3108,14 +3108,14 @@ const CHURN_LOST={"September 2025":2164.8,"October 2025":9.4,"November 2025":61.
 const CHURN_GAINED={"September 2025":65.52,"October 2025":4259.81,"November 2025":178.15,"December 2025":295.74,"January 2026":0.45,"February 2026":499.23};
 
 function CommissionsDashboard() {
-  const [tab, setTab]               = React.useState('overview');
-  const [search, setSearch]         = React.useState('');
-  const [entityFilter, setEntityFilter] = React.useState('All');
-  const [distFilter, setDistFilter] = React.useState('All');
-  const [svcFilter, setSvcFilter]   = React.useState('All');
-  const [sortBy, setSortBy]         = React.useState('feb');
-  const [expanded, setExpanded]     = React.useState(null);
-  const [custView, setCustView]     = React.useState(false);
+  const [tab, setTab]               = useState('overview');
+  const [search, setSearch]         = useState('');
+  const [entityFilter, setEntityFilter] = useState('All');
+  const [distFilter, setDistFilter] = useState('All');
+  const [svcFilter, setSvcFilter]   = useState('All');
+  const [sortBy, setSortBy]         = useState('feb');
+  const [expanded, setExpanded]     = useState(null);
+  const [custView, setCustView]     = useState(false);
 
   const $n  = (n) => '$' + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const $k  = (n) => n>=1000 ? '$'+(n/1000).toFixed(1)+'K' : $n(n);
@@ -3947,6 +3947,7 @@ function CommissionsDashboard() {
       {tab==='reignmaker'  && <ReignmakerTab/>}
       {tab==='clients'     && <Customer360Tab/>}
       {tab==='lines'       && <ServiceLinesTab/>}
+      {tab==='churn'       && <ChurnTab/>}
       <div style={{padding:'12px 0 0',fontSize:10,color:C.textDim,fontFamily:"'IBM Plex Mono',monospace"}}>
         Flows: AppDirect→BLG · Telarus→BLG (File 2) · Telarus→Reignmaker (File 1) · Intelisys→RM (pending) · 142 service lines · 116 customers · Aug 2025–Feb 2026
       </div>
