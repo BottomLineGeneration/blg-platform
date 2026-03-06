@@ -318,7 +318,7 @@ const CHAT_STARTERS = [
 ];
 
 const AI_RESPONSES = {
-  default: (q) => `I'm analyzing your BLG portfolio for: **"${q}"**\n\nNo client data has been loaded yet. Add clients and projects via the Client Portal and Vendor Matrix to enable portfolio-level analysis.\n\nCurrently available: Commission Intelligence data for Feb 2026 (59 clients, $20,506.93).`,
+  default: (q) => `I'm analyzing your BLG portfolio for: **"${q}"**\n\nNo client data has been loaded yet. Add clients and projects via the Client Portal and Vendor Matrix to enable portfolio-level analysis.\n\nCurrently available: Commission: AppDirect→BLG $20,507 + Telarus→BLG $2,524 = $23,031 BLG revenue · Telarus→Reignmaker $4,373 separate.`,
 };
 
 const ACTIVITIES = []; // Cleared — populated as users take actions in the platform
@@ -2183,7 +2183,7 @@ async function generatePDF(sections) {
   doc.line(margin, 160, W - margin, 160);
 
   // Metrics row on cover
-  const metrics = [["$20,507", "Feb 2026 Commission"], ["59", "Active Clients"], ["0", "Properties Loaded"], ["0", "Active Contracts"]];
+  const metrics = [["$23,031", "Feb 2026 — BLG"], ["59", "Active Clients"], ["0", "Properties Loaded"], ["0", "Active Contracts"]];
   metrics.forEach(([val, lbl], i) => {
     const x = margin + i * 44;
     doc.setFontSize(16);
@@ -2520,7 +2520,7 @@ async function generatePPT(sections) {
   slide1.addText("Portfolio Intelligence Report", { x: 0.5, y: 2.4, w: 8, h: 0.8, fontSize: 32, bold: true, color: TEXT, fontFace: "Arial" });
   slide1.addText(`Generated: ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`, { x: 0.5, y: 3.4, w: 6, h: 0.3, fontSize: 12, color: MID });
   slide1.addText("Prepared by: Byron M., President & Founder", { x: 0.5, y: 3.75, w: 6, h: 0.3, fontSize: 12, color: MID });
-  [["$20,507", "Feb 2026 Commission"], ["59", "Active Clients"], ["0", "Properties Loaded"], ["0", "Vendor Projects"]].forEach(([v, l], i) => {
+  [["$23,031", "Feb 2026 — BLG"], ["59", "Active Clients"], ["0", "Properties Loaded"], ["0", "Vendor Projects"]].forEach(([v, l], i) => {
     const x = 0.5 + i * 2.45;
     slide1.addShape(pptx.ShapeType.roundRect, { x, y: 4.5, w: 2.2, h: 0.9, fill: { color: "161C2D" }, rectRadius: 0.08 });
     slide1.addText(v, { x, y: 4.55, w: 2.2, h: 0.45, fontSize: 22, bold: true, color: ACCENT, align: "center" });
@@ -2534,7 +2534,7 @@ async function generatePPT(sections) {
     s2.addText("EXECUTIVE SUMMARY", { x: 0.5, y: 0.3, w: 9, h: 0.4, fontSize: 10, color: DIM, bold: true });
     s2.addText("Portfolio Overview", { x: 0.5, y: 0.7, w: 9, h: 0.55, fontSize: 26, bold: true, color: TEXT });
     s2.addText("Bottom Line Generation platform — add clients, properties, and vendor comparisons to generate a full portfolio summary.", { x: 0.5, y: 1.5, w: 9.5, h: 1, fontSize: 12, color: MID, paraSpaceAfter: 4 });
-    const kpis = [["$20,507", "Feb Commission", GREEN], ["59", "Clients", ACCENT], ["0", "Properties", GOLD], ["0", "Contracts", GREEN]];
+    const kpis = [["$23,031", "Feb BLG", GREEN], ["59", "Clients", ACCENT], ["0", "Properties", GOLD], ["0", "Contracts", GREEN]];
     kpis.forEach(([v, l, col], i) => {
       const x = 0.5 + i * 2.45;
       s2.addShape(pptx.ShapeType.roundRect, { x, y: 2.9, w: 2.2, h: 1.2, fill: { color: "161C2D" }, rectRadius: 0.1 });
@@ -2717,248 +2717,771 @@ function ExportModal({ onClose }) {
 }
 
 // ── REAL COMMISSION DATA — Feb 2026 ───────────────────────────────────────────
-const COMMISSION_DATA = [
-  { name: "Kinwest Senior Care LLC", revenue: 1825247.00, commission: 6388.37, providers: ["BOX Broker Online Exchange"], products: ["Wholesale"], lineItems: 1, type: "Senior Living" },
-  { name: "LaFontaine Cadillac Buick GMC, Inc.", revenue: 28271.62, commission: 4080.65, providers: ["CommandLink"], products: ["Dedicated Internet"], lineItems: 84, type: "Automotive" },
-  { name: "HIGHWOODS REALTY LIMITED PARTNERSHIP", revenue: 76234.31, commission: 2744.51, providers: ["Lingo Management, LLC"], products: ["Voice / SafeLine"], lineItems: 853, type: "REIT · Commercial" },
-  { name: "HIGHWOODS PROPERTIES INC", revenue: 18055.84, commission: 1625.02, providers: ["Lumen Technologies"], products: ["LCC Specialty Lines", "True Up"], lineItems: 4, type: "REIT · Commercial" },
-  { name: "Shea Buick GMC", revenue: 0, commission: 1250.00, providers: ["Everstream Solutions LLC"], products: ["SPIFF"], lineItems: 1, type: "Automotive" },
-  { name: "Real Floors (aka Arbor Carpet)", revenue: 8009.28, commission: 1214.97, providers: ["CommandLink"], products: ["Dedicated Internet"], lineItems: 72, type: "Commercial" },
-  { name: "PIEDMONT OFFICE REALTY TRUST", revenue: 6564.30, commission: 788.86, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 117, type: "REIT · Commercial" },
-  { name: "LaFontaine Automotive Group-ZNS", revenue: 2289.16, commission: 428.08, providers: ["Zayo"], products: ["Ethernet"], lineItems: 8, type: "Automotive" },
-  { name: "Somerby Peachtree City", revenue: 0, commission: 360.00, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 1, type: "Senior Living" },
-  { name: "PIEDMONT OFFICE REALTY TRUST INC DBA THE MEDICI", revenue: 1402.80, commission: 168.36, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 24, type: "REIT · Commercial" },
-  { name: "ONE METRO CENTER CORP", revenue: 985.95, commission: 125.58, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 21, type: "Commercial" },
-  { name: "Edge Business", revenue: 705.00, commission: 101.52, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
-  { name: "Bridge Senior Living - Fleming Farms", revenue: 567.73, commission: 86.87, providers: ["CommandLink"], products: ["Broadband"], lineItems: 3, type: "Senior Living" },
-  { name: "DDRTC Birkdale Village dba Birkdale Village", revenue: 601.00, commission: 80.47, providers: ["Lingo Management, LLC"], products: ["Fiber / Cable"], lineItems: 3, type: "Retail" },
-  { name: "JPPF WATERFRONT PLAZA LP DBA WATERFRONT PLAZA", revenue: 545.35, commission: 69.55, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 26, type: "Commercial" },
-  { name: "DBA LANDSTREET SS LLC", revenue: 449.00, commission: 68.70, providers: ["Spectrum Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
-  { name: "JPPF HPC LP DBA HOME PLATE CENTER", revenue: 378.40, commission: 48.24, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 8, type: "Commercial" },
-  { name: "JAMESTOWN PREMIER GHRSQ LP DBA GHIRARDELLI SQUARE", revenue: 335.60, commission: 42.80, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 16, type: "REIT · Commercial" },
-  { name: "AMSQ LP DBA AMERICA'S SQUARE", revenue: 370.80, commission: 39.83, providers: ["Lingo Management, LLC"], products: ["Cable / Voice"], lineItems: 6, type: "Commercial" },
-  { name: "SOMERBY PEACHTREE CITY", revenue: 293.65, commission: 37.45, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 14, type: "Senior Living" },
-  { name: "PECO Fasteners Inc.", revenue: 215.00, commission: 36.55, providers: ["AT&T"], products: ["Fiber Internet"], lineItems: 1, type: "Industrial" },
-  { name: "JAMESTOWN DORAL COMMONS, LP", revenue: 302.00, commission: 30.80, providers: ["Lingo Management, LLC"], products: ["Cable"], lineItems: 2, type: "REIT · Commercial" },
-  { name: "EAST UNION PROPERTY OWNER, LLC DBA UNION TERMINAL", revenue: 114.03, commission: 30.33, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Commercial" },
-  { name: "STATE STREET ASSISTED LIVING", revenue: 251.75, commission: 30.19, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 10, type: "Senior Living" },
-  { name: "CME Wire and Cable", revenue: 189.90, commission: 29.05, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Industrial" },
-  { name: "Bridge Senior Living - Newell Senior Care LLC", revenue: 183.30, commission: 28.04, providers: ["CommandLink"], products: ["Broadband"], lineItems: 1, type: "Senior Living" },
-  { name: "VILLAGES AT WEST LAUREL", revenue: 164.10, commission: 27.92, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 6, type: "Multi-Family" },
-  { name: "JAMESTOWN PREMIER BERKELEY GROTTO LP", revenue: 284.90, commission: 27.79, providers: ["Lingo Management, LLC"], products: ["Fiber / SafeLine"], lineItems: 8, type: "REIT · Commercial" },
-  { name: "SOMERBY SANTA ROSA BEACH", revenue: 215.85, commission: 25.89, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 6, type: "Senior Living" },
-  { name: "AVENTON ALAIRA II OWNER, LLC", revenue: 96.59, commission: 25.55, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "EXCHANGE PLACE ALL CAPP II REIT INC.", revenue: 95.09, commission: 25.27, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "REIT · Commercial" },
-  { name: "EDGE BUSINESS SYSTEMS LL", revenue: 149.99, commission: 24.00, providers: ["Spectrum Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
-  { name: "BGA JAX SOUTH OWNER LLC DBA AVENTON HIGHGROVE", revenue: 95.09, commission: 23.78, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "PARK WEST END APARTMENTS", revenue: 126.62, commission: 23.42, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 5, type: "Multi-Family" },
-  { name: "KID KEMPER LLC", revenue: 154.95, commission: 22.31, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
-  { name: "MALLORY SQUARE", revenue: 85.15, commission: 21.55, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "JPPF 55 FRANCISCO LP DBA 55 FRANCISCO", revenue: 167.80, commission: 21.40, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 8, type: "REIT · Commercial" },
-  { name: "LATITUDE AT GODLEY STATION", revenue: 89.14, commission: 21.32, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "AVENTON GWYNN", revenue: 76.65, commission: 20.32, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "LVA4 ATLANTA COLONY SQUARE LP", revenue: 231.00, commission: 19.64, providers: ["Lingo Management, LLC"], products: ["Fiber Ethernet"], lineItems: 1, type: "REIT · Commercial" },
-  { name: "AVENTON CARY", revenue: 76.15, commission: 19.03, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "CRP REPUBLIC MELBOURNE GREENS OWNER LLC", revenue: 76.15, commission: 19.03, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "Lehigh Storage LLC", revenue: 123.95, commission: 18.96, providers: ["Comcast Business"], products: ["Internet"], lineItems: 1, type: "Commercial" },
-  { name: "JPPF 360 E SECOND LP", revenue: 175.07, commission: 18.78, providers: ["Lingo Management, LLC"], products: ["Fiber / SafeLine"], lineItems: 21, type: "REIT · Commercial" },
-  { name: "JPPF 116 NEW MONTGOMERY LP", revenue: 158.95, commission: 15.30, providers: ["Lingo Management, LLC"], products: ["Fiber / SafeLine"], lineItems: 4, type: "REIT · Commercial" },
-  { name: "STATION AT LAKE MURRAY, LLC", revenue: 76.32, commission: 15.17, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 2, type: "Multi-Family" },
-  { name: "THE COTTAGES AT SUGAR MILL POND", revenue: 73.46, commission: 15.16, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "PIEDMONT 999 PEACHTREE", revenue: 114.90, commission: 13.79, providers: ["Lingo Management, LLC"], products: ["Voice"], lineItems: 2, type: "REIT · Commercial" },
-  { name: "JT INVEST 1 DAIRIES LLC DBA SOUTHERN DAIRIES", revenue: 162.00, commission: 13.77, providers: ["Lingo Management, LLC"], products: ["Fiber Ethernet"], lineItems: 1, type: "Commercial" },
-  { name: "NORTH AMERICAN PARKING, LLC", revenue: 160.00, commission: 13.60, providers: ["Lingo Management, LLC"], products: ["Fiber Ethernet"], lineItems: 1, type: "Commercial" },
-  { name: "KID KEMPER LLC DBA IFLEX STRETCH STUDIOS", revenue: 47.32, commission: 10.30, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Retail" },
-  { name: "L'ATTITUDE 34 - VINES CREEK", revenue: 45.27, commission: 9.60, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "COTTAGES AT MORGANFIELD", revenue: 44.77, commission: 9.51, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 4, type: "Multi-Family" },
-  { name: "SANTA ROSA FL LLC DBA ARTISAN LIVING NORTH BEACH", revenue: 50.88, commission: 9.51, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 2, type: "Multi-Family" },
-  { name: "SOMERBY SANDY SPRINGS", revenue: 48.85, commission: 6.23, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 4, type: "Senior Living" },
-  { name: "JAMESTOWN PREMIER SLO RETAIL LP", revenue: 41.95, commission: 5.35, providers: ["Lingo Management, LLC"], products: ["SafeLine"], lineItems: 2, type: "REIT · Commercial" },
-  { name: "WIM Resources, LLC", revenue: 30.00, commission: 5.10, providers: ["AT&T"], products: ["Fiber Broadband"], lineItems: 1, type: "Commercial" },
-  { name: "VENTURE AT LONG SHOALS", revenue: 25.44, commission: 4.76, providers: ["Lingo Management, LLC"], products: ["Residual"], lineItems: 2, type: "Multi-Family" },
-];
+// ── COMMISSION DATA — Corrected Multi-Distributor Flow ────────────────────────
+//
+//  Payment flows:
+//    AppDirect  → BLG         (59 clients, Feb 2026 only)
+//    Telarus    → BLG         (31 accounts, File 2, Aug 2025–Feb 2026)
+//    Telarus    → Reignmaker  (52 accounts, File 1, Aug 2025–Feb 2026)
+//    Intelisys  → Reignmaker  (separate distributor — add file when available)
+//
+//  agency = who manages the account   |   paidTo = who receives the check
 
-const COMMISSION_META = {
-  month: "February 2026",
-  totalRevenue: 1976202.88,
-  totalCommission: 20506.93,
-  totalClients: 59,
-  totalLineItems: 1412,
-  advisor: "BCCJ Communications LLC",
-  salesRep: "Byron Braun",
-};
+const COMM_MONTHS = ['August 2025','September 2025','October 2025','November 2025','December 2025','January 2026','February 2026'];
+
+// AppDirect → BLG  (Feb 2026 detail)
+const COMM_AD=[{customer:"HIGHWOODS PROPERTIES INC",carrier:"Lumen Technologies",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"LCC Specialty Lines, True Up",contractExpires:"",monthlyBilling:18055.84,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":1625.02}},
+{customer:"WIM Resources, LLC",carrier:"AT&T",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"U-Verse Fiber Broadband - 500M500M",contractExpires:"",monthlyBilling:30.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":5.1}},
+{customer:"PECO Fasteners Inc.",carrier:"AT&T",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"2000M2000MG",contractExpires:"",monthlyBilling:215.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":36.55}},
+{customer:"LaFontaine Automotive Group-ZNS",carrier:"Zayo",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Ethernet",contractExpires:"",monthlyBilling:2289.16,lineItems:8,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":428.08}},
+{customer:"Lehigh Storage LLC",carrier:"Comcast Business",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:123.95,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":18.96}},
+{customer:"KID KEMPER LLC",carrier:"Comcast Business",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:154.95,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":22.31}},
+{customer:"Edge Business",carrier:"Comcast Business",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:705.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":101.52}},
+{customer:"CME Wire and Cable",carrier:"Comcast Business",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:189.9,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":29.05}},
+{customer:"EDGE BUSINESS SYSTEMS LL",carrier:"Spectrum Business",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:149.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":24.0}},
+{customer:"Real Floors (aka Arbor Carpet)",carrier:"CommandLink",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bandwidth|Link 100 Mbps Cox Business DIA, Bandwidth|Link 1000Mbps Dedicated Inte",contractExpires:"",monthlyBilling:8009.28,lineItems:72,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":1214.97}},
+{customer:"LaFontaine Cadillac Buick GMC, Inc.",carrier:"CommandLink",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bandwidth|Link 100 Dedicated Internet, Bandwidth|Link 100 Mbps AT&T DIA, Bandwid",contractExpires:"",monthlyBilling:28271.62,lineItems:84,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":4080.65}},
+{customer:"DBA LANDSTREET SS LLC",carrier:"Spectrum Business",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:449.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":68.7}},
+{customer:"Bridge Senior Living - Fleming Farms",carrier:"CommandLink",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bandwidth|Link 250M/25M Cable Broadband Internet, Bandwidth|Link 600M/300M Cable",contractExpires:"",monthlyBilling:567.73,lineItems:3,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":86.87}},
+{customer:"Bridge Senior Living - Newell Senior Care LLC",carrier:"CommandLink",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bandwidth|Link 500M/20M Broadband Internet (Spectrum)",contractExpires:"",monthlyBilling:183.3,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":28.04}},
+{customer:"THE COTTAGES AT SUGAR MILL POND",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:73.46,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":15.16}},
+{customer:"AVENTON CARY",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:76.15,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":19.03}},
+{customer:"AVENTON GWYNN",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:76.65,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":20.32}},
+{customer:"EAST UNION PROPERTY OWNER, LLC DBA UNION TERMINAL",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:114.03,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":30.33}},
+{customer:"VENTURE AT LONG SHOALS",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:25.44,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":4.76}},
+{customer:"MALLORY SQUARE",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:85.15,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":21.55}},
+{customer:"AVENTON ALAIRA II OWNER, LLC",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:96.59,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":25.55}},
+{customer:"BGA JAX SOUTH OWNER LLC DBA AVENTON HIGHGROVE",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:95.09,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":23.78}},
+{customer:"COTTAGES AT MORGANFIELD",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:44.77,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":9.51}},
+{customer:"VILLAGES AT WEST LAUREL",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:164.1,lineItems:6,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":27.92}},
+{customer:"PARK WEST END APARTMENTS",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:126.62,lineItems:5,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":23.42}},
+{customer:"LATITUDE AT GODLEY STATION",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:89.14,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":21.32}},
+{customer:"CRP REPUBLIC MELBOURNE GREENS OWNER LLC",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:76.15,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":19.03}},
+{customer:"KID KEMPER LLC DBA IFLEX STRETCH STUDIOS",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:47.32,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":10.3}},
+{customer:"EXCHANGE PLACE ALL CAPP II REIT INC.",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:95.09,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":25.27}},
+{customer:"WESTLAKE PROPERTIES JV KP6 LLC DBA NOVO WESTLAKE",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:75.76,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":19.03}},
+{customer:"SANTA ROSA FL LLC DBA ARTISAN LIVING NORTH BEACH",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:50.88,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":9.51}},
+{customer:"STATION AT LAKE MURRAY, LLC",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:76.32,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":15.17}},
+{customer:"L'ATTITUDE 34 - VINES CREEK",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Adjustment, Residual",contractExpires:"",monthlyBilling:45.27,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":9.6}},
+{customer:"PIEDMONT 999 PEACHTREE ONE LLC PIEDMONT 999 PEACHTREE TWO LL",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bronze Line",contractExpires:"",monthlyBilling:114.9,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":13.79}},
+{customer:"PIEDMONT OFFICE REALTY TRUST",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bronze Line, Caller ID Deluxe",contractExpires:"",monthlyBilling:6564.3,lineItems:117,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":788.86}},
+{customer:"DDRTC Birkdale Village dba Birkdale Village",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"CABLE, ETHERNET OVER FIBER",contractExpires:"",monthlyBilling:601.0,lineItems:3,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":80.47}},
+{customer:"JAMESTOWN DORAL COMMONS, LP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"CABLE",contractExpires:"",monthlyBilling:302.0,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":30.8}},
+{customer:"PIEDMONT OFFICE REALTY TRUST INC DBA THE MEDICI",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Gold Line",contractExpires:"",monthlyBilling:1402.8,lineItems:24,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":168.36}},
+{customer:"HIGHWOODS REALTY LIMITED PARTNERSHIP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bronze Line, Gold Line, Usage",contractExpires:"",monthlyBilling:76234.31,lineItems:853,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":2744.51}},
+{customer:"STATE STREET ASSISTED LIVING",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bronze Line, Gold Line",contractExpires:"",monthlyBilling:251.75,lineItems:10,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":30.19}},
+{customer:"Kinwest Senior Care LLC",carrier:"BOX Broker Online Exchange",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"",contractExpires:"",monthlyBilling:1825247.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":6388.37}},
+{customer:"Somerby Peachtree City",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Residual",contractExpires:"",monthlyBilling:0.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":360.0}},
+{customer:"LVA4 ATLANTA COLONY SQUARE LP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"C209A Hybrid Fiber Ethernet 1000.0M/1000.0M (Static IP)",contractExpires:"",monthlyBilling:231.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":19.64}},
+{customer:"AMSQ LP DBA AMERICA'S SQUARE",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"C74C Cable 100.0M/25.0M (Static IP), Gold Line",contractExpires:"",monthlyBilling:370.8,lineItems:6,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":39.83}},
+{customer:"JT INVEST 1 DAIRIES LLC DBA SOUTHERN DAIRIES",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"C209ATTDedicated Fiber Ethernet 500.0M/500.0M (Static IP)",contractExpires:"",monthlyBilling:162.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":13.77}},
+{customer:"NORTH AMERICAN PARKING, LLC",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"C209ATTDedicated Fiber Ethernet 500.0M/500.0M (Static IP)",contractExpires:"",monthlyBilling:160.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":13.6}},
+{customer:"SOMERBY SANTA ROSA BEACH",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bronze Line",contractExpires:"",monthlyBilling:215.85,lineItems:6,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":25.89}},
+{customer:"JAMESTOWN PREMIER BERKELEY GROTTO LP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, C209A Hybrid Fiber Ethernet 300.0M/300.",contractExpires:"",monthlyBilling:284.9,lineItems:8,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":27.79}},
+{customer:"JPPF 116 NEW MONTGOMERY LP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, C209A Hybrid Fiber Ethernet 300.0M/300.",contractExpires:"",monthlyBilling:158.95,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":15.3}},
+{customer:"JPPF 360 E SECOND LP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, Bronze Line, C209A Hybrid Fiber Etherne",contractExpires:"",monthlyBilling:175.07,lineItems:21,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":18.78}},
+{customer:"JPPF HPC LP DBA HOME PLATE CENTER",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Gold Line",contractExpires:"",monthlyBilling:378.4,lineItems:8,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":48.24}},
+{customer:"ONE METRO CENTER CORP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"Bronze Line",contractExpires:"",monthlyBilling:985.95,lineItems:21,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":125.58}},
+{customer:"SOMERBY SANDY SPRINGS",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, SafeLine ALERT+ Recovery Fee",contractExpires:"",monthlyBilling:48.85,lineItems:4,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":6.23}},
+{customer:"JAMESTOWN PREMIER SLO RETAIL LP",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, SafeLine ALERT+ Recovery Fee",contractExpires:"",monthlyBilling:41.95,lineItems:2,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":5.35}},
+{customer:"SOMERBY PEACHTREE CITY",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, SafeLine ALERT+ Recovery Fee",contractExpires:"",monthlyBilling:293.65,lineItems:14,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":37.45}},
+{customer:"JPPF WATERFRONT PLAZA LP DBA WATERFRONT PLAZA",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, SafeLine ALERT+ Recovery Fee",contractExpires:"",monthlyBilling:545.35,lineItems:26,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":69.55}},
+{customer:"JAMESTOWN PREMIER GHRSQ LP DBA GHIRARDELLI SQUARE",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, SafeLine ALERT+ Recovery Fee",contractExpires:"",monthlyBilling:335.6,lineItems:16,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":42.8}},
+{customer:"JPPF 55 FRANCISCO LP DBA 55 FRANCISCO",carrier:"Lingo Management, LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"AD Safeline ALERT Line - Monthly Charge, SafeLine ALERT+ Recovery Fee",contractExpires:"",monthlyBilling:167.8,lineItems:8,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":21.4}},
+{customer:"Shea Buick GMC",carrier:"Everstream Solutions LLC",distributor:"AppDirect",agency:"BLG",paidTo:"BLG",service:"SPIFF",contractExpires:"",monthlyBilling:0.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":1250.0}}];
+
+// Telarus → BLG  (File 2 — 7 months)
+const COMM_TEL_BLG=[{customer:"Nissan Lithia Springs, LLC dba Nissan of Lithia Springs",carrier:"AT&T",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2025-11-04",monthlyBilling:160.0,lineItems:1,monthly:{"August 2025":30.4,"September 2025":30.4,"October 2025":30.4,"November 2025":30.4,"December 2025":-72.0,"January 2026":30.4,"February 2026":132.8}},
+{customer:"Nissan Morrow, LLC dba Nissan South Morrow",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-11-04",monthlyBilling:160.0,lineItems:1,monthly:{"August 2025":30.4,"September 2025":30.4,"October 2025":30.4,"November 2025":30.4,"December 2025":30.4,"January 2026":30.4,"February 2026":30.4}},
+{customer:"HEALTH AND LIFE ORGANIZATION",carrier:"BCN Telecom Inc",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2025-09-25",monthlyBilling:62.45,lineItems:1,monthly:{"August 2025":9.06,"September 2025":9.06,"October 2025":9.06,"November 2025":0.0,"December 2025":19.97,"January 2026":10.91,"February 2026":10.91}},
+{customer:"VPI, LLC.",carrier:"Comcast Business",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2027-11-17",monthlyBilling:224.9,lineItems:1,monthly:{"August 2025":33.1,"September 2025":31.66,"October 2025":31.66,"November 2025":31.66,"December 2025":31.66,"January 2026":31.66,"February 2026":32.38}},
+{customer:"Real Floors",carrier:"Command Link",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable, Ethernet (Fiber)",contractExpires:"2025-11-14",monthlyBilling:705.96,lineItems:1,monthly:{"August 2025":130.27,"September 2025":0.0,"October 2025":260.54,"November 2025":130.27,"December 2025":130.27,"January 2026":130.27,"February 2026":130.27}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Ethernet (Fiber)",contractExpires:"2024-02-09",monthlyBilling:250.0,lineItems:1,monthly:{"August 2025":39.26,"September 2025":0.0,"October 2025":78.52,"November 2025":39.26,"December 2025":39.26,"January 2026":39.26,"February 2026":39.26}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Ethernet (Fiber)",contractExpires:"2024-02-22",monthlyBilling:126.67,lineItems:1,monthly:{"August 2025":18.24,"September 2025":0.0,"October 2025":36.48,"November 2025":18.24,"December 2025":18.24,"January 2026":18.24,"February 2026":18.24}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-08",monthlyBilling:209.0,lineItems:1,monthly:{"August 2025":34.15,"September 2025":0.0,"October 2025":68.3,"November 2025":34.15,"December 2025":34.15,"January 2026":34.15,"February 2026":34.15}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-16",monthlyBilling:459.0,lineItems:1,monthly:{"August 2025":47.96,"September 2025":0.0,"October 2025":95.92,"November 2025":47.96,"December 2025":47.96,"January 2026":47.96,"February 2026":47.96}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-16",monthlyBilling:469.0,lineItems:1,monthly:{"August 2025":90.77,"September 2025":0.0,"October 2025":181.54,"November 2025":90.77,"December 2025":90.77,"January 2026":90.77,"February 2026":90.77}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-16",monthlyBilling:2278.8,lineItems:1,monthly:{"August 2025":641.17,"September 2025":0.0,"October 2025":1282.34,"November 2025":641.17,"December 2025":641.17,"January 2026":641.17,"February 2026":641.17}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-16",monthlyBilling:459.0,lineItems:1,monthly:{"August 2025":110.99,"September 2025":0.0,"October 2025":221.98,"November 2025":110.99,"December 2025":110.99,"January 2026":110.99,"February 2026":110.99}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-16",monthlyBilling:205.96,lineItems:1,monthly:{"August 2025":92.73,"September 2025":0.0,"October 2025":185.46,"November 2025":92.73,"December 2025":92.73,"January 2026":92.73,"February 2026":92.73}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-03-16",monthlyBilling:455.96,lineItems:1,monthly:{"August 2025":88.89,"September 2025":0.0,"October 2025":177.78,"November 2025":88.89,"December 2025":88.89,"January 2026":88.89,"February 2026":88.89}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",monthlyBilling:216.0,lineItems:1,monthly:{"August 2025":55.36,"September 2025":0.0,"October 2025":110.72,"November 2025":55.36,"December 2025":55.36,"January 2026":55.36,"February 2026":55.36}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",monthlyBilling:216.0,lineItems:1,monthly:{"August 2025":78.67,"September 2025":0.0,"October 2025":157.34,"November 2025":78.67,"December 2025":78.67,"January 2026":78.67,"February 2026":78.67}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",monthlyBilling:216.0,lineItems:1,monthly:{"August 2025":88.26,"September 2025":0.0,"October 2025":176.52,"November 2025":88.26,"December 2025":88.26,"January 2026":88.26,"February 2026":88.26}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",monthlyBilling:216.0,lineItems:1,monthly:{"August 2025":206.23,"September 2025":0.0,"October 2025":412.46,"November 2025":206.23,"December 2025":206.23,"January 2026":206.23,"February 2026":206.23}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",monthlyBilling:216.0,lineItems:1,monthly:{"August 2025":121.15,"September 2025":0.0,"October 2025":242.3,"November 2025":121.15,"December 2025":121.15,"January 2026":121.15,"February 2026":121.15}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable",contractExpires:"2024-08-14",monthlyBilling:535.62,lineItems:1,monthly:{"August 2025":99.88,"September 2025":0.0,"October 2025":199.76,"November 2025":99.88,"December 2025":99.88,"January 2026":99.88,"February 2026":99.88}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-08-18",monthlyBilling:213.0,lineItems:1,monthly:{"August 2025":40.52,"September 2025":0.0,"October 2025":81.04,"November 2025":40.52,"December 2025":40.52,"January 2026":40.52,"February 2026":40.52}},
+{customer:"Real Floors AKA Arbor Carpet",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-07-11",monthlyBilling:95.0,lineItems:1,monthly:{"August 2025":17.98,"September 2025":0.0,"October 2025":35.96,"November 2025":17.98,"December 2025":17.98,"January 2026":17.98,"February 2026":17.98}},
+{customer:"Real Floors AKA Arbor Carpet",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Ethernet (Fiber), UCaaS, Business Cable",contractExpires:"2026-08-07",monthlyBilling:837.62,lineItems:1,monthly:{"August 2025":94.99,"September 2025":0.0,"October 2025":189.98,"November 2025":94.99,"December 2025":94.99,"January 2026":94.99,"February 2026":94.99}},
+{customer:"Real Floors AKA Arbor Carpet",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Business Cable, UCaaS",contractExpires:"2024-08-23",monthlyBilling:444.0,lineItems:1,monthly:{"August 2025":30.1,"September 2025":0.0,"October 2025":27.09,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"400 RHETT APARTMENTS",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-11-30",monthlyBilling:60.97,lineItems:1,monthly:{"August 2025":49.23,"September 2025":49.23,"October 2025":49.23,"November 2025":49.23,"December 2025":49.23,"January 2026":49.23,"February 2026":49.23}},
+{customer:"Beverly Villas",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"POTS Lines",contractExpires:"2025-12-10",monthlyBilling:19.99,lineItems:1,monthly:{"August 2025":17.96,"September 2025":17.96,"October 2025":17.96,"November 2025":17.96,"December 2025":17.96,"January 2026":17.96,"February 2026":17.96}},
+{customer:"Maverick Yards TH LLC - Maverick Yards",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"UCaaS",contractExpires:"2025-11-20",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":10.92,"January 2026":10.92,"February 2026":10.92}},
+{customer:"Mills River TH LLC - Artisan Mills River",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"UCaaS",contractExpires:"2025-11-20",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":7.0,"September 2025":7.0,"October 2025":7.0,"November 2025":7.0,"December 2025":18.55,"January 2026":18.55,"February 2026":18.55}},
+{customer:"Real Floors",carrier:"Lingo",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"POTS Lines",contractExpires:"2024-08-08",monthlyBilling:119.9,lineItems:1,monthly:{"August 2025":17.98,"September 2025":17.98,"October 2025":17.98,"November 2025":27.58,"December 2025":27.58,"January 2026":27.58,"February 2026":27.58}},
+{customer:"Real Floors",carrier:"Performive",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Managed Services",contractExpires:"2026-02-02",monthlyBilling:4080.02,lineItems:1,monthly:{"August 2025":645.46,"September 2025":645.46,"October 2025":614.38,"November 2025":614.38,"December 2025":723.24,"January 2026":723.24,"February 2026":0.0}},
+{customer:"Taylor College",carrier:"Uniti Fiber",distributor:"Telarus",agency:"BLG",paidTo:"BLG",service:"Ethernet (Fiber)",contractExpires:"2026-07-18",monthlyBilling:795.0,lineItems:1,monthly:{"August 2025":95.4,"September 2025":95.4,"October 2025":95.4,"November 2025":95.4,"December 2025":95.4,"January 2026":95.4,"February 2026":95.4}}];
+
+// Telarus → Reignmaker  (File 1 — 7 months)
+const COMM_TEL_RM=[{customer:"Sto Corp",carrier:"AireSpring",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Ethernet (Fiber)",contractExpires:"2028-05-05",monthlyBilling:1127.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":16.65,"January 2026":172.38,"February 2026":1974.38}},
+{customer:"Sto Corp",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Ethernet (Fiber)",contractExpires:"2028-08-30",monthlyBilling:1131.11,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":159.1,"January 2026":1455.19,"February 2026":925.14}},
+{customer:"Zodiac Systems",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Ethernet (Fiber)",contractExpires:"2028-08-20",monthlyBilling:845.0,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":136.42}},
+{customer:"Batavia Storage LLC",carrier:"Comcast Business",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable",contractExpires:"2026-12-19",monthlyBilling:204.95,lineItems:1,monthly:{"August 2025":53.52,"September 2025":53.52,"October 2025":53.52,"November 2025":53.52,"December 2025":53.52,"January 2026":53.52,"February 2026":56.27}},
+{customer:"Kim Nhung Superfood",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable",contractExpires:"2027-12-08",monthlyBilling:229.9,lineItems:1,monthly:{"August 2025":35.17,"September 2025":35.17,"October 2025":35.17,"November 2025":35.17,"December 2025":35.17,"January 2026":35.17,"February 2026":35.94}},
+{customer:"Malone Storage",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable",contractExpires:"2028-06-16",monthlyBilling:214.9,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":35.17,"January 2026":35.17,"February 2026":35.94}},
+{customer:"Noble Family Enterprises",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable",contractExpires:"2026-12-15",monthlyBilling:204.95,lineItems:1,monthly:{"August 2025":37.47,"September 2025":37.47,"October 2025":37.47,"November 2025":37.47,"December 2025":37.47,"January 2026":37.47,"February 2026":38.69}},
+{customer:"Sto Corp",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable",contractExpires:"2028-11-07",monthlyBilling:122.3,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":13.45}},
+{customer:"Bridge Senior Living - Santa Rosa",carrier:"Command Link",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable, UCaaS, Ethernet (Fiber)",contractExpires:"2028-07-29",monthlyBilling:1085.62,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":91.4,"December 2025":48.97,"January 2026":0.0,"February 2026":172.49}},
+{customer:"Batavia Storage LLC",carrier:"For2Fi",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Fixed Wireless Broadband",contractExpires:"2025-04-23",monthlyBilling:229.0,lineItems:1,monthly:{"August 2025":37.23,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"Mad Industries",carrier:"GoTo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2028-12-09",monthlyBilling:174.09,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":64.76}},
+{customer:"AVENTON HOFFNER 2 OWNER",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-16",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":5.92,"December 2025":15.47,"January 2026":19.26,"February 2026":25.97}},
+{customer:"Aventon Noelle",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"POTS Lines",contractExpires:"2025-12-17",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":28.28,"September 2025":28.23,"October 2025":28.23,"November 2025":28.23,"December 2025":28.23,"January 2026":28.23,"February 2026":28.23}},
+{customer:"AVONDALE COMMONS TIC",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-10",monthlyBilling:60.47,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":53.82}},
+{customer:"BVT- Aventon Holly Hill Owner LLP",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-07-21",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":7.44,"November 2025":37.17,"December 2025":37.17,"January 2026":7.88,"February 2026":37.17}},
+{customer:"Cypress Point Apartments of Shawnee LLC dba Cypress Point",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Downtown OKC Properties LLC dba The Aberdeen",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"East Oaks 669 LLC dba East Oaks",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Elevate at Dawson Forest",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-08-07",monthlyBilling:59.97,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":8.03,"November 2025":17.84,"December 2025":17.84,"January 2026":17.84,"February 2026":17.84}},
+{customer:"Evergreen at Tuscany Villas",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-06-03",monthlyBilling:60.47,lineItems:1,monthly:{"August 2025":0.0,"September 2025":17.94,"October 2025":17.94,"November 2025":17.94,"December 2025":17.94,"January 2026":17.94,"February 2026":17.94}},
+{customer:"EVERGREEN PINE ISLAND LLC DBA EVERGREEN PINE ISLAN",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2027-10-01",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":13.18,"January 2026":7.44,"February 2026":7.44}},
+{customer:"Evergreen Westside",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-06-17",monthlyBilling:60.47,lineItems:1,monthly:{"August 2025":12.79,"September 2025":12.79,"October 2025":12.79,"November 2025":12.79,"December 2025":12.79,"January 2026":12.79,"February 2026":12.79}},
+{customer:"Forest Creek 669 LLC dba Forest Creek",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:59.97,lineItems:1,monthly:{"August 2025":17.84,"September 2025":17.84,"October 2025":17.84,"November 2025":17.84,"December 2025":17.84,"January 2026":17.84,"February 2026":17.84}},
+{customer:"High Streets Lofts",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2028-06-20",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":14.28,"December 2025":11.6,"January 2026":0.0,"February 2026":0.0}},
+{customer:"HoM at Pooler",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-03-18",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":15.47,"September 2025":25.28,"October 2025":25.28,"November 2025":0.0,"December 2025":25.28,"January 2026":25.28,"February 2026":25.28}},
+{customer:"Independence Square Acquisitions Partners LLC dba Vintage at",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Liberty Tax",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Business Cable, UCaaS",contractExpires:"2028-05-28",monthlyBilling:207.46,lineItems:1,monthly:{"August 2025":20.43,"September 2025":34.68,"October 2025":276.06,"November 2025":34.68,"December 2025":34.68,"January 2026":34.68,"February 2026":34.68}},
+{customer:"Lyons Estates 669 LLC dba Lyons Estates",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Marbella Palm Coast Apartments",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-24",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":15.47,"January 2026":28.64,"February 2026":28.64}},
+{customer:"MP South Tryon LLC dba Hollis 7601 Apartments",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Cloud Services",contractExpires:"2025-10-07",monthlyBilling:72.96,lineItems:1,monthly:{"August 2025":20.38,"September 2025":20.38,"October 2025":20.38,"November 2025":20.38,"December 2025":20.38,"January 2026":20.38,"February 2026":20.38}},
+{customer:"Murabella Owner LLC DBA Antica Apartments",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2027-01-08",monthlyBilling:79.96,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.45,"February 2026":7.44}},
+{customer:"Oxford Oaks Holdings LLC dba Oxford Oaks",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:79.96,lineItems:1,monthly:{"August 2025":23.79,"September 2025":35.68,"October 2025":35.68,"November 2025":157.12,"December 2025":35.68,"January 2026":35.68,"February 2026":35.68}},
+{customer:"PAC-I-DRIVE APARTMENTS",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2027-01-07",monthlyBilling:79.96,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":58.29}},
+{customer:"PARK POINTE APARTMENTS VERO",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-01-07",monthlyBilling:79.96,lineItems:1,monthly:{"August 2025":0.0,"September 2025":47.58,"October 2025":23.79,"November 2025":23.79,"December 2025":263.67,"January 2026":23.79,"February 2026":23.79}},
+{customer:"Pegasus Residential",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-02-14",monthlyBilling:159.84,lineItems:1,monthly:{"August 2025":1.96,"September 2025":1.96,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"Prairie View 669 LLC dba Prairie View",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Reeds Landing Apartments LLC dba Reeds Landing",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Reserve South",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-07-21",monthlyBilling:49.98,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":14.87,"November 2025":14.87,"December 2025":14.87,"January 2026":14.87,"February 2026":14.87}},
+{customer:"Rockberry Apartments",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-05-01",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":7.44,"September 2025":7.44,"October 2025":7.44,"November 2025":7.44,"December 2025":82.41,"January 2026":8.32,"February 2026":8.32}},
+{customer:"Rosewood 669 LLC dba Rosewood Manor",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:49.98,lineItems:1,monthly:{"August 2025":14.87,"September 2025":14.87,"October 2025":14.87,"November 2025":14.87,"December 2025":14.87,"January 2026":14.87,"February 2026":14.87}},
+{customer:"Savannah Guthrie 669 LLC dba Savannah House of Guthrie",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Savannah Yukon 669 LLC dba Savannah House of Yukon",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Sherwood Point Apartments LLC dba Sherwood Pointe",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:29.99,lineItems:1,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"The Cottages at Creekview",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-02-05",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":7.44,"September 2025":7.44,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"The Cottages at Creekview",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-23",monthlyBilling:59.98,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":7.44,"November 2025":10.12,"December 2025":22.6,"January 2026":22.6,"February 2026":22.6}},
+{customer:"The Olympic Club Apartments of Arlington LLC dba Coffee Cree",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:49.98,lineItems:1,monthly:{"August 2025":14.87,"September 2025":14.87,"October 2025":14.87,"November 2025":14.87,"December 2025":14.87,"January 2026":14.87,"February 2026":14.87}},
+{customer:"The Wayland Apartments",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"POTS Lines, UCaaS",contractExpires:"2026-05-15",monthlyBilling:331.85,lineItems:1,monthly:{"August 2025":40.08,"September 2025":55.35,"October 2025":75.35,"November 2025":61.72,"December 2025":61.72,"January 2026":61.72,"February 2026":69.37}},
+{customer:"Thirty5 West New LP LLC dba 35 West",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",monthlyBilling:79.96,lineItems:1,monthly:{"August 2025":23.79,"September 2025":23.79,"October 2025":23.79,"November 2025":23.79,"December 2025":23.79,"January 2026":23.79,"February 2026":23.79}},
+{customer:"Venture at Lake Julian",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-03-18",monthlyBilling:24.99,lineItems:1,monthly:{"August 2025":14.7,"September 2025":14.98,"October 2025":15.47,"November 2025":25.38,"December 2025":204.11,"January 2026":22.7,"February 2026":22.7}},
+{customer:"Villas at Sundace",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"Mobility",contractExpires:"2025-08-01",monthlyBilling:529.45,lineItems:1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":66.55,"December 2025":58.85,"January 2026":58.85,"February 2026":58.85}},
+{customer:"Villas East Broussard",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-07-25",monthlyBilling:60.47,lineItems:1,monthly:{"August 2025":7.44,"September 2025":7.44,"October 2025":12.79,"November 2025":12.79,"December 2025":12.79,"January 2026":22.7,"February 2026":97.67}},
+{customer:"West Village Lofts at Brandon Mill",carrier:"Lingo",distributor:"Telarus",agency:"Reignmaker",paidTo:"Reignmaker",service:"POTS Lines",contractExpires:"2026-02-03",monthlyBilling:119.94,lineItems:1,monthly:{"August 2025":29.55,"September 2025":29.55,"October 2025":29.55,"November 2025":29.55,"December 2025":29.55,"January 2026":29.55,"February 2026":29.55}}];
+
+// ── Convenience groupings ────────────────────────────────────────────────────
+const BLG_COMM    = [...COMM_AD, ...COMM_TEL_BLG];   // all commission BLG receives
+const RM_COMM     = [...COMM_TEL_RM];                 // all commission Reignmaker receives
+const ALL_COMM    = [...BLG_COMM, ...RM_COMM];
+
+// ── Monthly rollup by entity ─────────────────────────────────────────────────
+const COMM_MONTHLY = COMM_MONTHS.reduce((acc, m) => {
+  acc[m] = {
+    total:  ALL_COMM.reduce((s,r)     => s+(r.monthly[m]||0), 0),
+    blg:    BLG_COMM.reduce((s,r)     => s+(r.monthly[m]||0), 0),
+    rm:     RM_COMM.reduce((s,r)      => s+(r.monthly[m]||0), 0),
+    ad:     COMM_AD.reduce((s,r)      => s+(r.monthly[m]||0), 0),
+    telBlg: COMM_TEL_BLG.reduce((s,r) => s+(r.monthly[m]||0), 0),
+    telRm:  COMM_TEL_RM.reduce((s,r)  => s+(r.monthly[m]||0), 0),
+  };
+  return acc;
+}, {});
+
+// ── By distributor (who cuts the check) ─────────────────────────────────────
+const BY_DIST = COMM_MONTHS.reduce((acc, m) => {
+  acc[m] = {
+    AppDirect: COMM_AD.reduce((s,r) => s+(r.monthly[m]||0), 0),
+    Telarus:   [...COMM_TEL_BLG,...COMM_TEL_RM].reduce((s,r) => s+(r.monthly[m]||0), 0),
+  };
+  return acc;
+}, {});
 
 function CommissionsDashboard() {
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("commission");
-  const [filterType, setFilterType] = useState("All");
-  const [selected, setSelected] = useState(null);
+  const [tab, setTab]               = React.useState('overview');
+  const [search, setSearch]         = React.useState('');
+  const [entityFilter, setEntityFilter] = React.useState('All');
+  const [distFilter, setDistFilter] = React.useState('All');
+  const [sortBy, setSortBy]         = React.useState('feb');
+  const [expanded, setExpanded]     = React.useState(null);
 
-  const types = ["All", ...Array.from(new Set(COMMISSION_DATA.map(c => c.type))).sort()];
-  const providerTotals = COMMISSION_DATA.reduce((acc, c) => {
-    c.providers.forEach(p => { acc[p] = (acc[p] || 0) + c.commission; });
-    return acc;
-  }, {});
+  const $n  = (n) => '$' + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const $k  = (n) => n>=1000 ? '$'+(n/1000).toFixed(1)+'K' : $n(n);
+  const bw  = (v,mx) => mx>0 ? Math.max(2,Math.min(100,(v/mx)*100)) : 0;
+  const mo  = (label) => label.replace(' 2025','').replace(' 2026','');
+  const chgPct = (cur,prev) => prev>0 ? ((cur-prev)/prev*100).toFixed(0) : null;
 
-  const filtered = COMMISSION_DATA
-    .filter(c => (filterType === "All" || c.type === filterType) &&
-      c.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => b[sortBy] - a[sortBy]);
+  // ── Feb 2026 figures ──────────────────────────────────────────────────────
+  const feb     = COMM_MONTHLY['February 2026'];
+  const febBLG  = feb.blg;
+  const febRM   = feb.rm;
+  const febTOT  = feb.total;
 
-  const filteredTotal = filtered.reduce((s, c) => s + c.commission, 0);
-  const top5 = [...COMMISSION_DATA].sort((a, b) => b.commission - a.commission).slice(0, 5);
+  // ── All-time totals ───────────────────────────────────────────────────────
+  const sumMo = (arr) => COMM_MONTHS.reduce((s,m) => s+arr.reduce((a,r)=>a+(r.monthly[m]||0),0), 0);
+  const allBLG = sumMo(BLG_COMM);
+  const allRM  = sumMo(RM_COMM);
+  const allTOT = allBLG + allRM;
 
-  return (
-    <div>
-      {/* KPI Row */}
-      <div className="grid-4 mb-16">
-        <MetricTile label="Feb 2026 Commission" value={`$${COMMISSION_META.totalCommission.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2})}`} delta="59 clients · 1,412 line items" color="green" />
-        <MetricTile label="Provider Revenue" value="$1.97M" delta="Billed through AppDirect" color="cyan" />
-        <MetricTile label="Active Providers" value="9" delta="Lingo leads by volume" color="gold" />
-        <MetricTile label="Avg Commission/Client" value={`$${(COMMISSION_META.totalCommission / COMMISSION_META.totalClients).toFixed(0)}`} delta="Range: $4.76 – $6,388" color="purple" />
-      </div>
+  // ── Trend / forecast ──────────────────────────────────────────────────────
+  const activeMos   = COMM_MONTHS.filter(m => COMM_MONTHLY[m].blg > 0);
+  const avgBLGMo    = activeMos.length ? activeMos.reduce((s,m)=>s+COMM_MONTHLY[m].blg,0)/activeMos.length : 0;
+  const runRateBLG  = Math.round(avgBLGMo * 12);
 
-      <div className="grid-2 gap-20 mb-16">
-        {/* Provider Breakdown */}
-        <div className="card">
+  // Linear regression on BLG totals
+  const regVals = COMM_MONTHS.map((m,i) => ({x:i, y:COMM_MONTHLY[m].blg}));
+  const n_ = regVals.length;
+  const sX=regVals.reduce((s,v)=>s+v.x,0), sY=regVals.reduce((s,v)=>s+v.y,0);
+  const sXY=regVals.reduce((s,v)=>s+v.x*v.y,0), sX2=regVals.reduce((s,v)=>s+v.x*v.x,0);
+  const slope     = (n_*sXY-sX*sY)/(n_*sX2-sX*sX);
+  const intercept = (sY-slope*sX)/n_;
+  const nextMos   = ['March 2026','April 2026','May 2026','June 2026','July 2026','August 2026'];
+  const forecasts = nextMos.map((m,i) => ({month:m, val:Math.max(0,Math.round((intercept+slope*(n_+i))*100)/100)}));
+
+  // ── Carrier rollup ────────────────────────────────────────────────────────
+  const carrierMap = {};
+  ALL_COMM.forEach(r => {
+    const k = r.carrier||'Unknown';
+    if(!carrierMap[k]) carrierMap[k]={feb:0,total:0,blgFeb:0,rmFeb:0,count:0};
+    const f = r.monthly['February 2026']||0;
+    carrierMap[k].feb   += f;
+    carrierMap[k].total += Object.values(r.monthly).reduce((a,b)=>a+b,0);
+    if(r.paidTo==='BLG')        carrierMap[k].blgFeb += f;
+    if(r.paidTo==='Reignmaker') carrierMap[k].rmFeb  += f;
+    carrierMap[k].count++;
+  });
+  const carriers = Object.entries(carrierMap)
+    .filter(([k])=>!k.startsWith('Account'))
+    .sort((a,b)=>b[1].feb-a[1].feb);
+
+  // ── Filtered client list ──────────────────────────────────────────────────
+  const getPool = () => {
+    if(entityFilter==='BLG')        return BLG_COMM;
+    if(entityFilter==='Reignmaker') return RM_COMM;
+    return ALL_COMM;
+  };
+  const clientList = getPool()
+    .filter(r =>
+      (distFilter==='All' || r.distributor===distFilter) &&
+      r.customer.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a,b) => {
+      if(sortBy==='feb')   return (b.monthly['February 2026']||0)-(a.monthly['February 2026']||0);
+      if(sortBy==='total') return Object.values(b.monthly).reduce((s,v)=>s+v,0)-Object.values(a.monthly).reduce((s,v)=>s+v,0);
+      return a.customer.localeCompare(b.customer);
+    });
+
+  const entityCol = (e) => e==='BLG' ? C.accent : e==='Reignmaker' ? C.gold : C.green;
+  const distLabel  = (r) => `${r.distributor} → ${r.paidTo}`;
+
+  // ── TAB BAR ───────────────────────────────────────────────────────────────
+  const Tabs = () => (
+    <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
+      {[
+        ['overview',   'Overview'],
+        ['trend',      'Trend & Forecast'],
+        ['blg',        'BLG Revenue'],
+        ['reignmaker', 'Reignmaker'],
+        ['clients',    'All Accounts'],
+      ].map(([k,label]) => (
+        <button key={k} onClick={()=>setTab(k)} style={{
+          padding:'7px 16px', borderRadius:8, fontSize:11, fontWeight:700, cursor:'pointer',
+          background:tab===k ? C.accent : 'transparent',
+          color:tab===k ? '#000' : C.textMid,
+          border:`1px solid ${tab===k ? C.accent : C.border}`,
+          transition:'all .15s'
+        }}>{label}</button>
+      ))}
+    </div>
+  );
+
+  // ── OVERVIEW ──────────────────────────────────────────────────────────────
+  const Overview = () => {
+    const maxBar = Math.max(...COMM_MONTHS.map(m=>COMM_MONTHLY[m].total));
+    return (
+      <div>
+        {/* KPIs */}
+        <div className="grid-4 mb-16">
+          <MetricTile label="BLG Revenue — Feb" value={$n(febBLG)} delta={`AppDirect + Telarus → BLG`} color="green" />
+          <MetricTile label="Reignmaker — Feb" value={$n(febRM)} delta="Telarus → Reignmaker" color="gold" />
+          <MetricTile label="BLG Annual Run Rate" value={$k(runRateBLG)} delta={`Avg ${$n(avgBLGMo)}/mo × 12`} color="cyan" />
+          <MetricTile label="Combined Feb 2026" value={$n(febTOT)} delta="All entities" color="purple" />
+        </div>
+
+        {/* Flow diagram */}
+        <div className="card mb-16">
           <div className="card-header">
-            <div>
-              <div className="card-title">Commission by Provider</div>
-              <div className="card-sub">Feb 2026 · All clients</div>
+            <div><div className="card-title">Commission Flow</div><div className="card-sub">Who pays who · Feb 2026</div></div>
+          </div>
+          <div style={{display:'flex',gap:12,alignItems:'stretch',flexWrap:'wrap'}}>
+            {/* Distributors */}
+            <div style={{flex:1,minWidth:120}}>
+              <div style={{fontSize:10,color:C.textDim,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}}>Distributors</div>
+              {[
+                {name:'AppDirect', amt:feb.ad,    col:C.accent},
+                {name:'Telarus',   amt:feb.telBlg+feb.telRm, col:'#f97316'},
+                {name:'Intelisys', amt:0,          col:C.textDim, note:'add file'},
+              ].map(d=>(
+                <div key={d.name} style={{padding:'8px 10px',borderRadius:8,background:'rgba(255,255,255,.04)',border:`1px solid ${C.border}`,marginBottom:6}}>
+                  <div style={{fontSize:12,fontWeight:700,color:d.col}}>{d.name}</div>
+                  <div style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",color:d.col}}>{d.note ? `(${d.note})` : $n(d.amt)}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Arrow */}
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'0 8px',color:C.textDim,fontSize:20}}>→</div>
+
+            {/* Entities */}
+            <div style={{flex:1,minWidth:140}}>
+              <div style={{fontSize:10,color:C.textDim,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:8}}>Agency</div>
+              {/* BLG */}
+              <div style={{padding:'10px 12px',borderRadius:8,background:`${C.accent}0D`,border:`1px solid ${C.accent}44`,marginBottom:6}}>
+                <div style={{fontSize:13,fontWeight:700,color:C.accent}}>Bottom Line Generation</div>
+                <div style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",color:C.green,marginTop:2}}>{$n(febBLG)}</div>
+                <div style={{fontSize:10,color:C.textDim,marginTop:2}}>AppDirect {$n(feb.ad)} + Telarus {$n(feb.telBlg)}</div>
+                <div style={{fontSize:10,color:C.textDim}}>{BLG_COMM.length} accounts</div>
+              </div>
+              {/* Reignmaker */}
+              <div style={{padding:'10px 12px',borderRadius:8,background:`${C.gold}0D`,border:`1px solid ${C.gold}44`}}>
+                <div style={{fontSize:13,fontWeight:700,color:C.gold}}>Reignmaker</div>
+                <div style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",color:C.gold,marginTop:2}}>{$n(febRM)}</div>
+                <div style={{fontSize:10,color:C.textDim,marginTop:2}}>Telarus {$n(feb.telRm)} + Intelisys (TBD)</div>
+                <div style={{fontSize:10,color:C.textDim}}>{RM_COMM.length} accounts</div>
+              </div>
             </div>
           </div>
-          {Object.entries(providerTotals).sort((a,b) => b[1]-a[1]).map(([prov, amt]) => {
-            const pct = (amt / COMMISSION_META.totalCommission * 100).toFixed(1);
-            const barColor = prov.includes("Lingo") ? C.accent : prov.includes("CommandLink") ? C.gold : prov.includes("Lumen") ? C.green : prov.includes("BOX") ? C.purple : C.textMid;
+        </div>
+
+        {/* Monthly stacked bars */}
+        <div className="card mb-16">
+          <div className="card-header">
+            <div><div className="card-title">Monthly Commission Trend</div><div className="card-sub">Aug 2025 – Feb 2026 · By entity</div></div>
+            <div style={{fontSize:10,color:C.textDim}}>
+              <span style={{color:C.accent}}>■</span> BLG &nbsp;
+              <span style={{color:C.gold}}>■</span> Reignmaker
+            </div>
+          </div>
+          {COMM_MONTHS.map((m,i) => {
+            const d    = COMM_MONTHLY[m];
+            const prev = i>0 ? COMM_MONTHLY[COMM_MONTHS[i-1]] : null;
+            const blgChg = prev && prev.blg>0 ? chgPct(d.blg,prev.blg) : null;
             return (
-              <div key={prov} style={{ marginBottom: 12 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                  <span style={{ fontSize: 12, color: C.text, fontWeight: 600 }}>{prov}</span>
-                  <span style={{ fontSize: 12, fontFamily: "'IBM Plex Mono',monospace", color: barColor }}>${amt.toFixed(2)} <span style={{ color: C.textDim }}>({pct}%)</span></span>
+              <div key={m} style={{marginBottom:14}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:4,alignItems:'center'}}>
+                  <span style={{fontSize:12,fontWeight:i===6?700:400,color:i===6?C.green:C.text}}>{m}{i===6?' ← latest':''}</span>
+                  <div style={{display:'flex',gap:10,alignItems:'center'}}>
+                    {blgChg!==null && <span style={{fontSize:10,fontWeight:600,color:Number(blgChg)>=0?C.green:C.red}}>{Number(blgChg)>=0?'▲':'▼'}{Math.abs(Number(blgChg))}%</span>}
+                    <span style={{fontSize:12,fontFamily:"'IBM Plex Mono',monospace",fontWeight:600,color:i===6?C.green:C.text}}>{$n(d.total)}</span>
+                  </div>
                 </div>
-                <div style={{ height: 6, background: C.border, borderRadius: 3 }}>
-                  <div style={{ height: "100%", width: `${pct}%`, background: barColor, borderRadius: 3, transition: "width .4s ease" }} />
+                <div style={{height:12,borderRadius:6,background:'rgba(255,255,255,.05)',overflow:'hidden',display:'flex'}}>
+                  <div title={`BLG: ${$n(d.blg)}`}   style={{width:`${bw(d.blg,maxBar)}%`,background:C.accent,transition:'width .5s'}} />
+                  <div title={`RM: ${$n(d.rm)}`}    style={{width:`${bw(d.rm,maxBar)}%`, background:C.gold,  transition:'width .5s'}} />
+                </div>
+                <div style={{display:'flex',gap:16,marginTop:3}}>
+                  <span style={{fontSize:9,color:C.accent}}>BLG: {$n(d.blg)}</span>
+                  <span style={{fontSize:9,color:C.gold}}>RM: {$n(d.rm)}</span>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Top 5 Clients */}
-        <div className="card">
-          <div className="card-header">
-            <div>
-              <div className="card-title">Top 5 Clients by Commission</div>
-              <div className="card-sub">Feb 2026</div>
-            </div>
+        {/* 2-col: carriers + summary */}
+        <div className="grid-2 gap-20">
+          <div className="card">
+            <div className="card-header"><div><div className="card-title">By Carrier — Feb 2026</div><div className="card-sub">All entities combined</div></div></div>
+            {carriers.slice(0,12).map(([carrier,d]) => {
+              const pctStr = febTOT>0 ? (d.feb/febTOT*100).toFixed(1)+'%' : '0%';
+              const col = carrier.includes('Lingo')?C.accent:carrier.includes('Command')?C.gold:carrier.includes('Lumen')?C.green:carrier.includes('BOX')?C.purple:carrier.includes('AireSpring')?'#f97316':carrier.includes('AT&T')?'#00b4d8':carrier.includes('Everstream')?'#a855f7':C.textMid;
+              return (
+                <div key={carrier} style={{marginBottom:11}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                    <span style={{fontSize:11,fontWeight:600}}>{carrier}</span>
+                    <span style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",color:col}}>{$n(d.feb)} <span style={{color:C.textDim,fontSize:10}}>{pctStr}</span></span>
+                  </div>
+                  <div style={{height:5,background:C.border,borderRadius:3}}>
+                    <div style={{height:'100%',width:pctStr,background:col,borderRadius:3,transition:'width .4s'}} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          {top5.map((c, i) => (
-            <div key={c.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < 4 ? `1px solid ${C.border}` : "none", cursor: "pointer" }}
-              onClick={() => setSelected(selected?.name === c.name ? null : c)}>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: `rgba(0,212,255,${0.15 - i * 0.02})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: C.accent, flexShrink: 0 }}>{i+1}</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</div>
-                <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>{c.providers[0]} · {c.type}</div>
-              </div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: C.green, fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>${c.commission.toLocaleString("en-US", {minimumFractionDigits:2})}</div>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Selected client detail */}
-      {selected && (
-        <div className="card mb-16" style={{ border: `1px solid rgba(0,229,160,.3)`, background: "rgba(0,229,160,.04)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: C.green, marginBottom: 4 }}>{selected.name}</div>
-              <div style={{ fontSize: 11, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>{selected.type} · {selected.providers.join(", ")}</div>
-            </div>
-            <button className="btn btn-ghost btn-sm" onClick={() => setSelected(null)}>✕</button>
-          </div>
-          <div className="grid-4" style={{ marginTop: 16 }}>
+          <div className="card">
+            <div className="card-header"><div><div className="card-title">Income Summary</div><div className="card-sub">BLG revenue · P&L foundation</div></div></div>
             {[
-              ["Commission Earned", `$${selected.commission.toFixed(2)}`, C.green],
-              ["Provider Revenue", selected.revenue > 0 ? `$${selected.revenue.toLocaleString("en-US",{minimumFractionDigits:2})}` : "SPIFF/NRR", C.accent],
-              ["Line Items", selected.lineItems, C.gold],
-              ["Products", selected.products.slice(0,2).join(", "), C.purple],
-            ].map(([label, val, color]) => (
-              <div key={label} style={{ background: C.surfaceHigh, borderRadius: 8, padding: "10px 12px" }}>
-                <div style={{ fontSize: 10, color: C.textDim, marginBottom: 4, textTransform: "uppercase", letterSpacing: ".08em" }}>{label}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color, fontFamily: "'IBM Plex Mono',monospace" }}>{val}</div>
+              ['Feb 2026 — BLG Total',     $n(febBLG),    C.green],
+              ['↳ AppDirect → BLG',        $n(feb.ad),    C.accent],
+              ['↳ Telarus → BLG',          $n(feb.telBlg),C.accent],
+              ['Feb 2026 — Reignmaker',    $n(febRM),     C.gold],
+              ['↳ Telarus → Reignmaker',   $n(feb.telRm), C.gold],
+              ['↳ Intelisys → Reignmaker', '— add file',  C.textDim],
+              ['7-Mo BLG Total',           $n(allBLG),    C.text],
+              ['7-Mo Reignmaker Total',    $n(allRM),     C.textMid],
+              ['BLG Annual Run Rate',      $k(runRateBLG),C.green],
+              ['BLG 3-Year Projection',    $k(runRateBLG*3), C.green],
+            ].map(([l,v,c]) => (
+              <div key={l} style={{padding:'7px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span style={{fontSize:11,color:C.textDim}}>{l}</span>
+                <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:c}}>{v}</span>
               </div>
             ))}
           </div>
         </div>
-      )}
+      </div>
+    );
+  };
 
-      {/* Full client table */}
-      <div className="card">
-        <div className="card-header">
-          <div>
-            <div className="card-title">All Clients — Commission Detail</div>
-            <div className="card-sub">{filtered.length} records · Total shown: <span style={{ color: C.green, fontFamily: "'IBM Plex Mono',monospace" }}>${filteredTotal.toFixed(2)}</span></div>
-          </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <input
-              placeholder="Search clients..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              style={{ padding: "6px 12px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, width: 180, outline: "none" }}
-            />
-            <select value={filterType} onChange={e => setFilterType(e.target.value)}
-              style={{ padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.textMid, fontSize: 12, outline: "none", cursor: "pointer" }}>
-              {types.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-            <select value={sortBy} onChange={e => setSortBy(e.target.value)}
-              style={{ padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.textMid, fontSize: 12, outline: "none", cursor: "pointer" }}>
-              <option value="commission">Sort: Commission ↓</option>
-              <option value="revenue">Sort: Revenue ↓</option>
-              <option value="lineItems">Sort: Line Items ↓</option>
-            </select>
-          </div>
+  // ── TREND & FORECAST ──────────────────────────────────────────────────────
+  const TrendForecast = () => {
+    const allMonths = [
+      ...COMM_MONTHS.map(m=>({month:m,blg:COMM_MONTHLY[m].blg,rm:COMM_MONTHLY[m].rm,forecast:false})),
+      ...forecasts.map(f=>({month:f.month,blg:f.val,rm:0,forecast:true})),
+    ];
+    const mx = Math.max(...allMonths.map(d=>d.blg+d.rm));
+    const forecastCY26 = Math.round(
+      forecasts.reduce((s,f)=>s+f.val,0) +
+      COMM_MONTHLY['February 2026'].blg +
+      COMM_MONTHLY['January 2026'].blg
+    );
+
+    return (
+      <div>
+        <div className="grid-4 mb-16">
+          <MetricTile label="BLG Monthly Avg" value={$n(avgBLGMo)} delta={`${activeMos.length} months with data`} color="green" />
+          <MetricTile label="Monthly Growth" value={slope>=0?`+${$n(slope)}/mo`:`${$n(slope)}/mo`} delta="Linear regression trend" color={slope>=0?'green':'red'} />
+          <MetricTile label="Mar 2026 Forecast" value={$n(forecasts[0].val)} delta="BLG · Linear regression" color="cyan" />
+          <MetricTile label="CY 2026 Projection" value={$k(forecastCY26)} delta="Jan–Dec 2026 estimate" color="purple" />
         </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-            <thead>
-              <tr style={{ borderBottom: `1px solid ${C.border}` }}>
-                {["Client", "Type", "Provider", "Products", "Rev. Billed", "Commission", "Lines"].map(h => (
-                  <th key={h} style={{ padding: "8px 10px", textAlign: "left", fontSize: 10, color: C.textDim, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((c, i) => (
-                <tr key={c.name}
-                  onClick={() => setSelected(selected?.name === c.name ? null : c)}
-                  style={{ borderBottom: `1px solid ${C.border}`, cursor: "pointer", background: selected?.name === c.name ? "rgba(0,229,160,.04)" : i % 2 === 0 ? "transparent" : "rgba(255,255,255,.01)", transition: "background .1s" }}
-                  onMouseEnter={e => { if (selected?.name !== c.name) e.currentTarget.style.background = C.surfaceHigh; }}
-                  onMouseLeave={e => { if (selected?.name !== c.name) e.currentTarget.style.background = i % 2 === 0 ? "transparent" : "rgba(255,255,255,.01)"; }}>
-                  <td style={{ padding: "9px 10px", fontWeight: 600, color: C.text, maxWidth: 220, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</td>
-                  <td style={{ padding: "9px 10px" }}>
-                    <span style={{ padding: "2px 8px", borderRadius: 12, fontSize: 10, fontWeight: 600,
-                      background: c.type.includes("REIT") ? "rgba(168,85,247,.15)" : c.type.includes("Senior") ? "rgba(0,229,160,.12)" : c.type.includes("Multi") ? "rgba(0,212,255,.12)" : c.type.includes("Auto") ? "rgba(245,166,35,.12)" : "rgba(138,155,191,.1)",
-                      color: c.type.includes("REIT") ? C.purple : c.type.includes("Senior") ? C.green : c.type.includes("Multi") ? C.accent : c.type.includes("Auto") ? C.gold : C.textMid,
-                    }}>{c.type}</span>
-                  </td>
-                  <td style={{ padding: "9px 10px", color: C.textMid }}>{c.providers[0]}</td>
-                  <td style={{ padding: "9px 10px", color: C.textDim, maxWidth: 160, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.products[0]}</td>
-                  <td style={{ padding: "9px 10px", fontFamily: "'IBM Plex Mono',monospace", color: c.revenue > 0 ? C.textMid : C.textDim }}>{c.revenue > 0 ? `$${c.revenue.toLocaleString("en-US",{minimumFractionDigits:2})}` : "—"}</td>
-                  <td style={{ padding: "9px 10px", fontFamily: "'IBM Plex Mono',monospace", fontWeight: 800, color: c.commission >= 1000 ? C.green : c.commission >= 100 ? C.accent : C.textMid }}>${c.commission.toFixed(2)}</td>
-                  <td style={{ padding: "9px 10px", color: C.textDim, textAlign: "center" }}>{c.lineItems}</td>
-                </tr>
+        <div className="card mb-16">
+          <div className="card-header">
+            <div><div className="card-title">Actual + Forecast — BLG Revenue</div><div className="card-sub">Aug 2025 – Aug 2026</div></div>
+            <div style={{fontSize:10,color:C.textDim}}><span style={{color:C.green}}>■</span> Actual BLG &nbsp;<span style={{color:C.gold}}>■</span> Actual RM &nbsp;<span style={{color:`${C.accent}55`}}>■</span> Forecast</div>
+          </div>
+          {allMonths.map((d,i) => (
+            <div key={d.month} style={{marginBottom:11,opacity:d.forecast?0.75:1}}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:3,alignItems:'center'}}>
+                <span style={{fontSize:11,color:d.forecast?C.textMid:C.text,fontStyle:d.forecast?'italic':'normal'}}>
+                  {d.month}{d.forecast?' (est.)':''}
+                </span>
+                <div style={{display:'flex',gap:12,alignItems:'center'}}>
+                  {!d.forecast && <span style={{fontSize:10,color:C.gold}}>{$n(d.rm)}</span>}
+                  <span style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",fontWeight:600,color:d.forecast?C.accent:C.green}}>{$n(d.blg)}</span>
+                </div>
+              </div>
+              <div style={{height:8,borderRadius:4,background:'rgba(255,255,255,.05)',overflow:'hidden',display:'flex'}}>
+                {!d.forecast
+                  ? <>
+                      <div style={{width:`${bw(d.blg,mx)}%`,background:C.green,transition:'width .5s'}} />
+                      <div style={{width:`${bw(d.rm,mx)}%`,background:C.gold,transition:'width .5s'}} />
+                    </>
+                  : <div style={{width:`${bw(d.blg,mx)}%`,background:`${C.accent}55`,transition:'width .5s',
+                      backgroundImage:'repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.2) 3px,rgba(0,0,0,.2) 6px)'}} />
+                }
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid-2 gap-20">
+          <div className="card">
+            <div className="card-header"><div><div className="card-title">BLG Annual View</div><div className="card-sub">Actual + projected</div></div></div>
+            {[
+              ['Aug–Feb (7 months)',      $n(allBLG),        C.green],
+              ['Avg BLG monthly',         $n(avgBLGMo),      C.text],
+              ['Monthly growth rate',     slope>=0?`+${$n(slope)}/mo`:$n(slope), slope>=0?C.green:C.red],
+              ['CY 2026 BLG projection',  $k(forecastCY26),  C.accent],
+              ['12-month run rate',       $k(runRateBLG),    C.accent],
+              ['3-year projection',       $k(runRateBLG*3),  C.purple],
+              ['Reignmaker 7-month',      $n(allRM),         C.gold],
+              ['Combined 7-month',        $n(allTOT),        C.textMid],
+            ].map(([l,v,c]) => (
+              <div key={l} style={{padding:'9px 0',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between'}}>
+                <span style={{fontSize:11,color:C.textDim}}>{l}</span>
+                <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:c}}>{v}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="card">
+            <div className="card-header"><div><div className="card-title">P&L Framework</div><div className="card-sub">Build toward net income</div></div></div>
+            <div style={{padding:'10px 0',borderBottom:`1px solid ${C.border}`}}>
+              <div style={{fontSize:11,fontWeight:700,color:C.green,marginBottom:6,textTransform:'uppercase',letterSpacing:'.06em'}}>Revenue</div>
+              {[
+                ['AppDirect → BLG',   $n(feb.ad),    C.accent],
+                ['Telarus → BLG',     $n(feb.telBlg),C.accent],
+                ['Telarus → RM',      $n(feb.telRm), C.gold],
+                ['Intelisys → RM',    '+ add file',  C.textDim],
+              ].map(([l,v,c]) => (
+                <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0'}}>
+                  <span style={{fontSize:11,color:C.textDim}}>{l}</span>
+                  <span style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",color:c}}>{v}</span>
+                </div>
               ))}
-            </tbody>
-          </table>
+              <div style={{display:'flex',justifyContent:'space-between',padding:'6px 0 3px',marginTop:4,borderTop:`1px solid ${C.border}`}}>
+                <span style={{fontSize:12,fontWeight:700,color:C.text}}>Gross Commission</span>
+                <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.green}}>{$n(febTOT)}</span>
+              </div>
+            </div>
+            <div style={{padding:'10px 0',borderBottom:`1px solid ${C.border}`}}>
+              <div style={{fontSize:11,fontWeight:700,color:C.red,marginBottom:6,textTransform:'uppercase',letterSpacing:'.06em'}}>Expenses (add to unlock)</div>
+              {['Sub-agent payouts','Platform & tools','Travel & marketing','Operating costs'].map(e=>(
+                <div key={e} style={{display:'flex',justifyContent:'space-between',padding:'3px 0'}}>
+                  <span style={{fontSize:11,color:C.textDim}}>{e}</span>
+                  <span style={{fontSize:11,color:`${C.red}66`}}>— enter</span>
+                </div>
+              ))}
+            </div>
+            <div style={{padding:'10px 0',display:'flex',justifyContent:'space-between'}}>
+              <span style={{fontSize:13,fontWeight:700,color:C.text}}>Net Income</span>
+              <span style={{fontSize:13,fontWeight:700,color:`${C.text}44`}}>— pending expenses</span>
+            </div>
+          </div>
         </div>
-        <div style={{ padding: "10px 10px 0", fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>
-          Source: AppDirect · Advisor: BCCJ Communications LLC · Sales Rep: Byron Braun · Period: February 2026
+      </div>
+    );
+  };
+
+  // ── BLG REVENUE TAB ───────────────────────────────────────────────────────
+  const BLGTab = () => {
+    const mxAD  = Math.max(...COMM_AD.map(r=>r.monthly['February 2026']||0),0.01);
+    const mxTBL = Math.max(...COMM_TEL_BLG.map(r=>r.monthly['February 2026']||0),0.01);
+    return (
+      <div>
+        <div className="grid-4 mb-16">
+          <MetricTile label="Feb 2026 — BLG Total" value={$n(febBLG)} delta="AppDirect + Telarus direct" color="green" />
+          <MetricTile label="AppDirect" value={$n(feb.ad)} delta={`${COMM_AD.length} clients`} color="cyan" />
+          <MetricTile label="Telarus → BLG" value={$n(feb.telBlg)} delta={`${COMM_TEL_BLG.length} accounts`} color="accent" />
+          <MetricTile label="7-Month BLG Total" value={$n(allBLG)} delta="Aug 2025 – Feb 2026" color="purple" />
         </div>
+
+        <div className="grid-2 gap-20">
+          <div className="card">
+            <div className="card-header"><div><div className="card-title">AppDirect — All Clients</div><div className="card-sub">Feb 2026 · {COMM_AD.length} clients</div></div></div>
+            {[...COMM_AD].sort((a,b)=>(b.monthly['February 2026']||0)-(a.monthly['February 2026']||0)).map((r,i) => {
+              const f = r.monthly['February 2026']||0;
+              return (
+                <div key={i} style={{padding:'8px 0',borderBottom:`1px solid ${C.border}`,display:'flex',alignItems:'center',gap:10}}>
+                  <span style={{fontSize:10,color:C.textDim,minWidth:20,textAlign:'right'}}>{i+1}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:11,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.customer}</div>
+                    <div style={{fontSize:9,color:C.textDim}}>{r.carrier}</div>
+                    <div style={{height:3,background:C.border,borderRadius:2,marginTop:3}}>
+                      <div style={{height:'100%',width:`${bw(f,mxAD)}%`,background:C.accent,borderRadius:2}} />
+                    </div>
+                  </div>
+                  <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.green,minWidth:78,textAlign:'right'}}>{$n(f)}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="card">
+            <div className="card-header"><div><div className="card-title">Telarus → BLG</div><div className="card-sub">7-month history · {COMM_TEL_BLG.length} accounts</div></div></div>
+            {[...COMM_TEL_BLG].sort((a,b)=>(b.monthly['February 2026']||0)-(a.monthly['February 2026']||0)).map((r,i) => {
+              const f     = r.monthly['February 2026']||0;
+              const total = Object.values(r.monthly).reduce((s,v)=>s+v,0);
+              const mxR   = Math.max(...COMM_MONTHS.map(m=>r.monthly[m]||0),0.01);
+              return (
+                <div key={i} onClick={()=>setExpanded(expanded===`blg_${i}`?null:`blg_${i}`)}
+                  style={{padding:'9px 0',borderBottom:`1px solid ${C.border}`,cursor:'pointer'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:11,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.customer}</div>
+                      <div style={{fontSize:9,color:C.textDim}}>{r.carrier} · {r.service}</div>
+                    </div>
+                    <div style={{textAlign:'right',flexShrink:0,paddingLeft:8}}>
+                      <div style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:f>0?C.green:C.textDim}}>{$n(f)}</div>
+                      <div style={{fontSize:9,color:C.textDim}}>{$n(total)} 7-mo</div>
+                    </div>
+                  </div>
+                  {/* Sparkbars */}
+                  <div style={{display:'flex',gap:2,alignItems:'flex-end',height:14}}>
+                    {COMM_MONTHS.map(m=>{const v=r.monthly[m]||0;return<div key={m} title={`${mo(m)}: ${$n(v)}`} style={{flex:1,height:Math.round(bw(v,mxR)*0.12)+2,borderRadius:1,background:v>0?C.accent:'rgba(255,255,255,.06)',minWidth:3}}/>;} )}
+                  </div>
+                  {expanded===`blg_${i}` && (
+                    <div style={{marginTop:8,padding:'8px',background:'rgba(255,255,255,.03)',borderRadius:6}}>
+                      {COMM_MONTHS.map(m=>(
+                        <div key={m} style={{display:'flex',justifyContent:'space-between',padding:'2px 0'}}>
+                          <span style={{fontSize:10,color:C.textDim}}>{m}</span>
+                          <span style={{fontSize:10,fontFamily:"'IBM Plex Mono',monospace",color:(r.monthly[m]||0)>0?C.green:C.textDim}}>{$n(r.monthly[m]||0)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ── REIGNMAKER TAB ────────────────────────────────────────────────────────
+  const ReignmakerTab = () => {
+    const mxMo = Math.max(...COMM_MONTHS.map(m=>COMM_MONTHLY[m].rm),0.01);
+    return (
+      <div>
+        <div className="grid-4 mb-16">
+          <MetricTile label="Feb 2026 — RM" value={$n(febRM)} delta="Telarus → Reignmaker" color="gold" />
+          <MetricTile label="Accounts" value={RM_COMM.length} delta="Telarus File 1" color="cyan" />
+          <MetricTile label="7-Month Total" value={$n(allRM)} delta="Aug 2025 – Feb 2026" color="green" />
+          <MetricTile label="Intelisys" value="— add file" delta="Add report to include" color="purple" />
+        </div>
+
+        <div className="card mb-16">
+          <div className="card-header"><div><div className="card-title">Reignmaker Monthly — Telarus</div><div className="card-sub">Aug 2025 – Feb 2026</div></div></div>
+          {COMM_MONTHS.map((m,i) => {
+            const v    = COMM_MONTHLY[m].rm;
+            const prev = i>0 ? COMM_MONTHLY[COMM_MONTHS[i-1]].rm : null;
+            const chg  = prev&&prev>0 ? chgPct(v,prev) : null;
+            return (
+              <div key={m} style={{marginBottom:11}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:3,alignItems:'center'}}>
+                  <span style={{fontSize:11,color:i===6?C.gold:C.textMid,fontWeight:i===6?700:400}}>{m}</span>
+                  <div style={{display:'flex',gap:10,alignItems:'center'}}>
+                    {chg!==null && <span style={{fontSize:10,color:Number(chg)>=0?C.green:C.red}}>{Number(chg)>=0?'▲':'▼'}{Math.abs(Number(chg))}%</span>}
+                    <span style={{fontSize:11,fontFamily:"'IBM Plex Mono',monospace",color:C.gold}}>{$n(v)}</span>
+                  </div>
+                </div>
+                <div style={{height:7,background:C.border,borderRadius:3}}>
+                  <div style={{height:'100%',width:`${bw(v,mxMo)}%`,background:C.gold,borderRadius:3,transition:'width .5s'}} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="card">
+          <div className="card-header"><div><div className="card-title">Reignmaker — Account Detail</div><div className="card-sub">Click row to expand monthly history</div></div></div>
+          {[...RM_COMM].sort((a,b)=>(b.monthly['February 2026']||0)-(a.monthly['February 2026']||0)).map((r,i) => {
+            const f     = r.monthly['February 2026']||0;
+            const total = Object.values(r.monthly).reduce((s,v)=>s+v,0);
+            const mxR   = Math.max(...COMM_MONTHS.map(m=>r.monthly[m]||0),0.01);
+            const key   = `rm_${i}`;
+            return (
+              <div key={i} style={{borderBottom:`1px solid ${C.border}`}}>
+                <div onClick={()=>setExpanded(expanded===key?null:key)} style={{padding:'9px 0',cursor:'pointer',display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:600}}>{r.customer}</div>
+                    <div style={{fontSize:10,color:C.textDim}}>{r.carrier} · {r.service}</div>
+                    <div style={{display:'flex',gap:2,marginTop:4,alignItems:'flex-end',height:14}}>
+                      {COMM_MONTHS.map(m=>{const v=r.monthly[m]||0;return<div key={m} title={`${mo(m)}: ${$n(v)}`} style={{flex:1,height:Math.round(bw(v,mxR)*0.12)+2,borderRadius:1,background:v>0?C.gold:'rgba(255,255,255,.06)',minWidth:3}}/>;} )}
+                    </div>
+                  </div>
+                  <div style={{textAlign:'right',flexShrink:0}}>
+                    <div style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:f>0?C.gold:C.textDim}}>{$n(f)}</div>
+                    <div style={{fontSize:9,color:C.textDim}}>{$n(total)} 7-mo</div>
+                  </div>
+                </div>
+                {expanded===key && (
+                  <div style={{padding:'0 0 10px 12px'}}>
+                    {COMM_MONTHS.map(m=>(
+                      <div key={m} style={{display:'flex',justifyContent:'space-between',padding:'2px 0'}}>
+                        <span style={{fontSize:10,color:C.textDim}}>{m}</span>
+                        <span style={{fontSize:10,fontFamily:"'IBM Plex Mono',monospace",color:(r.monthly[m]||0)>0?C.gold:C.textDim}}>{$n(r.monthly[m]||0)}</span>
+                      </div>
+                    ))}
+                    {r.contractExpires && <div style={{fontSize:9,color:C.textDim,marginTop:4}}>Expires: {r.contractExpires}</div>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // ── ALL ACCOUNTS TAB ──────────────────────────────────────────────────────
+  const ClientsTab = () => (
+    <div>
+      <div style={{display:'flex',gap:8,marginBottom:12,flexWrap:'wrap'}}>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search accounts..."
+          style={{padding:'7px 10px',borderRadius:8,border:`1px solid ${C.border}`,background:C.surfaceHigh,color:C.text,fontSize:12,outline:'none',flex:1,minWidth:140}} />
+        {[['All','All'],['BLG','BLG Revenue'],['Reignmaker','Reignmaker']].map(([k,l])=>(
+          <button key={k} onClick={()=>setEntityFilter(k)}
+            style={{padding:'6px 12px',borderRadius:7,fontSize:11,cursor:'pointer',
+              background:entityFilter===k?entityCol(k):'transparent',
+              color:entityFilter===k?'#000':C.textMid,
+              border:`1px solid ${entityFilter===k?entityCol(k):C.border}`}}>{l}</button>
+        ))}
+        {[['All','All Dist.'],['AppDirect','AppDirect'],['Telarus','Telarus']].map(([k,l])=>(
+          <button key={k} onClick={()=>setDistFilter(k)}
+            style={{padding:'5px 9px',borderRadius:7,fontSize:10,cursor:'pointer',
+              background:distFilter===k?C.surfaceHigh:'transparent',
+              color:distFilter===k?C.text:C.textDim,
+              border:`1px solid ${distFilter===k?C.border:'transparent'}`}}>{l}</button>
+        ))}
+        {[['feb','Feb'],['total','Total'],['name','Name']].map(([k,l])=>(
+          <button key={k} onClick={()=>setSortBy(k)}
+            style={{padding:'5px 9px',borderRadius:7,fontSize:10,cursor:'pointer',
+              background:sortBy===k?C.surfaceHigh:'transparent',
+              color:sortBy===k?C.text:C.textDim,
+              border:`1px solid ${sortBy===k?C.border:'transparent'}`}}>{l}</button>
+        ))}
+      </div>
+      <div style={{fontSize:11,color:C.textDim,marginBottom:10}}>
+        {clientList.length} records · {$n(clientList.reduce((s,r)=>s+(r.monthly['February 2026']||0),0))} Feb 2026
+      </div>
+      <div className="card">
+        {clientList.map((r,i) => {
+          const f     = r.monthly['February 2026']||0;
+          const total = Object.values(r.monthly).reduce((s,v)=>s+v,0);
+          const dc    = r.paidTo==='BLG' ? C.accent : C.gold;
+          const mxR   = Math.max(...COMM_MONTHS.map(m=>r.monthly[m]||0),0.01);
+          return (
+            <div key={i} style={{padding:'8px 0',borderBottom:`1px solid ${C.border}`,display:'flex',alignItems:'center',gap:10}}>
+              <div style={{width:3,height:36,borderRadius:2,background:dc,flexShrink:0}} />
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.customer}</div>
+                <div style={{fontSize:10,color:C.textDim}}>
+                  {r.carrier} · <span style={{color:dc}}>{r.distributor} → {r.paidTo}</span>
+                </div>
+                {r.distributor==='Telarus' && (
+                  <div style={{display:'flex',gap:2,marginTop:3,alignItems:'flex-end',height:8}}>
+                    {COMM_MONTHS.map(m=>{const v=r.monthly[m]||0;return<div key={m} style={{flex:1,height:Math.round(bw(v,mxR)*0.06)+2,borderRadius:1,background:v>0?dc:'rgba(255,255,255,.06)',minWidth:3}}/>;} )}
+                  </div>
+                )}
+              </div>
+              <div style={{textAlign:'right',flexShrink:0}}>
+                <div style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:f>0?C.green:C.textDim}}>{$n(f)}</div>
+                {total!==f && <div style={{fontSize:9,color:C.textDim}}>{$n(total)} total</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <Tabs />
+      {tab==='overview'    && <Overview />}
+      {tab==='trend'       && <TrendForecast />}
+      {tab==='blg'         && <BLGTab />}
+      {tab==='reignmaker'  && <ReignmakerTab />}
+      {tab==='clients'     && <ClientsTab />}
+      <div style={{padding:'12px 0 0',fontSize:10,color:C.textDim,fontFamily:"'IBM Plex Mono',monospace"}}>
+        Flows: AppDirect→BLG · Telarus→BLG (File 2) · Telarus→Reignmaker (File 1) · Intelisys→Reignmaker (pending) · 142 records · Aug 2025–Feb 2026
       </div>
     </div>
   );
 }
+
+
 
 // ── ROOT APP ───────────────────────────────────────────────────────────────────
 
