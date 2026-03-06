@@ -3016,6 +3016,97 @@ const COMM_MO = COMM_MONTHS.reduce((acc, m) => {
   return acc;
 }, {});
 
+// ── CHURN & RETENTION DATA ────────────────────────────────────────────────────
+// Telarus 7-month history only — AppDirect has no historical data yet
+// Status: active | new | declining | gone_dark | churned
+const CHURN_RECORDS=[
+{customer:"Nissan Lithia Springs, LLC dba Nissan of Lithia Springs",carrier:"AT&T",paidTo:"BLG",service:"Broadband",contractExpires:"2025-11-04",status:"active",statusDate:"",peak:132.8,feb:132.8,total:212.8,monthly:{"August 2025":30.4,"September 2025":30.4,"October 2025":30.4,"November 2025":30.4,"December 2025":-72.0,"January 2026":30.4,"February 2026":132.8}},
+{customer:"Nissan Morrow, LLC dba Nissan South Morrow",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-11-04",status:"active",statusDate:"",peak:30.4,feb:30.4,total:212.8,monthly:{"August 2025":30.4,"September 2025":30.4,"October 2025":30.4,"November 2025":30.4,"December 2025":30.4,"January 2026":30.4,"February 2026":30.4}},
+{customer:"HEALTH AND LIFE ORGANIZATION",carrier:"BCN Telecom Inc",paidTo:"BLG",service:"Broadband",contractExpires:"2025-09-25",status:"active",statusDate:"",peak:19.97,feb:10.91,total:68.97,monthly:{"August 2025":9.06,"September 2025":9.06,"October 2025":9.06,"November 2025":0.0,"December 2025":19.97,"January 2026":10.91,"February 2026":10.91}},
+{customer:"VPI, LLC.",carrier:"Comcast Business",paidTo:"BLG",service:"Broadband",contractExpires:"2027-11-17",status:"active",statusDate:"",peak:33.1,feb:32.38,total:223.78,monthly:{"August 2025":33.1,"September 2025":31.66,"October 2025":31.66,"November 2025":31.66,"December 2025":31.66,"January 2026":31.66,"February 2026":32.38}},
+{customer:"Real Floors",carrier:"Command Link",paidTo:"BLG",service:"Fiber / Ethernet",contractExpires:"2025-11-14",status:"active",statusDate:"",peak:260.54,feb:130.27,total:911.89,monthly:{"August 2025":130.27,"September 2025":0.0,"October 2025":260.54,"November 2025":130.27,"December 2025":130.27,"January 2026":130.27,"February 2026":130.27}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Fiber / Ethernet",contractExpires:"2024-02-09",status:"active",statusDate:"",peak:78.52,feb:39.26,total:274.82,monthly:{"August 2025":39.26,"September 2025":0.0,"October 2025":78.52,"November 2025":39.26,"December 2025":39.26,"January 2026":39.26,"February 2026":39.26}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Fiber / Ethernet",contractExpires:"2024-02-22",status:"active",statusDate:"",peak:36.48,feb:18.24,total:127.68,monthly:{"August 2025":18.24,"September 2025":0.0,"October 2025":36.48,"November 2025":18.24,"December 2025":18.24,"January 2026":18.24,"February 2026":18.24}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-08",status:"active",statusDate:"",peak:68.3,feb:34.15,total:239.05,monthly:{"August 2025":34.15,"September 2025":0.0,"October 2025":68.3,"November 2025":34.15,"December 2025":34.15,"January 2026":34.15,"February 2026":34.15}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-16",status:"active",statusDate:"",peak:95.92,feb:47.96,total:335.72,monthly:{"August 2025":47.96,"September 2025":0.0,"October 2025":95.92,"November 2025":47.96,"December 2025":47.96,"January 2026":47.96,"February 2026":47.96}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-16",status:"active",statusDate:"",peak:181.54,feb:90.77,total:635.39,monthly:{"August 2025":90.77,"September 2025":0.0,"October 2025":181.54,"November 2025":90.77,"December 2025":90.77,"January 2026":90.77,"February 2026":90.77}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-16",status:"active",statusDate:"",peak:1282.34,feb:641.17,total:4488.19,monthly:{"August 2025":641.17,"September 2025":0.0,"October 2025":1282.34,"November 2025":641.17,"December 2025":641.17,"January 2026":641.17,"February 2026":641.17}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-16",status:"active",statusDate:"",peak:221.98,feb:110.99,total:776.93,monthly:{"August 2025":110.99,"September 2025":0.0,"October 2025":221.98,"November 2025":110.99,"December 2025":110.99,"January 2026":110.99,"February 2026":110.99}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-16",status:"active",statusDate:"",peak:185.46,feb:92.73,total:649.11,monthly:{"August 2025":92.73,"September 2025":0.0,"October 2025":185.46,"November 2025":92.73,"December 2025":92.73,"January 2026":92.73,"February 2026":92.73}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-03-16",status:"active",statusDate:"",peak:177.78,feb:88.89,total:622.23,monthly:{"August 2025":88.89,"September 2025":0.0,"October 2025":177.78,"November 2025":88.89,"December 2025":88.89,"January 2026":88.89,"February 2026":88.89}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",status:"active",statusDate:"",peak:110.72,feb:55.36,total:387.52,monthly:{"August 2025":55.36,"September 2025":0.0,"October 2025":110.72,"November 2025":55.36,"December 2025":55.36,"January 2026":55.36,"February 2026":55.36}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",status:"active",statusDate:"",peak:157.34,feb:78.67,total:550.69,monthly:{"August 2025":78.67,"September 2025":0.0,"October 2025":157.34,"November 2025":78.67,"December 2025":78.67,"January 2026":78.67,"February 2026":78.67}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",status:"active",statusDate:"",peak:176.52,feb:88.26,total:617.82,monthly:{"August 2025":88.26,"September 2025":0.0,"October 2025":176.52,"November 2025":88.26,"December 2025":88.26,"January 2026":88.26,"February 2026":88.26}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",status:"active",statusDate:"",peak:412.46,feb:206.23,total:1443.61,monthly:{"August 2025":206.23,"September 2025":0.0,"October 2025":412.46,"November 2025":206.23,"December 2025":206.23,"January 2026":206.23,"February 2026":206.23}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"SD-WAN",contractExpires:"2026-03-21",status:"active",statusDate:"",peak:242.3,feb:121.15,total:848.05,monthly:{"August 2025":121.15,"September 2025":0.0,"October 2025":242.3,"November 2025":121.15,"December 2025":121.15,"January 2026":121.15,"February 2026":121.15}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Broadband",contractExpires:"2024-08-14",status:"active",statusDate:"",peak:199.76,feb:99.88,total:699.16,monthly:{"August 2025":99.88,"September 2025":0.0,"October 2025":199.76,"November 2025":99.88,"December 2025":99.88,"January 2026":99.88,"February 2026":99.88}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-08-18",status:"active",statusDate:"",peak:81.04,feb:40.52,total:283.64,monthly:{"August 2025":40.52,"September 2025":0.0,"October 2025":81.04,"November 2025":40.52,"December 2025":40.52,"January 2026":40.52,"February 2026":40.52}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-07-11",status:"active",statusDate:"",peak:35.96,feb:17.98,total:125.86,monthly:{"August 2025":17.98,"September 2025":0.0,"October 2025":35.96,"November 2025":17.98,"December 2025":17.98,"January 2026":17.98,"February 2026":17.98}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-08-07",status:"active",statusDate:"",peak:189.98,feb:94.99,total:664.93,monthly:{"August 2025":94.99,"September 2025":0.0,"October 2025":189.98,"November 2025":94.99,"December 2025":94.99,"January 2026":94.99,"February 2026":94.99}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2024-08-23",status:"churned",statusDate:"October 2025",peak:30.1,feb:0.0,total:57.19,monthly:{"August 2025":30.1,"September 2025":0.0,"October 2025":27.09,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"400 RHETT APARTMENTS",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2026-11-30",status:"active",statusDate:"",peak:49.23,feb:49.23,total:344.61,monthly:{"August 2025":49.23,"September 2025":49.23,"October 2025":49.23,"November 2025":49.23,"December 2025":49.23,"January 2026":49.23,"February 2026":49.23}},
+{customer:"Beverly Villas",carrier:"Lingo",paidTo:"BLG",service:"Voice / SafeLine",contractExpires:"2025-12-10",status:"active",statusDate:"",peak:17.96,feb:17.96,total:125.72,monthly:{"August 2025":17.96,"September 2025":17.96,"October 2025":17.96,"November 2025":17.96,"December 2025":17.96,"January 2026":17.96,"February 2026":17.96}},
+{customer:"Maverick Yards TH LLC - Maverick Yards",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2025-11-20",status:"new",statusDate:"December 2025",peak:10.92,feb:10.92,total:32.76,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":10.92,"January 2026":10.92,"February 2026":10.92}},
+{customer:"Mills River TH LLC - Artisan Mills River",carrier:"Lingo",paidTo:"BLG",service:"UCaaS",contractExpires:"2025-11-20",status:"active",statusDate:"",peak:18.55,feb:18.55,total:83.65,monthly:{"August 2025":7.0,"September 2025":7.0,"October 2025":7.0,"November 2025":7.0,"December 2025":18.55,"January 2026":18.55,"February 2026":18.55}},
+{customer:"Real Floors",carrier:"Lingo",paidTo:"BLG",service:"Voice / SafeLine",contractExpires:"2024-08-08",status:"active",statusDate:"",peak:27.58,feb:27.58,total:164.26,monthly:{"August 2025":17.98,"September 2025":17.98,"October 2025":17.98,"November 2025":27.58,"December 2025":27.58,"January 2026":27.58,"February 2026":27.58}},
+{customer:"Real Floors",carrier:"Performive",paidTo:"BLG",service:"Managed Services",contractExpires:"2026-02-02",status:"gone_dark",statusDate:"January 2026",peak:723.24,feb:0.0,total:3966.16,monthly:{"August 2025":645.46,"September 2025":645.46,"October 2025":614.38,"November 2025":614.38,"December 2025":723.24,"January 2026":723.24,"February 2026":0.0}},
+{customer:"Taylor College",carrier:"Uniti Fiber",paidTo:"BLG",service:"Fiber / Ethernet",contractExpires:"2026-07-18",status:"active",statusDate:"",peak:95.4,feb:95.4,total:667.8,monthly:{"August 2025":95.4,"September 2025":95.4,"October 2025":95.4,"November 2025":95.4,"December 2025":95.4,"January 2026":95.4,"February 2026":95.4}},
+{customer:"Sto Corp",carrier:"AireSpring",paidTo:"Reignmaker",service:"Fiber / Ethernet",contractExpires:"2028-05-05",status:"new",statusDate:"December 2025",peak:1974.38,feb:1974.38,total:2163.41,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":16.65,"January 2026":172.38,"February 2026":1974.38}},
+{customer:"Sto Corp",carrier:"Lingo",paidTo:"Reignmaker",service:"Fiber / Ethernet",contractExpires:"2028-08-30",status:"new",statusDate:"December 2025",peak:1455.19,feb:925.14,total:2539.43,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":159.1,"January 2026":1455.19,"February 2026":925.14}},
+{customer:"Zodiac Systems",carrier:"Lingo",paidTo:"Reignmaker",service:"Fiber / Ethernet",contractExpires:"2028-08-20",status:"new",statusDate:"February 2026",peak:136.42,feb:136.42,total:136.42,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":136.42}},
+{customer:"Batavia Storage LLC",carrier:"Comcast Business",paidTo:"Reignmaker",service:"Broadband",contractExpires:"2026-12-19",status:"active",statusDate:"",peak:56.27,feb:56.27,total:377.39,monthly:{"August 2025":53.52,"September 2025":53.52,"October 2025":53.52,"November 2025":53.52,"December 2025":53.52,"January 2026":53.52,"February 2026":56.27}},
+{customer:"Kim Nhung Superfood",carrier:"Lingo",paidTo:"Reignmaker",service:"Broadband",contractExpires:"2027-12-08",status:"active",statusDate:"",peak:35.94,feb:35.94,total:246.96,monthly:{"August 2025":35.17,"September 2025":35.17,"October 2025":35.17,"November 2025":35.17,"December 2025":35.17,"January 2026":35.17,"February 2026":35.94}},
+{customer:"Malone Storage",carrier:"Lingo",paidTo:"Reignmaker",service:"Broadband",contractExpires:"2028-06-16",status:"new",statusDate:"December 2025",peak:35.94,feb:35.94,total:106.28,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":35.17,"January 2026":35.17,"February 2026":35.94}},
+{customer:"Noble Family Enterprises",carrier:"Lingo",paidTo:"Reignmaker",service:"Broadband",contractExpires:"2026-12-15",status:"active",statusDate:"",peak:38.69,feb:38.69,total:263.51,monthly:{"August 2025":37.47,"September 2025":37.47,"October 2025":37.47,"November 2025":37.47,"December 2025":37.47,"January 2026":37.47,"February 2026":38.69}},
+{customer:"Sto Corp",carrier:"Lingo",paidTo:"Reignmaker",service:"Broadband",contractExpires:"2028-11-07",status:"new",statusDate:"February 2026",peak:13.45,feb:13.45,total:13.45,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":13.45}},
+{customer:"Bridge Senior Living - Santa Rosa",carrier:"Command Link",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2028-07-29",status:"active",statusDate:"",peak:172.49,feb:172.49,total:312.86,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":91.4,"December 2025":48.97,"January 2026":0.0,"February 2026":172.49}},
+{customer:"Batavia Storage LLC",carrier:"For2Fi",paidTo:"Reignmaker",service:"Broadband",contractExpires:"2025-04-23",status:"churned",statusDate:"August 2025",peak:37.23,feb:0.0,total:37.23,monthly:{"August 2025":37.23,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"Mad Industries",carrier:"GoTo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2028-12-09",status:"new",statusDate:"February 2026",peak:64.76,feb:64.76,total:64.76,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":64.76}},
+{customer:"AVENTON HOFFNER 2 OWNER",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-16",status:"active",statusDate:"",peak:25.97,feb:25.97,total:66.62,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":5.92,"December 2025":15.47,"January 2026":19.26,"February 2026":25.97}},
+{customer:"Aventon Noelle",carrier:"Lingo",paidTo:"Reignmaker",service:"Voice / SafeLine",contractExpires:"2025-12-17",status:"active",statusDate:"",peak:28.28,feb:28.23,total:197.66,monthly:{"August 2025":28.28,"September 2025":28.23,"October 2025":28.23,"November 2025":28.23,"December 2025":28.23,"January 2026":28.23,"February 2026":28.23}},
+{customer:"AVONDALE COMMONS TIC",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-10",status:"new",statusDate:"February 2026",peak:53.82,feb:53.82,total:53.82,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":53.82}},
+{customer:"BVT- Aventon Holly Hill Owner LLP",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-07-21",status:"active",statusDate:"",peak:37.17,feb:37.17,total:126.83,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":7.44,"November 2025":37.17,"December 2025":37.17,"January 2026":7.88,"February 2026":37.17}},
+{customer:"Cypress Point Apartments of Shawnee LLC dba Cypress Point",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Downtown OKC Properties LLC dba The Aberdeen",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"East Oaks 669 LLC dba East Oaks",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Elevate at Dawson Forest",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-08-07",status:"active",statusDate:"",peak:17.84,feb:17.84,total:79.39,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":8.03,"November 2025":17.84,"December 2025":17.84,"January 2026":17.84,"February 2026":17.84}},
+{customer:"Evergreen at Tuscany Villas",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-06-03",status:"active",statusDate:"",peak:17.94,feb:17.94,total:107.64,monthly:{"August 2025":0.0,"September 2025":17.94,"October 2025":17.94,"November 2025":17.94,"December 2025":17.94,"January 2026":17.94,"February 2026":17.94}},
+{customer:"EVERGREEN PINE ISLAND LLC DBA EVERGREEN PINE ISLAN",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2027-10-01",status:"new",statusDate:"December 2025",peak:13.18,feb:7.44,total:28.06,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":13.18,"January 2026":7.44,"February 2026":7.44}},
+{customer:"Evergreen Westside",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-06-17",status:"active",statusDate:"",peak:12.79,feb:12.79,total:89.53,monthly:{"August 2025":12.79,"September 2025":12.79,"October 2025":12.79,"November 2025":12.79,"December 2025":12.79,"January 2026":12.79,"February 2026":12.79}},
+{customer:"Forest Creek 669 LLC dba Forest Creek",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:17.84,feb:17.84,total:124.88,monthly:{"August 2025":17.84,"September 2025":17.84,"October 2025":17.84,"November 2025":17.84,"December 2025":17.84,"January 2026":17.84,"February 2026":17.84}},
+{customer:"High Streets Lofts",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2028-06-20",status:"churned",statusDate:"December 2025",peak:14.28,feb:0.0,total:25.88,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":14.28,"December 2025":11.6,"January 2026":0.0,"February 2026":0.0}},
+{customer:"HoM at Pooler",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-03-18",status:"active",statusDate:"",peak:25.28,feb:25.28,total:141.87,monthly:{"August 2025":15.47,"September 2025":25.28,"October 2025":25.28,"November 2025":0.0,"December 2025":25.28,"January 2026":25.28,"February 2026":25.28}},
+{customer:"Independence Square Acquisitions Partners LLC dba Vintage at",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Liberty Tax",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2028-05-28",status:"active",statusDate:"",peak:276.06,feb:34.68,total:469.89,monthly:{"August 2025":20.43,"September 2025":34.68,"October 2025":276.06,"November 2025":34.68,"December 2025":34.68,"January 2026":34.68,"February 2026":34.68}},
+{customer:"Lyons Estates 669 LLC dba Lyons Estates",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Marbella Palm Coast Apartments",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-24",status:"new",statusDate:"December 2025",peak:28.64,feb:28.64,total:72.75,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":15.47,"January 2026":28.64,"February 2026":28.64}},
+{customer:"MP South Tryon LLC dba Hollis 7601 Apartments",carrier:"Lingo",paidTo:"Reignmaker",service:"Cloud Services",contractExpires:"2025-10-07",status:"active",statusDate:"",peak:20.38,feb:20.38,total:142.66,monthly:{"August 2025":20.38,"September 2025":20.38,"October 2025":20.38,"November 2025":20.38,"December 2025":20.38,"January 2026":20.38,"February 2026":20.38}},
+{customer:"Murabella Owner LLC DBA Antica Apartments",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2027-01-08",status:"new",statusDate:"January 2026",peak:7.44,feb:7.44,total:7.89,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.45,"February 2026":7.44}},
+{customer:"Oxford Oaks Holdings LLC dba Oxford Oaks",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:157.12,feb:35.68,total:359.31,monthly:{"August 2025":23.79,"September 2025":35.68,"October 2025":35.68,"November 2025":157.12,"December 2025":35.68,"January 2026":35.68,"February 2026":35.68}},
+{customer:"PAC-I-DRIVE APARTMENTS",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2027-01-07",status:"new",statusDate:"February 2026",peak:58.29,feb:58.29,total:58.29,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":58.29}},
+{customer:"PARK POINTE APARTMENTS VERO",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-01-07",status:"active",statusDate:"",peak:263.67,feb:23.79,total:406.41,monthly:{"August 2025":0.0,"September 2025":47.58,"October 2025":23.79,"November 2025":23.79,"December 2025":263.67,"January 2026":23.79,"February 2026":23.79}},
+{customer:"Pegasus Residential",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-02-14",status:"churned",statusDate:"September 2025",peak:1.96,feb:0.0,total:3.92,monthly:{"August 2025":1.96,"September 2025":1.96,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"Prairie View 669 LLC dba Prairie View",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Reeds Landing Apartments LLC dba Reeds Landing",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Reserve South",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-07-21",status:"active",statusDate:"",peak:14.87,feb:14.87,total:74.35,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":14.87,"November 2025":14.87,"December 2025":14.87,"January 2026":14.87,"February 2026":14.87}},
+{customer:"Rockberry Apartments",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-05-01",status:"active",statusDate:"",peak:82.41,feb:8.32,total:128.81,monthly:{"August 2025":7.44,"September 2025":7.44,"October 2025":7.44,"November 2025":7.44,"December 2025":82.41,"January 2026":8.32,"February 2026":8.32}},
+{customer:"Rosewood 669 LLC dba Rosewood Manor",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:14.87,feb:14.87,total:104.09,monthly:{"August 2025":14.87,"September 2025":14.87,"October 2025":14.87,"November 2025":14.87,"December 2025":14.87,"January 2026":14.87,"February 2026":14.87}},
+{customer:"Savannah Guthrie 669 LLC dba Savannah House of Guthrie",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Savannah Yukon 669 LLC dba Savannah House of Yukon",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"Sherwood Point Apartments LLC dba Sherwood Pointe",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:8.92,feb:8.92,total:62.44,monthly:{"August 2025":8.92,"September 2025":8.92,"October 2025":8.92,"November 2025":8.92,"December 2025":8.92,"January 2026":8.92,"February 2026":8.92}},
+{customer:"The Cottages at Creekview",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-02-05",status:"churned",statusDate:"September 2025",peak:7.44,feb:0.0,total:14.88,monthly:{"August 2025":7.44,"September 2025":7.44,"October 2025":0.0,"November 2025":0.0,"December 2025":0.0,"January 2026":0.0,"February 2026":0.0}},
+{customer:"The Cottages at Creekview",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-09-23",status:"active",statusDate:"",peak:22.6,feb:22.6,total:85.36,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":7.44,"November 2025":10.12,"December 2025":22.6,"January 2026":22.6,"February 2026":22.6}},
+{customer:"The Olympic Club Apartments of Arlington LLC dba Coffee Cree",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:14.87,feb:14.87,total:104.09,monthly:{"August 2025":14.87,"September 2025":14.87,"October 2025":14.87,"November 2025":14.87,"December 2025":14.87,"January 2026":14.87,"February 2026":14.87}},
+{customer:"The Wayland Apartments",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-05-15",status:"active",statusDate:"",peak:75.35,feb:69.37,total:425.31,monthly:{"August 2025":40.08,"September 2025":55.35,"October 2025":75.35,"November 2025":61.72,"December 2025":61.72,"January 2026":61.72,"February 2026":69.37}},
+{customer:"Thirty5 West New LP LLC dba 35 West",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2025-12-13",status:"active",statusDate:"",peak:23.79,feb:23.79,total:166.53,monthly:{"August 2025":23.79,"September 2025":23.79,"October 2025":23.79,"November 2025":23.79,"December 2025":23.79,"January 2026":23.79,"February 2026":23.79}},
+{customer:"Venture at Lake Julian",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-03-18",status:"active",statusDate:"",peak:204.11,feb:22.7,total:320.04,monthly:{"August 2025":14.7,"September 2025":14.98,"October 2025":15.47,"November 2025":25.38,"December 2025":204.11,"January 2026":22.7,"February 2026":22.7}},
+{customer:"Villas at Sundace",carrier:"Lingo",paidTo:"Reignmaker",service:"Mobility",contractExpires:"2025-08-01",status:"active",statusDate:"",peak:66.55,feb:58.85,total:243.1,monthly:{"August 2025":0.0,"September 2025":0.0,"October 2025":0.0,"November 2025":66.55,"December 2025":58.85,"January 2026":58.85,"February 2026":58.85}},
+{customer:"Villas East Broussard",carrier:"Lingo",paidTo:"Reignmaker",service:"UCaaS",contractExpires:"2026-07-25",status:"active",statusDate:"",peak:97.67,feb:97.67,total:173.62,monthly:{"August 2025":7.44,"September 2025":7.44,"October 2025":12.79,"November 2025":12.79,"December 2025":12.79,"January 2026":22.7,"February 2026":97.67}},
+{customer:"West Village Lofts at Brandon Mill",carrier:"Lingo",paidTo:"Reignmaker",service:"Voice / SafeLine",contractExpires:"2026-02-03",status:"active",statusDate:"",peak:29.55,feb:29.55,total:206.85,monthly:{"August 2025":29.55,"September 2025":29.55,"October 2025":29.55,"November 2025":29.55,"December 2025":29.55,"January 2026":29.55,"February 2026":29.55}}
+];
+const CHURN_LOST={"September 2025":2164.8,"October 2025":9.4,"November 2025":61.43,"December 2025":0.0,"January 2026":60.57,"February 2026":723.24};
+const CHURN_GAINED={"September 2025":65.52,"October 2025":4259.81,"November 2025":178.15,"December 2025":295.74,"January 2026":0.45,"February 2026":499.23};
+
 function CommissionsDashboard() {
   const [tab, setTab]               = React.useState('overview');
   const [search, setSearch]         = React.useState('');
@@ -3113,7 +3204,7 @@ function CommissionsDashboard() {
 
   const Tabs = () => (
     <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
-      {[['overview','Overview'],['trend','Trend & Forecast'],['blg','BLG Revenue'],['reignmaker','Reignmaker'],['clients','Customer 360'],['lines','Service Lines']].map(([k,label])=>(
+      {[['overview','Overview'],['trend','Trend & Forecast'],['blg','BLG Revenue'],['reignmaker','Reignmaker'],['clients','Customer 360'],['lines','Service Lines'],['churn','Churn & Retention']].map(([k,label])=>(
         <button key={k} onClick={()=>setTab(k)} style={{
           padding:'7px 14px', borderRadius:8, fontSize:11, fontWeight:700, cursor:'pointer',
           background:tab===k?C.accent:'transparent', color:tab===k?'#000':C.textMid,
@@ -3642,6 +3733,203 @@ function CommissionsDashboard() {
                   <div style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:f>0?C.green:C.textDim}}>{$n(f)}</div>
                   {tot!==f&&<div style={{fontSize:9,color:C.textDim}}>{$n(tot)} total</div>}
                 </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+
+  // ── CHURN & RETENTION TAB ──────────────────────────────────────────────────
+  const ChurnTab = () => {
+    const $n  = (n) => '$' + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const $k  = (n) => n>=1000 ? '$'+(n/1000).toFixed(1)+'K' : $n(n);
+    const bw  = (v,mx) => mx>0 ? Math.max(2,Math.min(100,(v/mx)*100)) : 0;
+    const mo  = (label) => label.replace(' 2025','').replace(' 2026','');
+
+    const MONTHS_CHURN = ['August 2025','September 2025','October 2025','November 2025','December 2025','January 2026','February 2026'];
+    const churnMos = MONTHS_CHURN.slice(1); // months where we can compare
+
+    const churned  = CHURN_RECORDS.filter(r=>r.status==='churned');
+    const goneDark = CHURN_RECORDS.filter(r=>r.status==='gone_dark');
+    const newInst  = CHURN_RECORDS.filter(r=>r.status==='new');
+    const active   = CHURN_RECORDS.filter(r=>r.status==='active');
+    const declining= CHURN_RECORDS.filter(r=>r.status==='declining');
+
+    const totalChurnedPeak  = churned.reduce((s,r)=>s+r.peak,0) + goneDark.reduce((s,r)=>s+r.peak,0);
+    const totalNewFeb       = newInst.reduce((s,r)=>s+r.feb,0);
+    const activeFebRev      = active.reduce((s,r)=>s+r.feb,0);
+    const netRetention      = totalNewFeb - totalChurnedPeak;
+    const churnRate         = activeFebRev > 0 ? (totalChurnedPeak / (activeFebRev + totalChurnedPeak) * 100) : 0;
+
+    const statusColor = (s) => s==='churned'?C.red:s==='gone_dark'?'#f97316':s==='new'?C.green:s==='declining'?C.gold:C.accent;
+    const statusLabel = (s) => s==='churned'?'Churned':s==='gone_dark'?'Gone Dark':s==='new'?'New Install':s==='declining'?'Declining':'Active';
+
+    const maxBar = Math.max(...churnMos.map(m=>Math.max(CHURN_LOST[m]||0, CHURN_GAINED[m]||0)), 1);
+
+    return (
+      <div>
+        {/* KPI tiles */}
+        <div className="grid-4 mb-16">
+          <MetricTile label="Churned / Gone Dark" value={$n(totalChurnedPeak)} delta={`${churned.length+goneDark.length} service lines lost`} color="red" />
+          <MetricTile label="New Installs (Telarus)" value={$n(totalNewFeb)} delta={`${newInst.length} new lines · Feb 2026`} color="green" />
+          <MetricTile label="Net New vs Lost" value={(netRetention>=0?'+':'')+$n(netRetention)} delta="New installs minus churn" color={netRetention>=0?'green':'red'} />
+          <MetricTile label="Churn Rate" value={churnRate.toFixed(1)+'%'} delta="% of peak book lost · Telarus only" color={churnRate<5?'green':churnRate<15?'gold':'red'} />
+        </div>
+
+        {/* Monthly lost vs gained */}
+        <div className="card mb-16">
+          <div className="card-header">
+            <div><div className="card-title">Monthly Revenue Lost vs Gained</div><div className="card-sub">Telarus only · Aug 2025–Feb 2026</div></div>
+            <div style={{fontSize:10,color:C.textDim}}><span style={{color:C.green}}>■</span> Gained &nbsp;<span style={{color:C.red}}>■</span> Lost</div>
+          </div>
+          {churnMos.map(m => {
+            const lost   = CHURN_LOST[m]   || 0;
+            const gained = CHURN_GAINED[m] || 0;
+            const net    = gained - lost;
+            return (
+              <div key={m} style={{marginBottom:14}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:4,alignItems:'center'}}>
+                  <span style={{fontSize:12,color:C.text}}>{m}</span>
+                  <div style={{display:'flex',gap:12,alignItems:'center'}}>
+                    <span style={{fontSize:10,color:C.green}}>+{$n(gained)}</span>
+                    <span style={{fontSize:10,color:C.red}}>-{$n(lost)}</span>
+                    <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:net>=0?C.green:C.red}}>{net>=0?'+':''}{$n(net)}</span>
+                  </div>
+                </div>
+                <div style={{position:'relative',height:12,borderRadius:6,background:'rgba(255,255,255,.05)',overflow:'hidden'}}>
+                  <div style={{position:'absolute',left:0,top:0,height:'100%',width:`${bw(gained,maxBar)}%`,background:C.green,borderRadius:'6px 0 0 6px'}}/>
+                  <div style={{position:'absolute',right:0,top:0,height:'100%',width:`${bw(lost,maxBar)}%`,background:C.red,borderRadius:'0 6px 6px 0'}}/>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="grid-2 gap-20">
+          {/* Churned & Gone Dark */}
+          <div className="card">
+            <div className="card-header"><div>
+              <div className="card-title">Churned & Gone Dark</div>
+              <div className="card-sub">Telarus accounts with no recent commission</div>
+            </div></div>
+            {[...churned, ...goneDark].length === 0
+              ? <div style={{padding:'20px 0',textAlign:'center',color:C.textDim,fontSize:12}}>No churn detected in this period</div>
+              : [...churned,...goneDark].sort((a,b)=>b.peak-a.peak).map((r,i)=>{
+                  const mxR = Math.max(...MONTHS_CHURN.map(m=>r.monthly[m]||0),0.01);
+                  return (
+                    <div key={i} style={{padding:'10px 0',borderBottom:`1px solid ${C.border}`}}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:8}}>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:2}}>
+                            <span style={{fontSize:9,padding:'1px 5px',borderRadius:3,background:`${statusColor(r.status)}22`,color:statusColor(r.status),fontWeight:700}}>
+                              {statusLabel(r.status).toUpperCase()}
+                            </span>
+                            <span style={{fontSize:9,color:C.textDim}}>{r.paidTo}</span>
+                          </div>
+                          <div style={{fontSize:12,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.customer}</div>
+                          <div style={{fontSize:10,color:C.textDim}}>{r.carrier} · {r.service}</div>
+                          {r.statusDate && <div style={{fontSize:9,color:C.textDim,marginTop:2}}>Last active: {r.statusDate}</div>}
+                          {r.contractExpires && <div style={{fontSize:9,color:C.gold,marginTop:1}}>Contract expires: {r.contractExpires}</div>}
+                        </div>
+                        <div style={{textAlign:'right',flexShrink:0}}>
+                          <div style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.red}}>{$n(r.peak)}<span style={{fontSize:9,color:C.textDim}}>/mo</span></div>
+                          <div style={{fontSize:9,color:C.textDim}}>{$n(r.total)} earned</div>
+                        </div>
+                      </div>
+                      {/* Mini sparkline showing decline */}
+                      <div style={{display:'flex',gap:2,marginTop:6,alignItems:'flex-end',height:14}}>
+                        {MONTHS_CHURN.map(m=>{
+                          const v=r.monthly[m]||0;
+                          const col=v>0?C.accent:C.red;
+                          return<div key={m} title={`${mo(m)}: ${$n(v)}`} style={{flex:1,height:Math.round(bw(v,mxR)*0.12)+2,borderRadius:1,background:v>0?col:'rgba(255,80,80,.2)',minWidth:3}}/>;
+                        })}
+                      </div>
+                      <div style={{display:'flex',gap:2}}>
+                        {MONTHS_CHURN.map(m=><div key={m} style={{flex:1,fontSize:7,color:C.textDim,textAlign:'center',minWidth:3}}>{mo(m).slice(0,1)}</div>)}
+                      </div>
+                    </div>
+                  );
+                })
+            }
+          </div>
+
+          {/* New Installs */}
+          <div className="card">
+            <div className="card-header"><div>
+              <div className="card-title">New Installs</div>
+              <div className="card-sub">First commission in last 3 months · Telarus</div>
+            </div></div>
+            {newInst.sort((a,b)=>b.feb-a.feb).map((r,i)=>{
+              const mxR = Math.max(...MONTHS_CHURN.map(m=>r.monthly[m]||0),0.01);
+              return (
+                <div key={i} style={{padding:'10px 0',borderBottom:`1px solid ${C.border}`}}>
+                  <div style={{display:'flex',justifyContent:'space-between',gap:8}}>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:2}}>
+                        <span style={{fontSize:9,padding:'1px 5px',borderRadius:3,background:`${C.green}22`,color:C.green,fontWeight:700}}>NEW</span>
+                        <span style={{fontSize:9,color:C.textDim}}>{r.paidTo}</span>
+                      </div>
+                      <div style={{fontSize:12,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.customer}</div>
+                      <div style={{fontSize:10,color:C.textDim}}>{r.carrier} · {r.service}</div>
+                      {r.statusDate && <div style={{fontSize:9,color:C.green,marginTop:2}}>First commission: {r.statusDate}</div>}
+                      {r.contractExpires && <div style={{fontSize:9,color:C.textDim}}>Contract expires: {r.contractExpires}</div>}
+                    </div>
+                    <div style={{textAlign:'right',flexShrink:0}}>
+                      <div style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:C.green}}>{$n(r.feb)}<span style={{fontSize:9,color:C.textDim}}>/mo</span></div>
+                      <div style={{fontSize:9,color:C.textDim}}>{$n(r.total)} earned</div>
+                    </div>
+                  </div>
+                  <div style={{display:'flex',gap:2,marginTop:6,alignItems:'flex-end',height:14}}>
+                    {MONTHS_CHURN.map(m=>{const v=r.monthly[m]||0;return<div key={m} title={`${mo(m)}: ${$n(v)}`} style={{flex:1,height:Math.round(bw(v,mxR)*0.12)+2,borderRadius:1,background:v>0?C.green:'rgba(255,255,255,.06)',minWidth:3}}/>;} )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Net retention summary */}
+            <div style={{marginTop:16,padding:'12px',borderRadius:8,background:`${netRetention>=0?C.green:C.red}09`,border:`1px solid ${netRetention>=0?C.green:C.red}22`}}>
+              <div style={{fontSize:10,color:C.textDim,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}}>Net Revenue Retention</div>
+              {[
+                ['New install revenue (Feb)',   $n(totalNewFeb),    C.green],
+                ['Churned/dark revenue (peak)', $n(totalChurnedPeak), C.red],
+                ['Net',                          (netRetention>=0?'+':'')+$n(netRetention), netRetention>=0?C.green:C.red],
+              ].map(([l,v,c])=>(
+                <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0'}}>
+                  <span style={{fontSize:11,color:C.textDim}}>{l}</span>
+                  <span style={{fontSize:12,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:c}}>{v}</span>
+                </div>
+              ))}
+              <div style={{marginTop:8,fontSize:10,color:C.textDim,lineHeight:1.5}}>
+                Note: Telarus history only. AppDirect churn tracking requires historical files.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Full account status list */}
+        <div className="card" style={{marginTop:20}}>
+          <div className="card-header"><div>
+            <div className="card-title">All Telarus Accounts — Status</div>
+            <div className="card-sub">{CHURN_RECORDS.length} service lines · {active.length} active · {newInst.length} new · {churned.length+goneDark.length} lost</div>
+          </div></div>
+          {[...CHURN_RECORDS].sort((a,b)=>{
+            const order = {churned:0,gone_dark:1,declining:2,new:3,active:4};
+            return (order[a.status]||5)-(order[b.status]||5) || b.feb-a.feb;
+          }).map((r,i)=>{
+            const sc = statusColor(r.status);
+            const f  = r.feb;
+            return (
+              <div key={i} style={{padding:'7px 0',borderBottom:`1px solid ${C.border}`,display:'flex',alignItems:'center',gap:8}}>
+                <div style={{width:3,height:28,borderRadius:2,background:sc,flexShrink:0}}/>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:11,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.customer}</div>
+                  <div style={{fontSize:9,color:C.textDim}}>{r.carrier} · <span style={{color:r.paidTo==='BLG'?C.accent:C.gold}}>{r.paidTo}</span></div>
+                </div>
+                <span style={{fontSize:9,padding:'2px 6px',borderRadius:4,background:`${sc}22`,color:sc,fontWeight:700,flexShrink:0}}>{statusLabel(r.status)}</span>
+                <span style={{fontSize:11,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",color:f>0?C.green:C.textDim,minWidth:70,textAlign:'right'}}>{$n(f)}</span>
               </div>
             );
           })}
