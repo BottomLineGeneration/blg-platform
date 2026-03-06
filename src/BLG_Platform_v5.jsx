@@ -287,12 +287,7 @@ const css = `
 `;
 
 // ── Mock data ──────────────────────────────────────────────────────────────────
-const VENDORS = [
-  { id: 1, name: "Comcast Business", logo: "🔵", tier: "Tier 1", score: 78 },
-  { id: 2, name: "Lumen Technologies", logo: "🟡", tier: "Tier 1", score: 85 },
-  { id: 3, name: "Cox Business", logo: "🟠", tier: "Regional", score: 71 },
-  { id: 4, name: "Brightspeed", logo: "⚡", tier: "Regional", score: 69 },
-];
+const VENDORS = []; // Cleared — add via Vendor Matrix per client
 
 const DOCUMENT_TYPES = [
   { value: "", label: "— Select Document Type —" },
@@ -309,54 +304,24 @@ const DOCUMENT_TYPES = [
   { value: "audit_report", label: "🔍 Cost Audit Report" },
 ];
 
-const CONTRACTS = [
-  { term: "Contract Length", value: "36 Months", risk: "medium", icon: "📅", color: C.gold },
-  { term: "Auto-Renewal Clause", value: "60-Day Notice Required", risk: "high", icon: "⚠️", color: C.red },
-  { term: "Early Termination Fee", value: "$4,800 (remaining months × $133)", risk: "high", icon: "💸", color: C.red },
-  { term: "Rate Escalation", value: "3% Annual Escalator", risk: "medium", icon: "📈", color: C.gold },
-  { term: "SLA Uptime Guarantee", value: "99.9% (4.38 hrs/yr downtime)", risk: "low", icon: "✅", color: C.green },
-  { term: "Credit Window", value: "30 Days to Report Outage", risk: "medium", icon: "🕐", color: C.gold },
-  { term: "Bandwidth Commitment", value: "500 Mbps Dedicated", risk: "low", icon: "🌐", color: C.green },
-  { term: "Installation Waiver", value: "$1,200 Waived on 36-Mo Commit", risk: "low", icon: "🎁", color: C.green },
-];
+const CONTRACTS = []; // Cleared — populated via Contract Terms module per client
 
-const TCO_DATA = {
-  categories: ["Monthly MRC", "Install/Setup", "Annual Escalation", "ETF (Avg)", "Support/Maint"],
-  vendors: [
-    { ...VENDORS[0], monthly: 2840, install: 0, escalation: 3.0, etf: 5100, support: 480 },
-    { ...VENDORS[1], monthly: 2650, install: 350, escalation: 2.5, etf: 4770, support: 360 },
-    { ...VENDORS[2], monthly: 2920, install: 0, escalation: 3.5, etf: 5256, support: 540 },
-    { ...VENDORS[3], monthly: 2590, install: 500, escalation: 3.0, etf: 4662, support: 420 },
-  ],
-};
-
-const calcTCO = (v, months) => {
-  const base = v.monthly * months;
-  const escalated = base * (1 + v.escalation / 100 * months / 12 * 0.5);
-  return Math.round(escalated + v.install + v.support * (months / 12));
-};
+const TCO_DATA = { categories: [], vendors: [] }; // Cleared — use Vendor Matrix per client
+const calcTCO = (v, months) => 0; // Legacy stub — use calcMatrixTCO
 
 const CHAT_STARTERS = [
-  "Summarize all open Kairoi opportunities",
-  "Which vendors have proposals pending review?",
-  "Flag contracts expiring within 90 days",
-  "Calculate savings if we renegotiate telecom contracts across the portfolio",
-  "Show me all properties in Qualification stage",
+  "What clients are in my commission report?",
+  "Show me the highest earning clients this month",
+  "Which providers are generating the most commission?",
+  "Summarize my Feb 2026 commission performance",
+  "What vendor comparisons are currently active?",
 ];
 
 const AI_RESPONSES = {
-  default: (q) => `I'm analyzing your BLG portfolio for: **"${q}"**\n\nBased on your current pipeline data across Kairoi, Pegasus Residential, and Highwoods:\n\n• **3 active opportunities** match this query across your Qualification-stage deals\n• **Estimated impact**: $24K–$68K in annual savings potential identified\n• **Recommended action**: Schedule vendor comparison review with decision-makers before Q2 close window\n\nWould you like me to pull the specific property-level breakdown or draft a client-facing summary?`,
-  kairoi: () => `**Kairoi Portfolio Summary** — as of today:\n\n• **11 properties** in active optimization\n• **Telecom**: 8 properties with legacy contracts (avg 28 mo remaining)\n• **Energy**: 3 properties flagged for procurement refresh\n• **Pipeline Stage**: Qualification → Proposal pending for 4 locations\n• **Est. Annual Savings**: $187,400 across full portfolio\n\nNext action: Lumen proposal for Kairoi Spectrum due Friday. Want me to draft the executive summary?`,
-  savings: () => `**Portfolio-Wide Telecom Renegotiation Analysis**:\n\nCurrent blended rate: **$2,847/mo avg** across 23 managed properties\nBenchmark rate: **$2,190/mo avg** (Q1 2026 market)\n\n📊 Gap analysis:\n• Overspend: ~$657/mo per property\n• Portfolio overspend: **~$15,111/mo / $181,332/yr**\n\nTop 3 renegotiation targets:\n1. **Kairoi Spectrum** — 34% above market\n2. **Pegasus Heights** — 28% above market  \n3. **Stonemont Flex** — 22% above market\n\nWant a full property-level breakdown exported to your pipeline?`,
+  default: (q) => `I'm analyzing your BLG portfolio for: **"${q}"**\n\nNo client data has been loaded yet. Add clients and projects via the Client Portal and Vendor Matrix to enable portfolio-level analysis.\n\nCurrently available: Commission Intelligence data for Feb 2026 (59 clients, $20,506.93).`,
 };
 
-const ACTIVITIES = [
-  { icon: "📄", color: "rgba(0,212,255,.15)", text: "Lumen proposal uploaded & analyzed", time: "2h ago", tag: "Document" },
-  { icon: "✅", color: "rgba(0,229,160,.15)", text: "Kairoi Spectrum contract terms extracted", time: "5h ago", tag: "Contract" },
-  { icon: "💰", color: "rgba(245,166,35,.15)", text: "TCO comparison completed — Lumen wins 36-mo", time: "1d ago", tag: "Analysis" },
-  { icon: "🤝", color: "rgba(168,85,247,.15)", text: "Pegasus Residential moved to Qualification", time: "2d ago", tag: "Pipeline" },
-  { icon: "📡", color: "rgba(0,212,255,.15)", text: "IoT quote from Brilliant received", time: "3d ago", tag: "Document" },
-];
+const ACTIVITIES = []; // Cleared — populated as users take actions in the platform
 
 // ── COMPONENTS ─────────────────────────────────────────────────────────────────
 
@@ -371,7 +336,8 @@ function MetricTile({ label, value, delta, color = "cyan", prefix = "", suffix =
 }
 
 // ── TAB: Document Intelligence ─────────────────────────────────────────────────
-function DocumentIntelligence() {
+function DocumentIntelligence({ clientCtx }) {
+  const { activeClient } = clientCtx || {};
   const [docType, setDocType] = useState("");
   const [dragging, setDragging] = useState(false);
   const [uploaded, setUploaded] = useState(false);
@@ -381,12 +347,7 @@ function DocumentIntelligence() {
   const [fileName, setFileName] = useState("");
   const fileRef = useRef();
 
-  const docs = [
-    { name: "Lumen_Proposal_Kairoi.pdf", type: "Vendor Proposal", date: "Mar 3", status: "Analyzed", pages: 12 },
-    { name: "Comcast_Invoice_Feb26.pdf", type: "Telecom Invoice", date: "Feb 28", status: "Analyzed", pages: 4 },
-    { name: "Kairoi_MSA_2024.pdf", type: "Service Contract", date: "Feb 14", status: "Analyzed", pages: 28 },
-    { name: "Brilliant_IoT_Quote.pdf", type: "IoT Quote", date: "Mar 1", status: "Reviewed", pages: 7 },
-  ];
+  const docs = []; // Cleared — documents appear here after upload and analysis
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -413,33 +374,32 @@ function DocumentIntelligence() {
 
   const RESULT_FIELDS = {
     telecom_invoice: [
-      { label: "Account Number", value: "827-449-001-TX", conf: 99 },
-      { label: "Billing Period", value: "Feb 1 – Feb 28, 2026", conf: 98 },
-      { label: "Total Charges", value: "$2,847.33", conf: 99 },
-      { label: "MRC (Recurring)", value: "$2,640.00", conf: 97 },
-      { label: "One-Time Charges", value: "$207.33", conf: 94 },
-      { label: "Service Address", value: "4800 Kairoi Blvd, Austin TX", conf: 96 },
-      { label: "Contract Expiration", value: "August 31, 2027", conf: 91 },
-      { label: "Overage Detected", value: "⚠️ 340 GB excess data ($87.00)", conf: 88 },
+      { label: "Account Number", value: "—", conf: 0 },
+      { label: "Billing Period", value: "—", conf: 0 },
+      { label: "Total Charges", value: "—", conf: 0 },
+      { label: "MRC (Recurring)", value: "—", conf: 0 },
+      { label: "Service Address", value: "—", conf: 0 },
+      { label: "Contract Expiration", value: "—", conf: 0 },
     ],
     vendor_proposal: [
-      { label: "Vendor", value: "Lumen Technologies", conf: 99 },
-      { label: "Proposal Date", value: "February 27, 2026", conf: 98 },
-      { label: "Quoted MRC", value: "$2,650/mo", conf: 99 },
-      { label: "Term Options", value: "36 or 60 months", conf: 97 },
-      { label: "Install Fee", value: "$350 (waivable at 60-mo)", conf: 95 },
-      { label: "SLA Uptime", value: "99.9%", conf: 96 },
-      { label: "Auto-Renew", value: "Yes – 60 day opt-out window", conf: 92 },
-      { label: "Savings vs Current", value: "↓ $197/mo ($2,364/yr)", conf: 90 },
+      { label: "Vendor", value: "—", conf: 0 },
+      { label: "Proposal Date", value: "—", conf: 0 },
+      { label: "Quoted MRC", value: "—", conf: 0 },
+      { label: "Term Options", value: "—", conf: 0 },
+      { label: "Install Fee", value: "—", conf: 0 },
+      { label: "SLA Uptime", value: "—", conf: 0 },
     ],
-    service_contract: CONTRACTS.map(c => ({ label: c.term, value: c.value, conf: 90 + Math.floor(Math.random() * 9) })),
+    service_contract: [
+      { label: "Contract Length", value: "—", conf: 0 },
+      { label: "Auto-Renewal Clause", value: "—", conf: 0 },
+      { label: "Early Termination Fee", value: "—", conf: 0 },
+      { label: "Rate Escalation", value: "—", conf: 0 },
+    ],
     energy_invoice: [
-      { label: "Utility Provider", value: "Oncor Electric Delivery", conf: 99 },
-      { label: "Usage (kWh)", value: "48,320 kWh", conf: 98 },
-      { label: "Rate ($/kWh)", value: "$0.0847", conf: 97 },
-      { label: "Demand Charge", value: "$1,240.00", conf: 95 },
-      { label: "Total Bill", value: "$5,332.10", conf: 99 },
-      { label: "Prior Month", value: "$5,119.40 (↑4.2%)", conf: 94 },
+      { label: "Utility Provider", value: "—", conf: 0 },
+      { label: "Usage (kWh)", value: "—", conf: 0 },
+      { label: "Rate ($/kWh)", value: "—", conf: 0 },
+      { label: "Total Bill", value: "—", conf: 0 },
     ],
   };
 
@@ -448,10 +408,10 @@ function DocumentIntelligence() {
   return (
     <div>
       <div className="grid-4 mb-16">
-        <MetricTile label="Docs Analyzed" value="47" delta="↑ 12 this month" color="cyan" />
-        <MetricTile label="Avg Confidence" value="94" suffix="%" delta="↑ 2% vs last month" color="green" />
-        <MetricTile label="Issues Flagged" value="8" delta="3 require review" color="gold" />
-        <MetricTile label="Time Saved" value="18" suffix="hrs" delta="vs manual entry" color="purple" />
+        <MetricTile label="Docs Analyzed" value={docs.length || "0"} delta={docs.length ? "Uploaded" : "Upload a document to begin"} color="cyan" />
+        <MetricTile label="Avg Confidence" value={results ? "94" : "—"} suffix={results ? "%" : ""} delta={results ? "Extraction confidence" : "Upload to analyze"} color="green" />
+        <MetricTile label="Issues Flagged" value="0" delta="Upload docs to detect issues" color="gold" />
+        <MetricTile label="Time Saved" value="—" delta="Tracked after first upload" color="purple" />
       </div>
 
       <div className="grid-2 gap-20">
@@ -567,89 +527,514 @@ function DocumentIntelligence() {
   );
 }
 
-// ── TAB: Contract Terms ────────────────────────────────────────────────────────
-function ContractTerms() {
-  const [selected, setSelected] = useState(0);
+// ── Contract Risk Engine ───────────────────────────────────────────────────────
+// Auto-calculates risk from real contract fields. Manual override allowed.
+// Fields: autoRenew (bool), optOutDays (number), escalationPct (number), etfAmount (number)
+// Returns { level: "high"|"medium"|"low", triggers: [...reasons] }
+function calcContractRisk(c) {
+  const triggers = { high: [], medium: [] };
 
-  const contracts = [
-    { name: "Kairoi Spectrum — Lumen", exp: "Aug 31, 2027", risk: "medium", months: 18 },
-    { name: "Pegasus Heights — Comcast", exp: "Dec 14, 2026", risk: "high", months: 9 },
-    { name: "Highwoods Parkway — Cox", exp: "Mar 1, 2028", risk: "low", months: 24 },
-    { name: "Stonemont Flex — Lumen", exp: "Jul 15, 2027", risk: "medium", months: 16 },
-  ];
+  // Auto-renewal clause
+  if (c.autoRenew) {
+    const optOut = parseInt(c.optOutDays) || 0;
+    if (optOut > 0 && optOut <= 30)       triggers.high.push(`Auto-renews · only ${optOut}-day opt-out window`);
+    else if (optOut > 30 && optOut <= 60) triggers.medium.push(`Auto-renews · ${optOut}-day opt-out window`);
+    else                                   triggers.medium.push("Auto-renewal clause present");
+  }
+
+  // Rate escalation
+  const esc = parseFloat(c.escalationPct) || 0;
+  if (esc > 3)          triggers.high.push(`Rate escalation ${esc}%/yr — above 3% threshold`);
+  else if (esc >= 1)    triggers.medium.push(`Rate escalation ${esc}%/yr`);
+
+  // ETF
+  const etf = parseFloat(c.etfAmount) || 0;
+  if (etf > 10000)      triggers.high.push(`ETF $${etf.toLocaleString()} — above $10K threshold`);
+  else if (etf >= 2500) triggers.medium.push(`ETF $${etf.toLocaleString()}`);
+
+  // Short opt-out (independent of auto-renew)
+  if (!c.autoRenew && parseInt(c.optOutDays) > 0) {
+    const optOut = parseInt(c.optOutDays);
+    if (optOut <= 30)       triggers.high.push(`Only ${optOut}-day cancellation notice required`);
+    else if (optOut <= 60)  triggers.medium.push(`${optOut}-day cancellation notice required`);
+  }
+
+  const level = triggers.high.length > 0 ? "high"
+    : triggers.medium.length >= 2 ? "medium"
+    : triggers.medium.length === 1 ? "medium"
+    : "low";
+
+  return { level, triggers: [...triggers.high, ...triggers.medium] };
+}
+
+// Resolve effective risk: manual override wins if set, otherwise auto
+function effectiveRisk(c) {
+  const auto = calcContractRisk(c);
+  if (c.riskOverride) return { ...auto, level: c.riskOverride, overridden: true };
+  return { ...auto, overridden: false };
+}
+
+// ── TAB: Contract Terms ────────────────────────────────────────────────────────
+// ── Contract Countdown Engine ──────────────────────────────────────────────────
+// Returns countdown data for both expiration and opt-out deadline.
+// Opt-out deadline = expiration date minus opt-out notice days — the real action date.
+function contractCountdown(c) {
+  if (!c.exp) return {};
+
+  const expDate = new Date(c.exp);
+  if (isNaN(expDate)) return {};
+
+  const now = Date.now();
+  const expDays = Math.floor((expDate - now) / 86400000);
+
+  // Color scale: green > 180d, teal 90–180d, gold 30–90d, red < 30d, dark red expired
+  const dayColor = (d) => d <= 0 ? "#ef4444" : d <= 30 ? C.red : d <= 90 ? C.gold : d <= 180 ? "#66d9e8" : C.green;
+  // Progress bar fills from right as deadline approaches — 100% = expired, 0% = far away
+  // Use a 365-day window as the "full" range
+  const dayPct  = (d) => Math.max(0, Math.min(100, Math.round((1 - d / 365) * 100)));
+
+  const formatDate = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+  const result = {};
+
+  // Expiration countdown
+  result.exp = {
+    days: expDays,
+    dateStr: formatDate(expDate),
+    color: dayColor(expDays),
+    pct: dayPct(expDays),
+    urgent: expDays <= 90,
+  };
+
+  // Opt-out deadline — only if opt-out days are set
+  const optOutDays = parseInt(c.optOutDays) || 0;
+  if (optOutDays > 0) {
+    const optOutDate = new Date(expDate.getTime() - (optOutDays * 86400000));
+    const optOutRemaining = Math.floor((optOutDate - now) / 86400000);
+    result.optOut = {
+      days: optOutRemaining,
+      dateStr: formatDate(optOutDate),
+      color: dayColor(optOutRemaining),
+      pct: dayPct(optOutRemaining),
+      urgent: optOutRemaining <= 30,
+    };
+  }
+
+  return result;
+}
+
+const EMPTY_CONTRACT = { name: "", vendor: "", exp: "", months: "", serviceCategory: "", status: "", autoRenew: false, optOutDays: "", escalationPct: "", etfAmount: "", riskOverride: "", notes: "" };
+
+function ContractTerms({ clientCtx }) {
+  const { activeClient, updateClient, activeClientId } = clientCtx || {};
+  const [selected, setSelected] = useState(0);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newContract, setNewContract] = useState({ ...EMPTY_CONTRACT });
+
+  const contracts = activeClient?.contracts || [];
+
+  const addContract = () => {
+    if (!newContract.name || !activeClientId) return;
+    const c = { ...newContract, id: Date.now().toString(), months: +newContract.months || 0 };
+    updateClient(activeClientId, cl => ({ contracts: [...(cl.contracts || []), c] }));
+    setNewContract({ ...EMPTY_CONTRACT });
+    setShowAdd(false);
+  };
+  const removeContract = (id) => updateClient(activeClientId, cl => ({ contracts: (cl.contracts || []).filter(c => c.id !== id) }));
+  const updateContractField = (id, field, value) => updateClient(activeClientId, cl => ({ contracts: (cl.contracts || []).map(c => c.id === id ? { ...c, [field]: value } : c) }));
+
+  const inputStyle = { padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, outline: "none", width: "100%" };
 
   const riskColor = (r) => r === "high" ? C.red : r === "medium" ? C.gold : C.green;
   const riskBadge = (r) => r === "high" ? "badge-red" : r === "medium" ? "badge-gold" : "badge-green";
+  const statusInfo = (s) => SERVICE_STATUS_LABELS[s] || { label: "Unknown", color: C.textDim, bg: "transparent" };
+
+  const activeContracts = contracts.filter(c => c.status !== "disconnected" && c.status !== "cancelled");
+  const historicalContracts = contracts.filter(c => c.status === "disconnected" || c.status === "cancelled");
+  const highRiskActive = activeContracts.filter(c => effectiveRisk(c).level === "high");
+  const avgMonths = activeContracts.length ? Math.round(activeContracts.reduce((s, c) => s + (+c.months || 0), 0) / activeContracts.length) : null;
+
+  if (!activeClient) return (
+    <div style={{ padding: 40, textAlign: "center" }}>
+      <div style={{ fontSize: 32, marginBottom: 12 }}>📑</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 8 }}>Select a Client First</div>
+      <div style={{ fontSize: 13, color: C.textDim }}>All contracts are scoped to a specific client. Select or add a client using the bar at the top.</div>
+    </div>
+  );
 
   return (
     <div>
       <div className="grid-4 mb-16">
-        <MetricTile label="Active Contracts" value="14" delta="3 expiring < 6 mo" color="cyan" />
-        <MetricTile label="Auto-Renew Risk" value="5" delta="Require action" color="red" />
-        <MetricTile label="ETF Exposure" value="$67K" delta="If all cancelled today" color="gold" />
-        <MetricTile label="Avg Remaining" value="21" suffix=" mo" delta="Across portfolio" color="green" />
+        <MetricTile label="Active Contracts" value={activeContracts.length || "0"} delta={activeClient.name} color="cyan" />
+        <MetricTile label="High-Risk Contracts" value={highRiskActive.length || "0"} delta={highRiskActive.length ? "Auto-calculated from terms" : activeContracts.length ? "No high-risk flags" : "Add contracts below"} color={highRiskActive.length ? "red" : "green"} />
+        <MetricTile label="Historical (Replaced)" value={historicalContracts.length || "0"} delta="Disconnected — record only" color="cyan" />
+        <MetricTile label="Avg Remaining" value={avgMonths != null ? avgMonths : "—"} suffix={avgMonths != null ? " mo" : ""} delta={avgMonths != null ? "Active contracts" : "No active contracts yet"} color="green" />
       </div>
 
       <div className="grid-2 gap-20">
         <div className="card">
           <div className="card-header">
-            <div><div className="card-title">Contract Registry</div><div className="card-sub">Select to extract terms</div></div>
-            <button className="btn btn-primary btn-sm">+ Add Contract</button>
+            <div><div className="card-title">Contract Registry</div><div className="card-sub">{activeClient.name} · {contracts.length} total · {activeContracts.length} active</div></div>
+            <button className="btn btn-primary btn-sm" onClick={() => setShowAdd(!showAdd)}>+ Add Contract</button>
           </div>
-          {contracts.map((c, i) => (
-            <div
-              key={i}
-              onClick={() => setSelected(i)}
-              style={{
-                padding: "14px 16px",
-                borderRadius: 10,
-                cursor: "pointer",
-                marginBottom: 8,
-                border: `1px solid ${selected === i ? "rgba(0,212,255,.3)" : C.border}`,
-                background: selected === i ? "rgba(0,212,255,.04)" : C.surfaceHigh,
-                transition: "all .15s",
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{c.name}</div>
-                <span className={`badge ${riskBadge(c.risk)}`}>{c.risk.toUpperCase()} RISK</span>
+
+          {showAdd && (
+            <div style={{ marginBottom: 16, padding: 14, borderRadius: 10, border: `1px solid rgba(245,166,35,.3)`, background: "rgba(245,166,35,.04)" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 10 }}>New Contract — {activeClient.name}</div>
+
+              {/* Row 1: Basic info */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+                {[["Contract Name / Property", "name"], ["Vendor / Provider", "vendor"], ["Expiration Date (MM/DD/YYYY)", "exp"], ["Months Remaining", "months"]].map(([label, key]) => (
+                  <div key={key}>
+                    <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>{label}</div>
+                    <input style={inputStyle} value={newContract[key]} onChange={e => setNewContract(p => ({ ...p, [key]: e.target.value }))} placeholder={label} />
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center gap-12 mt-8">
-                <span className="text-xs text-mono text-dim">Exp: {c.exp}</span>
-                <span className="text-xs text-mono" style={{ color: c.months <= 12 ? C.red : C.textMid }}>{c.months} mo remaining</span>
+
+              {/* Row 2: Category + Status */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+                <div>
+                  <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Service Category</div>
+                  <select style={{ ...inputStyle, cursor: "pointer" }} value={newContract.serviceCategory} onChange={e => setNewContract(p => ({ ...p, serviceCategory: e.target.value }))}>
+                    <option value="">— Select Category —</option>
+                    {SERVICE_CATEGORIES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Service Status</div>
+                  <select style={{ ...inputStyle, cursor: "pointer" }} value={newContract.status} onChange={e => setNewContract(p => ({ ...p, status: e.target.value }))}>
+                    {SERVICE_STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
               </div>
-              <div className="progress-bar mt-8">
-                <div className="progress-fill" style={{ width: `${(c.months / 36) * 100}%`, background: riskColor(c.risk) + "99", height: "100%" }} />
+
+              {/* Row 3: Risk fields — auto-calculated */}
+              <div style={{ padding: "10px 12px", borderRadius: 8, border: `1px solid rgba(0,212,255,.2)`, background: "rgba(0,212,255,.03)", marginBottom: 8 }}>
+                <div style={{ fontSize: 10, color: C.accent, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8 }}>Risk Factors — Auto-Calculated</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 8 }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Rate Escalation (%/yr)</div>
+                    <input type="number" style={inputStyle} value={newContract.escalationPct} onChange={e => setNewContract(p => ({ ...p, escalationPct: e.target.value }))} placeholder="e.g. 2.5" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>ETF Amount ($)</div>
+                    <input type="number" style={inputStyle} value={newContract.etfAmount} onChange={e => setNewContract(p => ({ ...p, etfAmount: e.target.value }))} placeholder="e.g. 4500" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Opt-Out / Notice (days)</div>
+                    <input type="number" style={inputStyle} value={newContract.optOutDays} onChange={e => setNewContract(p => ({ ...p, optOutDays: e.target.value }))} placeholder="e.g. 30" />
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 12, color: C.textMid }}>
+                    <input type="checkbox" checked={newContract.autoRenew} onChange={e => setNewContract(p => ({ ...p, autoRenew: e.target.checked }))}
+                      style={{ width: 14, height: 14, cursor: "pointer", accentColor: C.gold }} />
+                    Auto-renewal clause present in this contract
+                  </label>
+                </div>
+
+                {/* Live risk preview */}
+                {(() => {
+                  const r = calcContractRisk(newContract);
+                  if (!r.triggers.length) return <div style={{ fontSize: 11, color: C.green }}>✓ No risk factors detected — Low Risk</div>;
+                  return (
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: r.level === "high" ? C.red : C.gold, marginBottom: 4 }}>
+                        {r.level === "high" ? "⚠️ HIGH RISK detected" : "📋 MEDIUM RISK detected"}
+                      </div>
+                      {r.triggers.map((t, i) => <div key={i} style={{ fontSize: 10, color: C.textDim, marginLeft: 8 }}>· {t}</div>)}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Row 4: Manual override */}
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Manual Risk Override (optional)</div>
+                <select style={{ ...inputStyle, cursor: "pointer" }} value={newContract.riskOverride} onChange={e => setNewContract(p => ({ ...p, riskOverride: e.target.value }))}>
+                  <option value="">— Use auto-calculated risk —</option>
+                  <option value="low">Override → Low Risk</option>
+                  <option value="medium">Override → Medium Risk</option>
+                  <option value="high">Override → High Risk</option>
+                </select>
+                {newContract.riskOverride && <div style={{ fontSize: 10, color: C.gold, marginTop: 3 }}>⚠️ Manual override will replace the auto-calculated result</div>}
+              </div>
+
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Notes / Additional Terms</div>
+                <input style={inputStyle} value={newContract.notes} onChange={e => setNewContract(p => ({ ...p, notes: e.target.value }))} placeholder="SLA terms, special conditions, negotiation notes..." />
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button className="btn btn-primary btn-sm" onClick={addContract}>Save Contract</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => setShowAdd(false)}>Cancel</button>
               </div>
             </div>
-          ))}
+          )}
+
+          {contracts.length === 0 && !showAdd && (
+            <div style={{ padding: "24px", textAlign: "center", border: `1px dashed ${C.border}`, borderRadius: 10, color: C.textDim, fontSize: 12 }}>
+              No contracts for {activeClient.name} yet — click + Add Contract to begin
+            </div>
+          )}
+
+          {/* Active contracts */}
+          {activeContracts.length > 0 && (
+            <div style={{ marginBottom: historicalContracts.length ? 12 : 0 }}>
+              {activeContracts.map((c) => {
+                const ri = effectiveRisk(c);
+                const si = statusInfo(c.status);
+                const idx = contracts.indexOf(c);
+                const isSelected = selected === idx;
+                const cd = contractCountdown(c);
+                return (
+                  <div key={c.id} onClick={() => setSelected(idx)}
+                    style={{ padding: "12px 14px", borderRadius: 10, cursor: "pointer", marginBottom: 8, border: `1px solid ${isSelected ? "rgba(0,212,255,.3)" : cd.optOut?.urgent ? "rgba(239,68,68,.3)" : cd.exp?.urgent ? "rgba(245,166,35,.3)" : C.border}`, background: isSelected ? "rgba(0,212,255,.04)" : C.surfaceHigh, transition: "all .15s" }}>
+
+                    {/* Header row */}
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 4 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 8 }}>{c.name}</div>
+                      <div style={{ display: "flex", gap: 5, alignItems: "center", flexShrink: 0 }}>
+                        {c.status && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 5, background: si.bg, color: si.color, fontWeight: 700, whiteSpace: "nowrap" }}>{si.label}</span>}
+                        <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 5, background: ri.level === "high" ? "rgba(239,68,68,.15)" : ri.level === "medium" ? "rgba(245,166,35,.15)" : "rgba(0,229,160,.12)", color: ri.level === "high" ? C.red : ri.level === "medium" ? C.gold : C.green, fontWeight: 700 }}>
+                          {ri.level.toUpperCase()}{ri.overridden ? " ✎" : ""}
+                        </span>
+                        <span onClick={e => { e.stopPropagation(); removeContract(c.id); }} style={{ fontSize: 11, color: C.textDim, cursor: "pointer", padding: "0 3px" }}>✕</span>
+                      </div>
+                    </div>
+
+                    {c.vendor && <div style={{ fontSize: 11, color: C.textDim, marginBottom: 6 }}>{c.vendor}{c.serviceCategory ? ` · ${c.serviceCategory}` : ""}</div>}
+
+                    {/* Countdown bars */}
+                    {(cd.optOut || cd.exp) && (
+                      <div style={{ marginBottom: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+                        {/* Opt-out deadline — the one that really matters */}
+                        {cd.optOut && (
+                          <div>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                              <span style={{ fontSize: 9, color: C.textDim, textTransform: "uppercase", letterSpacing: ".07em" }}>⏰ Opt-Out Deadline</span>
+                              <span style={{ fontSize: 10, fontFamily: "'IBM Plex Mono',monospace", fontWeight: 700, color: cd.optOut.color }}>
+                                {cd.optOut.days <= 0 ? "PASSED" : `${cd.optOut.days}d remaining`}
+                              </span>
+                            </div>
+                            <div style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
+                              <div style={{ width: `${cd.optOut.pct}%`, height: "100%", borderRadius: 3, background: cd.optOut.color, transition: "width .3s" }} />
+                            </div>
+                            <div style={{ fontSize: 9, color: C.textDim, marginTop: 2 }}>Must act by {cd.optOut.dateStr} · {c.optOutDays}-day notice required</div>
+                          </div>
+                        )}
+                        {/* Contract expiration */}
+                        {cd.exp && (
+                          <div>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                              <span style={{ fontSize: 9, color: C.textDim, textTransform: "uppercase", letterSpacing: ".07em" }}>📅 Contract Expires</span>
+                              <span style={{ fontSize: 10, fontFamily: "'IBM Plex Mono',monospace", fontWeight: 700, color: cd.exp.color }}>
+                                {cd.exp.days <= 0 ? "EXPIRED" : `${cd.exp.days}d remaining`}
+                              </span>
+                            </div>
+                            <div style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
+                              <div style={{ width: `${cd.exp.pct}%`, height: "100%", borderRadius: 3, background: cd.exp.color, transition: "width .3s" }} />
+                            </div>
+                            <div style={{ fontSize: 9, color: C.textDim, marginTop: 2 }}>Expires {cd.exp.dateStr}</div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Risk triggers */}
+                    {ri.triggers.length > 0 && (
+                      <div style={{ marginBottom: 6 }}>
+                        {ri.triggers.map((t, i) => (
+                          <div key={i} style={{ fontSize: 10, color: ri.level === "high" ? C.red : C.gold }}>{ri.level === "high" ? "⚠️" : "📋"} {t}</div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Inline controls */}
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }} onClick={e => e.stopPropagation()}>
+                      <select value={c.status || ""} onChange={e => updateContractField(c.id, "status", e.target.value)}
+                        style={{ padding: "3px 8px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.bg, color: c.status ? si.color : C.textDim, fontSize: 10, cursor: "pointer", outline: "none" }}>
+                        {SERVICE_STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </select>
+                      <select value={c.riskOverride || ""} onChange={e => updateContractField(c.id, "riskOverride", e.target.value)}
+                        style={{ padding: "3px 8px", borderRadius: 6, border: `1px solid ${c.riskOverride ? C.gold : C.border}`, background: C.bg, color: c.riskOverride ? C.gold : C.textDim, fontSize: 10, cursor: "pointer", outline: "none" }}>
+                        <option value="">Risk: Auto</option>
+                        <option value="low">Override → Low</option>
+                        <option value="medium">Override → Medium</option>
+                        <option value="high">Override → High</option>
+                      </select>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Historical / disconnected contracts */}
+          {historicalContracts.length > 0 && (
+            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10 }}>
+              <div style={{ fontSize: 10, color: C.textDim, textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 8, fontWeight: 700 }}>
+                Historical — Replaced Services ({historicalContracts.length})
+              </div>
+              {historicalContracts.map((c) => {
+                const si = statusInfo(c.status);
+                return (
+                  <div key={c.id} onClick={() => setSelected(contracts.indexOf(c))}
+                    style={{ padding: "10px 12px", borderRadius: 8, cursor: "pointer", marginBottom: 6, border: `1px solid ${C.border}`, background: "rgba(255,255,255,.02)", opacity: 0.7 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: C.textMid }}>{c.name}</div>
+                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 5, background: si.bg, color: si.color, fontWeight: 700 }}>{si.label}</span>
+                        <span onClick={e => { e.stopPropagation(); removeContract(c.id); }} style={{ fontSize: 11, color: C.textDim, cursor: "pointer", padding: "0 3px" }}>✕</span>
+                      </div>
+                    </div>
+                    {c.vendor && <div style={{ fontSize: 10, color: C.textDim, marginTop: 2 }}>{c.vendor}{c.serviceCategory ? ` · ${c.serviceCategory}` : ""}</div>}
+                    <div style={{ marginTop: 6 }} onClick={e => e.stopPropagation()}>
+                      <select value={c.status || ""} onChange={e => updateContractField(c.id, "status", e.target.value)}
+                        style={{ padding: "3px 8px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.bg, color: si.color, fontSize: 10, cursor: "pointer", outline: "none" }}>
+                        {SERVICE_STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="card">
           <div className="card-header">
             <div>
-              <div className="card-title">Extracted Terms</div>
-              <div className="card-sub">{contracts[selected].name}</div>
-            </div>
-            <div className="flex gap-8">
-              <button className="btn btn-secondary btn-sm">📄 Export PDF</button>
-              <button className="btn btn-gold btn-sm">⚠️ Flag Issues</button>
+              <div className="card-title">Contract Detail</div>
+              <div className="card-sub">{contracts[selected]?.name || "Select a contract"}</div>
             </div>
           </div>
-          {CONTRACTS.map((c, i) => (
-            <div key={i} className="term-row">
-              <div className="term-icon" style={{ background: c.color + "18" }}>
-                <span>{c.icon}</span>
+          {contracts[selected] ? (() => {
+            const c = contracts[selected];
+            const ri = effectiveRisk(c);
+            const si = statusInfo(c.status);
+            const cd = contractCountdown(c);
+            const row = (label, value, color = C.text) => (
+              <div key={label} style={{ padding: "10px 0", borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+                <div style={{ fontSize: 11, color: C.textDim, fontWeight: 600, minWidth: 140 }}>{label}</div>
+                <div style={{ fontSize: 12, color, fontWeight: 500, textAlign: "right", flex: 1 }}>{value}</div>
               </div>
-              <div style={{ flex: 1 }}>
-                <div className="term-key">{c.term}</div>
-                <div className="term-val">{c.value}</div>
-                <div className="term-risk" style={{ color: c.color }}>
-                  {c.risk === "high" ? "⚠️ HIGH RISK — Requires attention" : c.risk === "medium" ? "📋 REVIEW RECOMMENDED" : "✓ Acceptable terms"}
+            );
+            return (
+              <div>
+                {row("Client", activeClient.name, C.accent)}
+                {row("Vendor / Provider", c.vendor || "—")}
+                {row("Service Category", c.serviceCategory || "—", C.gold)}
+                {row("Service Status", c.status ? si.label : "Not set", c.status ? si.color : C.textDim)}
+                {row("Expiration Date", c.exp || "—")}
+                {row("Months Remaining", c.months ? `${c.months} months` : "—", +c.months <= 12 ? C.red : C.gold)}
+
+                {/* Countdown section */}
+                {(cd.optOut || cd.exp) && (
+                  <div style={{ padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
+                    <div style={{ fontSize: 11, color: C.textDim, fontWeight: 600, marginBottom: 10 }}>Critical Dates</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {cd.optOut && (
+                        <div style={{ padding: "10px 12px", borderRadius: 8, background: cd.optOut.urgent ? `${cd.optOut.color}0d` : C.surfaceHigh, border: `1px solid ${cd.optOut.urgent ? cd.optOut.color + "44" : C.border}` }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                            <div>
+                              <div style={{ fontSize: 11, fontWeight: 700, color: cd.optOut.color }}>⏰ Opt-Out Deadline</div>
+                              <div style={{ fontSize: 10, color: C.textDim, marginTop: 1 }}>{c.optOutDays}-day notice · Must act by {cd.optOut.dateStr}</div>
+                            </div>
+                            <div style={{ textAlign: "right" }}>
+                              <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'IBM Plex Mono',monospace", color: cd.optOut.color, lineHeight: 1 }}>
+                                {cd.optOut.days <= 0 ? "PASSED" : cd.optOut.days}
+                              </div>
+                              {cd.optOut.days > 0 && <div style={{ fontSize: 9, color: C.textDim }}>days left</div>}
+                            </div>
+                          </div>
+                          <div style={{ height: 6, borderRadius: 3, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
+                            <div style={{ width: `${cd.optOut.pct}%`, height: "100%", borderRadius: 3, background: cd.optOut.color, transition: "width .4s" }} />
+                          </div>
+                        </div>
+                      )}
+                      {cd.exp && (
+                        <div style={{ padding: "10px 12px", borderRadius: 8, background: cd.exp.urgent ? `${cd.exp.color}0d` : C.surfaceHigh, border: `1px solid ${cd.exp.urgent ? cd.exp.color + "44" : C.border}` }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                            <div>
+                              <div style={{ fontSize: 11, fontWeight: 700, color: cd.exp.color }}>📅 Contract Expires</div>
+                              <div style={{ fontSize: 10, color: C.textDim, marginTop: 1 }}>{cd.exp.dateStr}</div>
+                            </div>
+                            <div style={{ textAlign: "right" }}>
+                              <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'IBM Plex Mono',monospace", color: cd.exp.color, lineHeight: 1 }}>
+                                {cd.exp.days <= 0 ? "EXPIRED" : cd.exp.days}
+                              </div>
+                              {cd.exp.days > 0 && <div style={{ fontSize: 9, color: C.textDim }}>days left</div>}
+                            </div>
+                          </div>
+                          <div style={{ height: 6, borderRadius: 3, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
+                            <div style={{ width: `${cd.exp.pct}%`, height: "100%", borderRadius: 3, background: cd.exp.color, transition: "width .4s" }} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Risk breakdown section */}
+                <div style={{ padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <div style={{ fontSize: 11, color: C.textDim, fontWeight: 600 }}>Contract Risk</div>
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      <span style={{ fontSize: 11, padding: "2px 10px", borderRadius: 6, background: ri.level === "high" ? "rgba(239,68,68,.15)" : ri.level === "medium" ? "rgba(245,166,35,.15)" : "rgba(0,229,160,.12)", color: ri.level === "high" ? C.red : ri.level === "medium" ? C.gold : C.green, fontWeight: 800 }}>
+                        {ri.level.toUpperCase()} RISK
+                      </span>
+                      {ri.overridden && <span style={{ fontSize: 9, color: C.gold, padding: "1px 5px", borderRadius: 4, border: `1px solid ${C.gold}44` }}>OVERRIDDEN</span>}
+                    </div>
+                  </div>
+
+                  {/* Risk factor grid */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+                    {[
+                      ["Auto-Renewal", c.autoRenew ? "Present" : "None", c.autoRenew ? C.gold : C.green],
+                      ["Opt-Out Window", c.optOutDays ? `${c.optOutDays} days` : "Not specified", +c.optOutDays > 0 && +c.optOutDays <= 30 ? C.red : +c.optOutDays <= 60 ? C.gold : C.textMid],
+                      ["Rate Escalation", c.escalationPct ? `${c.escalationPct}%/yr` : "Not specified", +c.escalationPct > 3 ? C.red : +c.escalationPct >= 1 ? C.gold : C.textMid],
+                      ["ETF Amount", c.etfAmount ? `$${parseFloat(c.etfAmount).toLocaleString()}` : "Not specified", +c.etfAmount > 10000 ? C.red : +c.etfAmount >= 2500 ? C.gold : C.textMid],
+                    ].map(([label, val, col]) => (
+                      <div key={label} style={{ padding: "8px 10px", borderRadius: 8, background: C.surfaceHigh }}>
+                        <div style={{ fontSize: 9, color: C.textDim, textTransform: "uppercase", marginBottom: 3 }}>{label}</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: col, fontFamily: "'IBM Plex Mono',monospace" }}>{val}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Triggered reasons */}
+                  {ri.triggers.length > 0 ? (
+                    <div style={{ padding: "8px 10px", borderRadius: 8, background: ri.level === "high" ? "rgba(239,68,68,.06)" : "rgba(245,166,35,.06)" }}>
+                      {ri.triggers.map((t, i) => (
+                        <div key={i} style={{ fontSize: 11, color: ri.level === "high" ? C.red : C.gold, marginBottom: i < ri.triggers.length - 1 ? 4 : 0 }}>
+                          {ri.level === "high" ? "⚠️" : "📋"} {t}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11, color: C.green }}>✓ No risk factors detected based on entered terms</div>
+                  )}
+
+                  {/* Override control */}
+                  <div style={{ marginTop: 10 }}>
+                    <div style={{ fontSize: 9, color: C.textDim, textTransform: "uppercase", marginBottom: 4 }}>Manual Override</div>
+                    <select value={c.riskOverride || ""} onChange={e => updateContractField(c.id, "riskOverride", e.target.value)}
+                      style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${c.riskOverride ? C.gold : C.border}`, background: C.surfaceHigh, color: c.riskOverride ? C.gold : C.textDim, fontSize: 11, cursor: "pointer", outline: "none", width: "100%" }}>
+                      <option value="">— Use auto-calculated risk —</option>
+                      <option value="low">Override → Low Risk</option>
+                      <option value="medium">Override → Medium Risk</option>
+                      <option value="high">Override → High Risk</option>
+                    </select>
+                  </div>
                 </div>
+
+                {row("Notes / Terms", c.notes || "—", C.textMid)}
               </div>
-            </div>
-          ))}
+            );
+          })() : (
+            <div style={{ padding: "24px", textAlign: "center", color: C.textDim, fontSize: 12 }}>Add contracts on the left to view details here</div>
+          )}
         </div>
       </div>
     </div>
@@ -657,163 +1042,401 @@ function ContractTerms() {
 }
 
 // ── TAB: Vendor Proposal Matrix ────────────────────────────────────────────────
-function VendorMatrix() {
+// ── VENDOR MATRIX DATA — seeded from real Highwoods POTS comparison 2/7/25 ────
+const MATRIX_PROJECTS = [
+  {
+    id: "hw-pots-2025",
+    client: "HIGHWOODS PROPERTIES INC",
+    project: "POTS Replacement",
+    serviceType: "Voice / POTS Replacement",
+    lines: 1116, locations: 144, units: 348,
+    status: "Active",
+    created: "2/7/2025",
+    vendors: [
+      { id: "fusion", name: "Fusion Connect", term: 36, mrc: 25382, taxes: 6078, nrc: 0, nrcTax: 0, mrr_credit: 0, nps: 9, revenue: null, perLine: 22.74, notes: "Taxes 24%. $22.74/line. 100Mb data pooled. Morgan Stanley acquisition 2022.", recommended: true },
+      { id: "lingo-a", name: "Lingo (Option A)", term: 36, mrc: 40497, taxes: 6075, nrc: 77140, nrcTax: 7714, mrr_credit: 0, nps: 65, revenue: 135, perLine: 36.29, notes: "15% taxes. $32/line + $13.75/box. Unlimited data. Ooma underlying. $450/loc install." },
+      { id: "lingo-b", name: "Lingo (Option B)", term: 36, mrc: 44961, taxes: 6750, nrc: 0, nrcTax: 0, mrr_credit: 0, nps: 65, revenue: 135, perLine: 40.29, notes: "15% taxes. $36/line + $13.75/box. Unlimited data. Ooma underlying. No install fee." },
+      { id: "lumen", name: "Lumen Technologies", term: 36, mrc: 42497, taxes: 9349, nrc: 0, nrcTax: 0, mrr_credit: 16800, nps: -19, revenue: 14500, perLine: 38.08, notes: "22% taxes. WAN discount $2,200/mo for 24 mos. $8,400 credit months 1 & 13." },
+      { id: "lumen-60", name: "Lumen Technologies", term: 60, mrc: 39060, taxes: 8593, nrc: 0, nrcTax: 0, mrr_credit: 16800, nps: -19, revenue: 14500, perLine: 35.00, notes: "60-month term. Same WAN discount and credits apply." },
+      { id: "ooma", name: "Ooma Air Dial", term: 36, mrc: 36828, taxes: 9409, nrc: 0, nrcTax: 0, mrr_credit: 24000, nps: null, revenue: 221, perLine: 33.00, notes: "24.5% taxes. Unlimited data. Delayed install available. 65% loc discount ~$24K." },
+      { id: "bcn", name: "BCN Telecom", term: 36, mrc: 42831, taxes: 11522, nrc: 0, nrcTax: 0, mrr_credit: 0, nps: 65, revenue: 67, perLine: 39.12, notes: "26.9% taxes. 1,095 lines. Onsite install included. Cross-connect $275 if porting." },
+    ]
+  }
+];
+
+const DEFAULT_VENDOR = { id: "", name: "", term: 36, mrc: 0, taxes: 0, nrc: 0, nrcTax: 0, mrr_credit: 0, nps: null, revenue: null, perLine: 0, notes: "", recommended: false };
+
+function calcMatrixTCO(v, months) {
+  const totalMRC = (v.mrc + v.taxes) * months;
+  const totalNRC = v.nrc + v.nrcTax;
+  const credit = v.mrr_credit || 0;
+  return Math.round(totalMRC + totalNRC - credit);
+}
+
+function VendorMatrix({ clientCtx }) {
+  const { activeClient, updateClient, activeClientId } = clientCtx || {};
+  // Projects stored on the client object; seed Highwoods if that client is selected
+  const rawProjects = activeClient?.vendorProjects || [];
+  // For Highwoods, auto-seed the real POTS data if no projects yet
+  const isHighwoods = activeClient?.name?.toLowerCase().includes("highwoods");
+  const projects = rawProjects.length === 0 && isHighwoods ? MATRIX_PROJECTS : rawProjects;
+  const [activeProject, setActiveProject] = useState(projects[0]?.id || null);
   const [termMonths, setTermMonths] = useState(36);
   const [sortBy, setSortBy] = useState("tco");
+  const [showAddVendor, setShowAddVendor] = useState(false);
+  const [showAddProject, setShowAddProject] = useState(false);
+  const [newVendor, setNewVendor] = useState({ ...DEFAULT_VENDOR });
+  const [newProject, setNewProject] = useState({ project: "", serviceType: "", lines: "", locations: "" });
+  const [view, setView] = useState("matrix"); // matrix | noneconomic
 
-  const withTCO = TCO_DATA.vendors.map(v => ({ ...v, tco: calcTCO(v, termMonths) }));
-  const sorted = [...withTCO].sort((a, b) => sortBy === "tco" ? a.tco - b.tco : sortBy === "monthly" ? a.monthly - b.monthly : b.score - a.score);
-  const bestTCO = Math.min(...withTCO.map(v => v.tco));
-  const worstTCO = Math.max(...withTCO.map(v => v.tco));
+  const fmt = (n) => "$" + Math.round(n).toLocaleString();
+  const proj = projects.find(p => p.id === activeProject) || projects[0];
 
-  const fmt = (n) => "$" + n.toLocaleString();
+  // Persist changes back to clientCtx
+  const saveProjects = (updatedProjects) => {
+    if (activeClientId && updateClient) {
+      updateClient(activeClientId, () => ({ vendorProjects: updatedProjects }));
+    }
+  };
 
-  const rows = [
-    { label: "Monthly MRC", key: "monthly", fmt: (v) => fmt(v.monthly), compare: true, lower: true },
-    { label: "Installation Fee", key: "install", fmt: (v) => v.install === 0 ? "✓ Waived" : fmt(v.install), compare: false },
-    { label: "Annual Rate Escalation", key: "escalation", fmt: (v) => `${v.escalation}%`, compare: true, lower: true },
-    { label: "ETF (Early Termination)", key: "etf", fmt: (v) => fmt(v.etf), compare: true, lower: true },
-    { label: "Support & Maintenance", key: "support", fmt: (v) => fmt(v.support) + "/yr", compare: true, lower: true },
-    { label: `${termMonths}-Mo TCO`, key: "tco", fmt: (v) => fmt(v.tco), compare: true, lower: true, highlight: true },
-    { label: "BLG Vendor Score", key: "score", fmt: (v) => v.score + " / 100", compare: true, lower: false },
+  // Filter vendors by selected term
+  const vendors = proj ? (proj.vendors.filter(v => v.term === termMonths || proj.vendors.filter(x => x.term === termMonths).length === 0 ? true : v.term === termMonths)) : [];
+  const withTCO = vendors.map(v => ({ ...v, tco: calcMatrixTCO(v, termMonths) }));
+  const sorted = [...withTCO].sort((a, b) => sortBy === "tco" ? a.tco - b.tco : sortBy === "mrc" ? a.mrc - b.mrc : sortBy === "perline" ? a.perLine - b.perLine : a.tco - b.tco);
+  const bestTCO = sorted.length ? sorted[0].tco : 0;
+  const worstTCO = sorted.length ? sorted[sorted.length - 1].tco : 0;
+  const bestMRC = sorted.length ? Math.min(...sorted.map(v => v.mrc)) : 0;
+
+  const inputStyle = { padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, outline: "none", width: "100%" };
+  const vSet = (k, val) => setNewVendor(p => ({ ...p, [k]: val }));
+  const pSet = (k, val) => setNewProject(p => ({ ...p, [k]: val }));
+
+  const addVendor = () => {
+    if (!newVendor.name || !newVendor.mrc || !proj) return;
+    const updated = projects.map(p => p.id === activeProject ? { ...p, vendors: [...p.vendors, { ...newVendor, id: Date.now().toString(), mrc: +newVendor.mrc, taxes: +newVendor.taxes, nrc: +newVendor.nrc, nrcTax: +newVendor.nrcTax, mrr_credit: +newVendor.mrr_credit, perLine: +newVendor.perLine, term: +newVendor.term }] } : p);
+    saveProjects(updated);
+    setNewVendor({ ...DEFAULT_VENDOR });
+    setShowAddVendor(false);
+  };
+
+  const addProject = () => {
+    if (!newProject.project || !activeClientId) return;
+    const id = (activeClient?.name || "project").toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+    const updated = [...projects, { id, client: activeClient?.name || "", ...newProject, lines: +newProject.lines || 0, locations: +newProject.locations || 0, status: "Active", created: new Date().toLocaleDateString(), vendors: [] }];
+    saveProjects(updated);
+    setActiveProject(id);
+    setNewProject({ project: "", serviceType: "", lines: "", locations: "" });
+    setShowAddProject(false);
+  };
+
+  const removeVendor = (vid) => {
+    const updated = projects.map(p => p.id === activeProject ? { ...p, vendors: p.vendors.filter(v => v.id !== vid) } : p);
+    saveProjects(updated);
+  };
+
+  // NEC data
+  const NEC_ROWS = [
+    { label: "Net Promoter Score (NPS)", key: "nps", fmt: (v) => v.nps != null ? (v.nps > 0 ? `+${v.nps}` : `${v.nps}`) : "N/A", good: (v) => v.nps != null && v.nps > 30, bad: (v) => v.nps != null && v.nps < 0 },
+    { label: "Annual Revenue", key: "revenue", fmt: (v) => v.revenue ? `$${v.revenue}M` : "N/A", good: (v) => v.revenue > 200, bad: () => false },
+    { label: "Cost Per Line", key: "perLine", fmt: (v) => v.perLine ? `$${v.perLine.toFixed(2)}/line` : "N/A", good: (v) => v.perLine > 0 && v.perLine === Math.min(...vendors.filter(x => x.perLine > 0).map(x => x.perLine)), bad: (v) => v.perLine === Math.max(...vendors.map(x => x.perLine)) },
+    { label: "Recommended by BLG", key: "recommended", fmt: (v) => v.recommended ? "✓ Yes" : "—", good: (v) => v.recommended, bad: () => false },
   ];
+
+  const termOptions = proj ? [...new Set(proj.vendors.map(v => v.term))].sort((a,b) => a-b) : [36];
+
+  if (!activeClient) return (
+    <div style={{ padding: 40, textAlign: "center" }}>
+      <div style={{ fontSize: 32, marginBottom: 12 }}>📊</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 8 }}>Select a Client First</div>
+      <div style={{ fontSize: 13, color: C.textDim }}>Vendor comparisons are scoped to a specific client. Each client can have multiple comparison projects (e.g. POTS Replacement, DIA, Energy).</div>
+    </div>
+  );
 
   return (
     <div>
-      <div className="grid-4 mb-16">
-        <MetricTile label="Vendors Compared" value="4" color="cyan" />
-        <MetricTile label={`${termMonths}-Mo Best TCO`} value={fmt(bestTCO)} color="green" delta="Lumen Technologies" />
-        <MetricTile label="Max Savings vs Worst" value={fmt(worstTCO - bestTCO)} color="gold" delta="vs Comcast" />
-        <MetricTile label="Avg Vendor Score" value={Math.round(withTCO.reduce((a, b) => a + b.score, 0) / withTCO.length)} suffix="/100" color="purple" />
+      {/* Project Selector Bar */}
+      <div className="card mb-16" style={{ padding: "12px 16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 11, color: C.textDim, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>Client: <strong style={{ color: C.accent }}>{activeClient.name}</strong></span>
+          <span style={{ fontSize: 11, color: C.textDim }}>·</span>
+          <span style={{ fontSize: 11, color: C.textDim, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>Project:</span>
+          {projects.map(p => (
+            <button key={p.id} onClick={() => setActiveProject(p.id)}
+              style={{ padding: "5px 14px", borderRadius: 20, border: `1px solid ${activeProject === p.id ? C.accent : C.border}`, background: activeProject === p.id ? "rgba(0,212,255,.1)" : "transparent", color: activeProject === p.id ? C.accent : C.textMid, fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+              {p.project}
+            </button>
+          ))}
+          <button onClick={() => setShowAddProject(!showAddProject)}
+            style={{ padding: "5px 14px", borderRadius: 20, border: `1px dashed ${C.border}`, background: "transparent", color: C.textDim, fontSize: 12, cursor: "pointer" }}>
+            + New Comparison
+          </button>
+        </div>
+
+        {/* Project meta */}
+        <div style={{ display: "flex", gap: 20, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${C.border}`, flexWrap: "wrap" }}>
+          {[
+            ["Client", proj.client],
+            ["Service Type", proj.serviceType],
+            ["Lines", proj.lines || "—"],
+            ["Locations", proj.locations || "—"],
+            ["Created", proj.created],
+            ["Status", proj.status],
+          ].map(([l, v]) => (
+            <div key={l}>
+              <div style={{ fontSize: 9, color: C.textDim, textTransform: "uppercase", letterSpacing: ".08em" }}>{l}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{v}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
+      {/* Add Project Form */}
+      {showAddProject && (
+        <div className="card mb-16" style={{ border: `1px solid rgba(0,212,255,.3)`, background: "rgba(0,212,255,.04)" }}>
+          <div className="card-title mb-12">New Comparison — {activeClient?.name}</div>
+          <div className="grid-4" style={{ gap: 12, marginBottom: 12 }}>
+            {[["Project / Service Type", "project"], ["Service Description", "serviceType"]].map(([label, key]) => (
+              <div key={key}>
+                <div style={{ fontSize: 10, color: C.textDim, marginBottom: 4, textTransform: "uppercase" }}>{label}</div>
+                <input style={inputStyle} value={newProject[key]} onChange={e => pSet(key, e.target.value)} placeholder={label} />
+              </div>
+            ))}
+            <div>
+              <div style={{ fontSize: 10, color: C.textDim, marginBottom: 4, textTransform: "uppercase" }}>Lines / Units</div>
+              <input style={inputStyle} value={newProject.lines} onChange={e => pSet("lines", e.target.value)} placeholder="e.g. 1116" type="number" />
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button className="btn btn-primary btn-sm" onClick={addProject}>Create Project</button>
+            <button className="btn btn-ghost btn-sm" onClick={() => setShowAddProject(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* KPI Row */}
+      <div className="grid-4 mb-16">
+        <MetricTile label="Vendors Compared" value={vendors.length} color="cyan" delta={`${termMonths}-month term`} />
+        <MetricTile label="Best TCO" value={fmt(bestTCO)} color="green" delta={sorted[0]?.name || "—"} />
+        <MetricTile label="TCO Savings vs Worst" value={fmt(worstTCO - bestTCO)} color="gold" delta={`vs ${sorted[sorted.length-1]?.name || "—"}`} />
+        <MetricTile label="Best MRC" value={fmt(bestMRC)} color="purple" delta={`$${proj.lines ? (bestMRC / proj.lines).toFixed(2) : "—"}/line`} />
+      </div>
+
+      {/* View toggle + Controls */}
       <div className="card">
         <div className="card-header">
-          <div><div className="card-title">Vendor Comparison Matrix</div><div className="card-sub">Side-by-side TCO analysis</div></div>
-          <div className="flex items-center gap-12">
-            <div className="flex items-center gap-8">
-              <span className="text-xs text-mono text-mid">Term:</span>
-              {[36, 60].map(m => (
-                <button
-                  key={m}
-                  onClick={() => setTermMonths(m)}
-                  style={{
-                    padding: "5px 14px",
-                    borderRadius: 6,
-                    border: `1px solid ${termMonths === m ? C.accent : C.border}`,
-                    background: termMonths === m ? "rgba(0,212,255,.1)" : C.surfaceHigh,
-                    color: termMonths === m ? C.accent : C.textMid,
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    fontFamily: "'IBM Plex Mono', monospace",
-                  }}
-                >{m} Mo</button>
+          <div>
+            <div className="card-title">{proj.client} — {proj.project}</div>
+            <div className="card-sub">{vendors.length} vendors · {termMonths}-month term · {proj.lines ? `${proj.lines} lines · ` : ""}{proj.locations ? `${proj.locations} locations` : ""}</div>
+          </div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            {/* View Toggle */}
+            {[["matrix", "💰 Financial"], ["nec", "📊 Non-Economic"]].map(([v, l]) => (
+              <button key={v} onClick={() => setView(v)}
+                style={{ padding: "5px 12px", borderRadius: 6, border: `1px solid ${view === v ? C.accent : C.border}`, background: view === v ? "rgba(0,212,255,.1)" : C.surfaceHigh, color: view === v ? C.accent : C.textMid, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>{l}</button>
+            ))}
+            {/* Term */}
+            <span style={{ fontSize: 11, color: C.textDim }}>Term:</span>
+            {termOptions.map(m => (
+              <button key={m} onClick={() => setTermMonths(m)}
+                style={{ padding: "5px 12px", borderRadius: 6, border: `1px solid ${termMonths === m ? C.gold : C.border}`, background: termMonths === m ? "rgba(245,166,35,.1)" : C.surfaceHigh, color: termMonths === m ? C.gold : C.textMid, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "'IBM Plex Mono',monospace" }}>{m} Mo</button>
+            ))}
+            {/* Sort */}
+            {view === "matrix" && <>
+              <span style={{ fontSize: 11, color: C.textDim }}>Sort:</span>
+              {[["tco","TCO"],["mrc","MRC"],["perline","$/Line"]].map(([k,l]) => (
+                <button key={k} onClick={() => setSortBy(k)}
+                  style={{ padding: "5px 10px", borderRadius: 6, border: `1px solid ${sortBy === k ? C.green : C.border}`, background: sortBy === k ? "rgba(0,229,160,.08)" : C.surfaceHigh, color: sortBy === k ? C.green : C.textMid, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>{l}</button>
               ))}
-            </div>
-            <div className="flex items-center gap-8">
-              <span className="text-xs text-mono text-mid">Sort:</span>
-              {[["tco", "TCO"], ["monthly", "MRC"], ["score", "Score"]].map(([k, l]) => (
-                <button
-                  key={k}
-                  onClick={() => setSortBy(k)}
-                  style={{
-                    padding: "5px 12px",
-                    borderRadius: 6,
-                    border: `1px solid ${sortBy === k ? C.gold : C.border}`,
-                    background: sortBy === k ? "rgba(245,166,35,.1)" : C.surfaceHigh,
-                    color: sortBy === k ? C.gold : C.textMid,
-                    cursor: "pointer",
-                    fontSize: 11,
-                    fontWeight: 600,
-                    fontFamily: "'IBM Plex Mono', monospace",
-                  }}
-                >{l}</button>
-              ))}
-            </div>
-            <button className="btn btn-primary btn-sm">📊 Export</button>
+            </>}
+            <button onClick={() => setShowAddVendor(!showAddVendor)}
+              style={{ padding: "5px 14px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.textMid, fontSize: 11, cursor: "pointer" }}>+ Add Vendor</button>
           </div>
         </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table className="data-table w-full">
-            <thead>
-              <tr>
-                <th style={{ minWidth: 180 }}>Metric</th>
-                {sorted.map((v, i) => (
-                  <th key={v.id} style={{ textAlign: "center", minWidth: 160 }}>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                      <div style={{ fontSize: 16 }}>{v.logo}</div>
-                      <div style={{ color: C.text, fontSize: 11 }}>{v.name}</div>
-                      {i === 0 && <span className="badge badge-green" style={{ fontSize: 9 }}>⭐ BEST {sortBy.toUpperCase()}</span>}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, ri) => (
-                <tr key={ri} style={row.highlight ? { background: "rgba(0,229,160,.03)" } : {}}>
-                  <td>
-                    <span style={{ fontWeight: row.highlight ? 700 : 400, color: row.highlight ? C.green : C.textMid, fontFamily: row.highlight ? "'Syne', sans-serif" : "inherit", fontSize: row.highlight ? 13 : 13 }}>
-                      {row.highlight ? "🏆 " : ""}{row.label}
-                    </span>
-                  </td>
-                  {sorted.map((v) => {
-                    const val = row.fmt(v);
-                    const isBest = row.compare && (row.lower ? v[row.key] === Math.min(...withTCO.map(x => x[row.key])) : v[row.key] === Math.max(...withTCO.map(x => x[row.key])));
-                    const isWorst = row.compare && (row.lower ? v[row.key] === Math.max(...withTCO.map(x => x[row.key])) : v[row.key] === Math.min(...withTCO.map(x => x[row.key])));
-                    return (
-                      <td key={v.id} style={{ textAlign: "center" }}>
-                        <div style={{ fontFamily: row.highlight ? "'Syne', sans-serif" : "'IBM Plex Mono', monospace", fontWeight: row.highlight ? 800 : 500, fontSize: row.highlight ? 16 : 13, color: isBest ? C.green : isWorst ? C.red : C.text }}>
-                          {val}
-                        </div>
-                        {row.compare && row.key !== "score" && (
-                          <div style={{ marginTop: 4, height: 4, background: C.border, borderRadius: 2, overflow: "hidden" }}>
-                            <div style={{
-                              height: "100%",
-                              width: `${((v[row.key] - Math.min(...withTCO.map(x => x[row.key]))) / (Math.max(...withTCO.map(x => x[row.key])) - Math.min(...withTCO.map(x => x[row.key])) || 1)) * 100}%`,
-                              background: isBest ? C.green : isWorst ? C.red : C.gold,
-                              borderRadius: 2,
-                            }} />
-                          </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
+        {/* Add Vendor Form */}
+        {showAddVendor && (
+          <div style={{ padding: "14px 16px", marginBottom: 16, background: "rgba(245,166,35,.05)", border: `1px solid rgba(245,166,35,.25)`, borderRadius: 10 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 12 }}>Add Vendor Quote</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10, marginBottom: 12 }}>
+              {[
+                ["Vendor Name", "name", "text"],
+                ["Contract Term (mo)", "term", "number"],
+                ["MRC (before tax)", "mrc", "number"],
+                ["Taxes & Surcharges", "taxes", "number"],
+                ["NRC / Setup Fee", "nrc", "number"],
+                ["NRC Tax", "nrcTax", "number"],
+                ["MRR Credits", "mrr_credit", "number"],
+                ["Cost Per Line ($)", "perLine", "number"],
+                ["NPS Score", "nps", "number"],
+                ["Annual Revenue ($M)", "revenue", "number"],
+              ].map(([label, key, type]) => (
+                <div key={key}>
+                  <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>{label}</div>
+                  <input type={type} style={inputStyle} value={newVendor[key] || ""} onChange={e => vSet(key, e.target.value)} placeholder={label} />
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 10, color: C.textDim, marginBottom: 3, textTransform: "uppercase" }}>Notes</div>
+              <input style={{ ...inputStyle, width: "100%" }} value={newVendor.notes} onChange={e => vSet("notes", e.target.value)} placeholder="Pricing assumptions, key terms, caveats..." />
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button className="btn btn-primary btn-sm" onClick={addVendor}>Add to Matrix</button>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowAddVendor(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
+
+        {/* Financial Matrix View */}
+        {view === "matrix" && (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${C.border}` }}>
+                  <th style={{ padding: "10px 12px", textAlign: "left", fontSize: 11, color: C.textDim, fontWeight: 700, minWidth: 160 }}>METRIC</th>
+                  {sorted.map((v, i) => (
+                    <th key={v.id} style={{ padding: "10px 12px", textAlign: "center", minWidth: 160 }}>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: i === 0 ? C.green : C.text }}>{v.name}</div>
+                      <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>{v.term} mo</div>
+                      {i === 0 && <div style={{ marginTop: 4 }}><span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10, background: "rgba(0,229,160,.15)", color: C.green, fontWeight: 700 }}>⭐ BEST TCO</span></div>}
+                      {v.recommended && <div style={{ marginTop: 4 }}><span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10, background: "rgba(0,212,255,.15)", color: C.accent, fontWeight: 700 }}>✓ BLG REC</span></div>}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: "MRC (before tax)", key: "mrc", fmt: v => fmt(v.mrc), compare: true, lower: true },
+                  { label: "Taxes & Surcharges", key: "taxes", fmt: v => fmt(v.taxes), compare: true, lower: true },
+                  { label: "First Year Total", key: null, fmt: v => fmt((v.mrc + v.taxes) * 12), compare: true, lower: true },
+                  { label: "NRC (setup / install)", key: "nrc", fmt: v => v.nrc > 0 ? fmt(v.nrc + v.nrcTax) : "✓ Waived", compare: false },
+                  { label: "MRR Credits / Discounts", key: "mrr_credit", fmt: v => v.mrr_credit > 0 ? `−${fmt(v.mrr_credit)}` : "—", compare: false },
+                  { label: "Cost Per Line", key: "perLine", fmt: v => v.perLine ? `$${v.perLine.toFixed(2)}/line` : "—", compare: true, lower: true },
+                  { label: `${termMonths}-Month TCO`, key: "tco", fmt: v => fmt(v.tco), compare: true, lower: true, highlight: true },
+                ].map((row, ri) => {
+                  const nums = sorted.map(v => row.key === "tco" ? v.tco : row.key === null ? (v.mrc + v.taxes) * 12 : v[row.key]).filter(n => n > 0);
+                  const best = nums.length ? Math.min(...nums) : null;
+                  const worst = nums.length ? Math.max(...nums) : null;
+                  return (
+                    <tr key={ri} style={{ borderBottom: `1px solid ${C.border}`, background: row.highlight ? "rgba(0,229,160,.03)" : ri % 2 === 0 ? "transparent" : "rgba(255,255,255,.01)" }}>
+                      <td style={{ padding: "10px 12px", color: row.highlight ? C.green : C.textMid, fontWeight: row.highlight ? 700 : 500 }}>
+                        {row.highlight ? "🏆 " : ""}{row.label}
+                      </td>
+                      {sorted.map(v => {
+                        const raw = row.key === "tco" ? v.tco : row.key === null ? (v.mrc + v.taxes) * 12 : v[row.key];
+                        const display = row.fmt(v);
+                        const isBest = row.compare && raw === best && best !== worst;
+                        const isWorst = row.compare && raw === worst && best !== worst;
+                        const barPct = (row.compare && best != null && worst !== best) ? ((raw - best) / (worst - best)) * 100 : 0;
+                        return (
+                          <td key={v.id} style={{ padding: "10px 12px", textAlign: "center" }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontWeight: row.highlight ? 800 : 600, fontSize: row.highlight ? 15 : 12, color: isBest ? C.green : isWorst ? "#f87171" : C.text }}>
+                              {display}
+                            </div>
+                            {row.compare && worst !== best && (
+                              <div style={{ marginTop: 5, height: 4, background: C.border, borderRadius: 2, overflow: "hidden" }}>
+                                <div style={{ height: "100%", width: `${barPct}%`, background: isBest ? C.green : isWorst ? "#f87171" : C.gold, borderRadius: 2 }} />
+                              </div>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Non-Economic Comparison View */}
+        {view === "nec" && (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${C.border}` }}>
+                  <th style={{ padding: "10px 12px", textAlign: "left", fontSize: 11, color: C.textDim, fontWeight: 700, minWidth: 200 }}>FACTOR</th>
+                  {proj.vendors.map(v => (
+                    <th key={v.id} style={{ padding: "10px 12px", textAlign: "center", minWidth: 150, fontSize: 12, fontWeight: 800, color: C.text }}>{v.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {NEC_ROWS.map((row, ri) => (
+                  <tr key={ri} style={{ borderBottom: `1px solid ${C.border}`, background: ri % 2 === 0 ? "transparent" : "rgba(255,255,255,.01)" }}>
+                    <td style={{ padding: "10px 12px", color: C.textMid, fontWeight: 600 }}>{row.label}</td>
+                    {proj.vendors.map(v => {
+                      const isGood = row.good(v);
+                      const isBad = row.bad(v);
+                      return (
+                        <td key={v.id} style={{ padding: "10px 12px", textAlign: "center" }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontWeight: 700, fontSize: 13, color: isGood ? C.green : isBad ? "#f87171" : C.text }}>{row.fmt(v)}</span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+                {/* Notes row */}
+                <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                  <td style={{ padding: "10px 12px", color: C.textMid, fontWeight: 600, verticalAlign: "top" }}>BLG Notes</td>
+                  {proj.vendors.map(v => (
+                    <td key={v.id} style={{ padding: "10px 12px", textAlign: "left", verticalAlign: "top" }}>
+                      <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.5 }}>{v.notes || "—"}</div>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Remove vendor buttons */}
+        <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap", paddingTop: 12, borderTop: `1px solid ${C.border}` }}>
+          <span style={{ fontSize: 11, color: C.textDim, alignSelf: "center" }}>Remove:</span>
+          {proj.vendors.map(v => (
+            <button key={v.id} onClick={() => removeVendor(v.id)}
+              style={{ padding: "3px 10px", borderRadius: 6, border: `1px solid ${C.border}`, background: "transparent", color: C.textDim, fontSize: 11, cursor: "pointer" }}>
+              ✕ {v.name}
+            </button>
+          ))}
         </div>
 
-        <div style={{ marginTop: 20, padding: "14px 16px", background: "rgba(0,229,160,.06)", border: "1px solid rgba(0,229,160,.2)", borderRadius: 10 }}>
-          <div className="flex items-center gap-10">
-            <span style={{ fontSize: 18 }}>💡</span>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.green }}>BLG Recommendation — {termMonths}-Month Term</div>
-              <div style={{ fontSize: 12, color: C.textMid, marginTop: 4 }}>
-                <strong style={{ color: C.text }}>Lumen Technologies</strong> delivers the lowest {termMonths}-month TCO at <strong style={{ color: C.green }}>{fmt(calcTCO(TCO_DATA.vendors[1], termMonths))}</strong>,
-                saving <strong style={{ color: C.accent }}>{fmt(calcTCO(TCO_DATA.vendors[0], termMonths) - calcTCO(TCO_DATA.vendors[1], termMonths))}</strong> vs Comcast over the term.
-                Negotiate waiver of the $350 install fee and lock 2.5% escalation cap in writing.
+        {/* BLG Recommendation */}
+        {sorted.length > 0 && (
+          <div style={{ marginTop: 16, padding: "14px 16px", background: "rgba(0,229,160,.06)", border: "1px solid rgba(0,229,160,.2)", borderRadius: 10 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <span style={{ fontSize: 18 }}>💡</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.green, marginBottom: 4 }}>BLG Recommendation — {termMonths}-Month Term</div>
+                <div style={{ fontSize: 12, color: C.textMid, lineHeight: 1.6 }}>
+                  <strong style={{ color: C.text }}>{sorted[0].name}</strong> delivers the lowest {termMonths}-month TCO at <strong style={{ color: C.green }}>{fmt(sorted[0].tco)}</strong>,
+                  saving <strong style={{ color: C.accent }}>{fmt(worstTCO - bestTCO)}</strong> vs {sorted[sorted.length - 1].name} over the contract term.
+                  {sorted[0].mrr_credit > 0 && <> Includes <strong style={{ color: C.gold }}>{fmt(sorted[0].mrr_credit)}</strong> in MRR credits.</>}
+                  {sorted[0].nrc > 0 && <> NRC of <strong style={{ color: "#f87171" }}>{fmt(sorted[0].nrc + sorted[0].nrcTax)}</strong> should be negotiated.</>}
+                  {sorted[0].notes && <> <span style={{ color: C.textDim }}>{sorted[0].notes.split(".")[0]}.</span></>}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 // ── TAB: Financial Validation Engine ──────────────────────────────────────────
-function FinancialEngine() {
+function FinancialEngine({ clientCtx }) {
+  const { activeClient, updateClient, activeClientId } = clientCtx || {};
+  const [propertyName, setPropertyName] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [analysisName, setAnalysisName] = useState("");
   const [inputs, setInputs] = useState({
-    currentMRC: "2847",
-    proposedMRC: "2650",
+    currentMRC: "",
+    proposedMRC: "",
     termMonths: "36",
-    installFee: "350",
-    escalation: "2.5",
-    etfRisk: "4770",
+    installFee: "0",
+    escalation: "0",
+    etfRisk: "0",
     implementationCost: "0",
   });
 
@@ -846,23 +1469,75 @@ function FinancialEngine() {
     { label: "Payback Period (<12 Months)", pass: parseFloat(payback) < 12 || install === 0, detail: install === 0 ? "Immediate" : `${payback} months` },
   ];
 
+  const saveAnalysis = () => {
+    if (!activeClientId) return;
+    const analysis = { id: Date.now().toString(), name: analysisName || `${serviceType || "Analysis"} — ${new Date().toLocaleDateString()}`, property: propertyName, serviceType, inputs: { ...inputs }, results: { netSavings, annualized, roi, score, scoreLabel }, createdAt: new Date().toLocaleDateString() };
+    updateClient(activeClientId, cl => ({ financialAnalyses: [...(cl.financialAnalyses || []), analysis] }));
+    setAnalysisName(""); setPropertyName(""); setServiceType("");
+  };
+
+  if (!activeClient) return (
+    <div style={{ padding: 40, textAlign: "center" }}>
+      <div style={{ fontSize: 32, marginBottom: 12 }}>💰</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 8 }}>Select a Client First</div>
+      <div style={{ fontSize: 13, color: C.textDim }}>Financial analyses are scoped to a specific client to keep data separated. Select or add a client using the bar at the top.</div>
+    </div>
+  );
+
+  const savedAnalyses = activeClient.financialAnalyses || [];
+
   return (
     <div>
+      {/* Client Context Bar */}
+      <div className="card mb-16" style={{ padding: "12px 16px", background: "rgba(0,212,255,.03)", border: `1px solid rgba(0,212,255,.15)` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontSize: 10, color: C.textDim, textTransform: "uppercase", marginBottom: 2 }}>Client</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.accent }}>{activeClient.name}</div>
+          </div>
+          <div style={{ width: 1, height: 32, background: C.border }} />
+          <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            {[
+              ["Property / Site", propertyName, setPropertyName, "e.g. 4720 Piedmont Row"],
+              ["Service Type", serviceType, setServiceType, "e.g. POTS Replacement, Telecom, Energy"],
+              ["Analysis Name (optional)", analysisName, setAnalysisName, "e.g. POTS Replacement — Feb 2026"],
+            ].map(([label, val, setter, ph]) => (
+              <div key={label}>
+                <div style={{ fontSize: 10, color: C.textDim, marginBottom: 4, textTransform: "uppercase" }}>{label}</div>
+                <input style={{ padding: "7px 10px", borderRadius: 8, border: `1px solid ${val ? C.accent : C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, outline: "none", width: "100%" }}
+                  value={val} onChange={e => setter(e.target.value)} placeholder={ph} />
+              </div>
+            ))}
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={saveAnalysis} disabled={!cur}>
+            💾 Save Analysis
+          </button>
+        </div>
+        {savedAnalyses.length > 0 && (
+          <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${C.border}`, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 10, color: C.textDim, alignSelf: "center" }}>Saved analyses:</span>
+            {savedAnalyses.map(a => (
+              <span key={a.id} style={{ fontSize: 10, padding: "2px 8px", borderRadius: 6, background: "rgba(0,229,160,.1)", color: C.green, fontFamily: "'IBM Plex Mono',monospace" }}>{a.name}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="grid-4 mb-16">
-        <MetricTile label={`${term}-Mo Net Savings`} value={"$" + Math.max(0, netSavings).toLocaleString()} delta={netSavings > 0 ? "↑ Positive ROI" : "⚠️ Review required"} color={netSavings > 0 ? "green" : "red"} />
+        <MetricTile label={`${term}-Mo Net Savings`} value={"$" + Math.max(0, netSavings).toLocaleString()} delta={netSavings > 0 ? "↑ Positive ROI" : "Enter data below"} color={netSavings > 0 ? "green" : "cyan"} />
         <MetricTile label="Annual Savings" value={"$" + Math.max(0, parseInt(annualized)).toLocaleString()} delta="Annualized" color="cyan" />
-        <MetricTile label="ROI" value={install === 0 ? "∞" : roi} suffix={install > 0 ? "%" : ""} delta={install === 0 ? "No upfront cost" : `${payback} mo payback`} color="gold" />
-        <MetricTile label="Validation Score" value={score} suffix="/100" delta={scoreLabel} color={scoreState === "pass" ? "green" : scoreState === "warn" ? "gold" : "red"} />
+        <MetricTile label="ROI" value={install === 0 && cur > 0 ? "∞" : roi || "—"} suffix={install > 0 ? "%" : ""} delta={install === 0 && cur > 0 ? "No upfront cost" : install > 0 ? `${payback} mo payback` : "Enter data"} color="gold" />
+        <MetricTile label="Validation Score" value={cur > 0 ? score : "—"} suffix={cur > 0 ? "/100" : ""} delta={cur > 0 ? scoreLabel : "Enter MRC data"} color={cur > 0 ? (scoreState === "pass" ? "green" : scoreState === "warn" ? "gold" : "red") : "cyan"} />
       </div>
 
       <div className="grid-2 gap-20">
         <div className="card">
           <div className="card-header">
-            <div><div className="card-title">Financial Inputs</div><div className="card-sub">Deal economics calculator</div></div>
+            <div><div className="card-title">Financial Inputs</div><div className="card-sub">{activeClient.name}{propertyName ? ` · ${propertyName}` : ""}</div></div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {[
-              ["currentMRC", "Current Monthly Rate (MRC)", "$"],
+              ["currentMRC", "Current / Incumbent Monthly Rate (MRC)", "$"],
               ["proposedMRC", "Proposed Monthly Rate", "$"],
               ["termMonths", "Contract Term (Months)", ""],
               ["installFee", "Installation / Setup Fee", "$"],
@@ -937,11 +1612,12 @@ function FinancialEngine() {
 }
 
 // ── TAB: AI Chat ───────────────────────────────────────────────────────────────
-function AIChat() {
+function AIChat({ clientCtx }) {
+  const { activeClient, clients } = clientCtx || {};
   const [messages, setMessages] = useState([
     {
       role: "ai",
-      content: "Hello Byron! I'm your BLG Intelligence Assistant. I have full context on your portfolio — Kairoi, Pegasus, Highwoods, Jamestown, and Stonemont.\n\nI can help you analyze contracts, compare vendors, flag opportunities, draft proposals, or surface insights from your pipeline. What do you need?",
+      content: "Hello Byron! I'm your BLG Intelligence Assistant. I'm ready to help you analyze contracts, compare vendors, surface savings opportunities, and draft client deliverables.\n\nAdd clients in the Client Portal and load data to enable full portfolio analysis. Commission data for Feb 2026 is already loaded.\n\nWhat do you need?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -960,7 +1636,7 @@ function AIChat() {
     try {
       const systemPrompt = `You are the BLG Intelligence Assistant, an expert AI for Bottom Line Generation — a commercial real estate cost-optimization consultancy run by Byron, the President/Founder. BLG specializes in telecom, energy, water, IoT, EV charging, and next-gen networking for multi-family communities, commercial offices, student housing, and REITs.
 
-Active clients: Kairoi, Pegasus Residential, Highwoods Properties, Jamestown LP, Stonemont Financial.
+Active clients: Commission data loaded for Feb 2026 (59 clients, $20,506.93). Add clients via Client Portal to enable full portfolio analysis.
 Current Bigin pipeline stage: Qualification.
 Byron runs parent/child account structures in Bigin CRM.
 
@@ -1083,119 +1759,111 @@ Respond as a sharp, data-aware advisor. Be concise but specific. Use numbers whe
 }
 
 // ── TAB: Client Portal ─────────────────────────────────────────────────────────
-const ACCOUNT_HIERARCHY = [
-  {
-    id: "kairoi",
-    name: "Kairoi Residential",
-    type: "REIT · Multi-Family",
-    stage: "Qualification",
-    savings: "$187,400",
-    score: 87,
-    pm: "Byron M.",
-    hq: "San Antonio, TX",
-    totalProps: 11,
-    children: [
-      { id: "k1", name: "Kairoi Spectrum", address: "4800 Spectrum Dr, Austin TX", type: "Multi-Family", units: 312, stage: "Qualification", savings: "$42,100", service: "Telecom + IoT", mrr: "$2,847" },
-      { id: "k2", name: "Kairoi Riverwalk", address: "200 River Walk Blvd, San Antonio TX", type: "Multi-Family", units: 248, stage: "Proposal", savings: "$31,800", service: "Telecom", mrr: "$2,340" },
-      { id: "k3", name: "Kairoi Domain", address: "11801 Domain Dr, Austin TX", type: "Multi-Family", units: 420, stage: "Qualification", savings: "$54,200", service: "Telecom + Energy", mrr: "$3,640" },
-      { id: "k4", name: "Kairoi Westover Hills", address: "9800 Westover Hills, San Antonio TX", type: "Multi-Family", units: 190, stage: "Discovery", savings: "$28,400", service: "Telecom", mrr: "$1,980" },
-      { id: "k5", name: "Kairoi Horizon", address: "6100 N Lamar, Austin TX", type: "Multi-Family", units: 276, stage: "Qualification", savings: "$30,900", service: "Telecom + EV", mrr: "$2,510" },
-    ],
-  },
-  {
-    id: "pegasus",
-    name: "Pegasus Residential",
-    type: "Multi-Family Operator",
-    stage: "Proposal",
-    savings: "$94,200",
-    score: 74,
-    pm: "Byron M.",
-    hq: "Atlanta, GA",
-    totalProps: 8,
-    children: [
-      { id: "p1", name: "Pegasus Heights", address: "1200 Peachtree St NE, Atlanta GA", type: "Multi-Family", units: 380, stage: "Proposal", savings: "$38,400", service: "Telecom + Energy", mrr: "$4,120" },
-      { id: "p2", name: "Pegasus Midtown", address: "850 W Peachtree St, Atlanta GA", type: "Multi-Family", units: 224, stage: "Qualification", savings: "$29,600", service: "Telecom", mrr: "$2,870" },
-      { id: "p3", name: "Pegasus Buckhead", address: "3500 Piedmont Rd, Atlanta GA", type: "Multi-Family", units: 196, stage: "Discovery", savings: "$26,200", service: "Telecom + IoT", mrr: "$2,240" },
-    ],
-  },
-  {
-    id: "highwoods",
-    name: "Highwoods Properties",
-    type: "REIT · Commercial Office",
-    stage: "Qualification",
-    savings: "$62,800",
-    score: 81,
-    pm: "Byron M.",
-    hq: "Raleigh, NC",
-    totalProps: 6,
-    children: [
-      { id: "h1", name: "Highwoods 4720 Piedmont", address: "4720 Piedmont Row Dr, Charlotte NC", type: "Office", units: null, sqft: "142,000 SF", stage: "Qualification", savings: "$24,100", service: "Telecom + Network", mrr: "$3,840" },
-      { id: "h2", name: "Highwoods Ravinia", address: "2 Ravinia Dr, Atlanta GA", type: "Office", units: null, sqft: "98,000 SF", stage: "Qualification", savings: "$18,700", service: "Telecom", mrr: "$2,960" },
-      { id: "h3", name: "Highwoods Forsyth", address: "300 S Orange Ave, Orlando FL", type: "Office", units: null, sqft: "76,000 SF", stage: "Discovery", savings: "$20,000", service: "Energy + Telecom", mrr: "$2,480" },
-    ],
-  },
-  {
-    id: "jamestown",
-    name: "Jamestown LP",
-    type: "Mixed-Use REIT",
-    stage: "Discovery",
-    savings: "$41,500",
-    score: 68,
-    pm: "Byron M.",
-    hq: "Atlanta, GA",
-    totalProps: 4,
-    children: [
-      { id: "j1", name: "Ponce City Market", address: "675 Ponce de Leon Ave NE, Atlanta GA", type: "Mixed-Use", units: null, sqft: "2.1M SF", stage: "Discovery", savings: "$22,800", service: "Telecom + IoT + EV", mrr: "$8,400" },
-      { id: "j2", name: "Ghirardelli Square", address: "900 North Point St, San Francisco CA", type: "Mixed-Use", units: null, sqft: "310,000 SF", stage: "Discovery", savings: "$18,700", service: "Telecom + Network", mrr: "$5,200" },
-    ],
-  },
-  {
-    id: "stonemont",
-    name: "Stonemont Financial",
-    type: "Industrial / Flex",
-    stage: "Discovery",
-    savings: "$31,200",
-    score: 71,
-    pm: "Byron M.",
-    hq: "Atlanta, GA",
-    totalProps: 3,
-    children: [
-      { id: "s1", name: "Stonemont Flex ATL", address: "1800 Satellite Blvd, Duluth GA", type: "Industrial/Flex", units: null, sqft: "480,000 SF", stage: "Discovery", savings: "$16,400", service: "Telecom + IoT", mrr: "$3,100" },
-      { id: "s2", name: "Stonemont Kennesaw", address: "3200 Cobb Pkwy, Kennesaw GA", type: "Industrial/Flex", units: null, sqft: "220,000 SF", stage: "Discovery", savings: "$14,800", service: "Telecom", mrr: "$1,940" },
-    ],
-  },
-];
+function ClientPortal({ clientCtx, setActivePage }) {
+  const { clients: accounts, setClients: setAccounts, activeClientId, setActiveClientId } = clientCtx || {};
+  const [activeParent, setActiveParent] = useState(activeClientId || null);
+  const [activeChild, setActiveChild] = useState(null);
+  const [expandedParents, setExpandedParents] = useState({});
+  const [showAddParent, setShowAddParent] = useState(false);
+  const [showAddChild, setShowAddChild] = useState(false);
+  const [newParent, setNewParent] = useState({ name: "", type: "", hq: "", stage: "Discovery" });
+  const [newChild, setNewChild] = useState({ name: "", address: "", type: "", units: "", service: "", mrr: "", stage: "Discovery" });
 
-function ClientPortal() {
-  const [activeParent, setActiveParent] = useState("kairoi");
-  const [activeChild, setActiveChild] = useState("k1");
-  const [expandedParents, setExpandedParents] = useState({ kairoi: true, pegasus: false, highwoods: false, jamestown: false, stonemont: false });
-
-  const parent = ACCOUNT_HIERARCHY.find(a => a.id === activeParent);
-  const child = parent?.children.find(c => c.id === activeChild);
+  const parent = accounts?.find(a => a.id === activeParent);
+  const child = parent?.children?.find(c => c.id === activeChild);
 
   const toggleExpand = (id) => setExpandedParents(p => ({ ...p, [id]: !p[id] }));
-
   const stageBadge = (s) => s === "Qualification" ? "badge-gold" : s === "Proposal" ? "badge-cyan" : s === "Discovery" ? "badge-gray" : "badge-green";
-
   const milestoneStages = ["Discovery", "Qualification", "Proposal", "Negotiation", "Closed Won"];
   const stageIndex = (s) => milestoneStages.indexOf(s);
+  const inputStyle = { padding: "7px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, outline: "none", width: "100%" };
+
+  const totalChildren = (accounts || []).reduce((s, a) => s + (a.children?.length || 0), 0);
+  const totalProposals = (accounts || []).reduce((s, a) => s + (a.children?.filter(c => c.stage === "Proposal").length || 0), 0);
+
+  const addParent = () => {
+    if (!newParent.name) return;
+    const id = newParent.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+    const newClient = { id, ...newParent, pm: "Byron Braun", savings: "$0", children: [], vendorProjects: [], financialAnalyses: [], contracts: [], documents: [], createdAt: new Date().toLocaleDateString() };
+    setAccounts(prev => [...prev, newClient]);
+    setActiveParent(id);
+    setActiveClientId(id);
+    setExpandedParents(p => ({ ...p, [id]: true }));
+    setNewParent({ name: "", type: "", hq: "", stage: "Discovery" });
+    setShowAddParent(false);
+  };
+
+  const addChild = () => {
+    if (!newChild.name || !activeParent) return;
+    const id = newChild.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+    setAccounts(prev => prev.map(a => a.id === activeParent ? { ...a, children: [...(a.children || []), { id, ...newChild, units: +newChild.units || null }] } : a));
+    setActiveChild(id);
+    setNewChild({ name: "", address: "", type: "", units: "", service: "", mrr: "", stage: "Discovery" });
+    setShowAddChild(false);
+  };
+
+  const removeParent = (id) => {
+    setAccounts(prev => prev.filter(a => a.id !== id));
+    if (activeParent === id) { setActiveParent(null); setActiveChild(null); setActiveClientId(null); }
+  };
+
+  const removeChild = (parentId, childId) => {
+    setAccounts(prev => prev.map(a => a.id === parentId ? { ...a, children: a.children.filter(c => c.id !== childId) } : a));
+    if (activeChild === childId) setActiveChild(null);
+  };
 
   return (
     <div>
       <div className="grid-4 mb-16">
-        <MetricTile label="Parent Accounts" value="5" delta="2 added this quarter" color="cyan" />
-        <MetricTile label="Child Properties" value="17" delta="Across all parents" color="gold" />
-        <MetricTile label="Total Savings ID'd" value="$417K" delta="Annualized" color="green" />
-        <MetricTile label="Proposals Pending" value="3" delta="2 due this week" color="red" />
+        <MetricTile label="Parent Accounts" value={accounts.length || "0"} delta={accounts.length ? "Active clients" : "Add your first client below"} color="cyan" />
+        <MetricTile label="Child Properties" value={totalChildren || "0"} delta="Across all parents" color="gold" />
+        <MetricTile label="Total Savings ID'd" value="$0" delta="Add projects to track" color="green" />
+        <MetricTile label="Proposals Pending" value={totalProposals || "0"} delta="In Proposal stage" color={totalProposals > 0 ? "gold" : "cyan"} />
       </div>
 
       <div style={{ display: "flex", gap: 16 }}>
 
         {/* LEFT: Account Tree */}
         <div style={{ width: 260, minWidth: 260, display: "flex", flexDirection: "column", gap: 6 }}>
-          <div style={{ fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: ".12em", color: C.textDim, textTransform: "uppercase", marginBottom: 6, paddingLeft: 4 }}>Account Hierarchy</div>
-          {ACCOUNT_HIERARCHY.map(pa => (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6, paddingLeft: 4 }}>
+            <div style={{ fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: ".12em", color: C.textDim, textTransform: "uppercase" }}>Account Hierarchy</div>
+            <button onClick={() => setShowAddParent(!showAddParent)}
+              style={{ fontSize: 10, padding: "3px 10px", borderRadius: 6, border: `1px solid ${C.border}`, background: "transparent", color: C.accent, cursor: "pointer", fontWeight: 700 }}>+ Client</button>
+          </div>
+
+          {/* Add Parent Form */}
+          {showAddParent && (
+            <div style={{ padding: 12, borderRadius: 10, border: `1px solid rgba(0,212,255,.3)`, background: "rgba(0,212,255,.04)", marginBottom: 8, display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.accent }}>New Parent Account</div>
+              {[["Company Name", "name"], ["Type", "type"], ["HQ City, State", "hq"]].map(([label, key]) => (
+                <div key={key}>
+                  <div style={{ fontSize: 9, color: C.textDim, marginBottom: 2, textTransform: "uppercase" }}>{label}</div>
+                  <input style={{ ...inputStyle, fontSize: 11 }} value={newParent[key]} onChange={e => setNewParent(p => ({ ...p, [key]: e.target.value }))} placeholder={label} />
+                </div>
+              ))}
+              <div>
+                <div style={{ fontSize: 9, color: C.textDim, marginBottom: 2, textTransform: "uppercase" }}>Stage</div>
+                <select style={{ ...inputStyle, fontSize: 11, cursor: "pointer" }} value={newParent.stage} onChange={e => setNewParent(p => ({ ...p, stage: e.target.value }))}>
+                  {["Discovery", "Qualification", "Proposal", "Negotiation", "Closed Won"].map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button className="btn btn-primary btn-sm" style={{ flex: 1 }} onClick={addParent}>Add</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => setShowAddParent(false)}>✕</button>
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {accounts.length === 0 && !showAddParent && (
+            <div style={{ padding: "20px 12px", textAlign: "center", border: `1px dashed ${C.border}`, borderRadius: 10 }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🏢</div>
+              <div style={{ fontSize: 12, color: C.textMid, fontWeight: 600, marginBottom: 4 }}>No clients yet</div>
+              <div style={{ fontSize: 11, color: C.textDim }}>Click + Client to add your first account</div>
+            </div>
+          )}
+
+          {accounts.map(pa => (
             <div key={pa.id}>
               {/* Parent row */}
               <div
@@ -1205,20 +1873,21 @@ function ClientPortal() {
                   border: `1px solid ${activeParent === pa.id ? "rgba(0,212,255,.3)" : C.border}`,
                   background: activeParent === pa.id ? "rgba(0,212,255,.05)" : C.surface,
                 }}
-                onClick={() => { setActiveParent(pa.id); toggleExpand(pa.id); if (pa.children.length > 0) setActiveChild(pa.children[0].id); }}
+                onClick={() => { setActiveParent(pa.id); toggleExpand(pa.id); if (pa.children?.length > 0) setActiveChild(pa.children[0].id); }}
               >
                 <span style={{ fontSize: 11, color: C.textDim, transition: "transform .15s", display: "inline-block", transform: expandedParents[pa.id] ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: activeParent === pa.id ? C.accent : C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{pa.name}</div>
-                  <div style={{ fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", color: C.textDim, marginTop: 2 }}>{pa.totalProps} properties</div>
+                  <div style={{ fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", color: C.textDim, marginTop: 2 }}>{pa.children?.length || 0} properties</div>
                 </div>
                 <span className={`badge ${stageBadge(pa.stage)}`} style={{ fontSize: 9, padding: "2px 7px" }}>{pa.stage}</span>
+                <span onClick={e => { e.stopPropagation(); removeParent(pa.id); }} style={{ fontSize: 12, color: C.textDim, cursor: "pointer", padding: "0 4px", marginLeft: 2 }} title="Remove">✕</span>
               </div>
 
               {/* Children */}
               {expandedParents[pa.id] && (
                 <div style={{ marginLeft: 16, marginTop: 4, borderLeft: `1px solid ${C.border}`, paddingLeft: 12, display: "flex", flexDirection: "column", gap: 4, marginBottom: 4 }}>
-                  {pa.children.map(ch => (
+                  {pa.children?.map(ch => (
                     <div
                       key={ch.id}
                       onClick={() => { setActiveParent(pa.id); setActiveChild(ch.id); }}
@@ -1234,9 +1903,33 @@ function ClientPortal() {
                           <div style={{ fontSize: 11, fontWeight: 600, color: activeChild === ch.id && activeParent === pa.id ? C.gold : C.textMid, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ch.name}</div>
                           <div style={{ fontSize: 9, fontFamily: "'IBM Plex Mono', monospace", color: C.textDim, marginTop: 1 }}>{ch.service}</div>
                         </div>
+                        <span onClick={e => { e.stopPropagation(); removeChild(pa.id, ch.id); }} style={{ fontSize: 11, color: C.textDim, cursor: "pointer", padding: "0 3px" }} title="Remove">✕</span>
                       </div>
                     </div>
                   ))}
+                  {/* Add Child button */}
+                  {activeParent === pa.id && (
+                    <div style={{ marginTop: 4 }}>
+                      {!showAddChild ? (
+                        <button onClick={() => setShowAddChild(true)}
+                          style={{ fontSize: 10, padding: "4px 10px", borderRadius: 6, border: `1px dashed ${C.border}`, background: "transparent", color: C.textDim, cursor: "pointer", width: "100%" }}>+ Add Property</button>
+                      ) : (
+                        <div style={{ padding: 10, borderRadius: 8, border: `1px solid rgba(245,166,35,.3)`, background: "rgba(245,166,35,.04)", display: "flex", flexDirection: "column", gap: 7 }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: C.gold }}>New Property</div>
+                          {[["Property Name", "name"], ["Address", "address"], ["Type", "type"], ["MRR", "mrr"], ["Service", "service"]].map(([label, key]) => (
+                            <input key={key} style={{ ...inputStyle, fontSize: 11 }} value={newChild[key]} onChange={e => setNewChild(p => ({ ...p, [key]: e.target.value }))} placeholder={label} />
+                          ))}
+                          <select style={{ ...inputStyle, fontSize: 11, cursor: "pointer" }} value={newChild.stage} onChange={e => setNewChild(p => ({ ...p, stage: e.target.value }))}>
+                            {["Discovery", "Qualification", "Proposal", "Negotiation", "Closed Won"].map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                          <div style={{ display: "flex", gap: 6 }}>
+                            <button className="btn btn-primary btn-sm" style={{ flex: 1, fontSize: 10 }} onClick={addChild}>Add</button>
+                            <button className="btn btn-ghost btn-sm" style={{ fontSize: 10 }} onClick={() => setShowAddChild(false)}>✕</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1490,7 +2183,7 @@ async function generatePDF(sections) {
   doc.line(margin, 160, W - margin, 160);
 
   // Metrics row on cover
-  const metrics = [["$417K", "Total Savings ID'd"], ["5", "Parent Accounts"], ["17", "Properties"], ["14", "Active Contracts"]];
+  const metrics = [["$20,507", "Feb 2026 Commission"], ["59", "Active Clients"], ["0", "Properties Loaded"], ["0", "Active Contracts"]];
   metrics.forEach(([val, lbl], i) => {
     const x = margin + i * 44;
     doc.setFontSize(16);
@@ -1522,7 +2215,7 @@ async function generatePDF(sections) {
     doc.text("Executive Summary", margin, y); y += 10;
 
     doc.setFontSize(10); doc.setTextColor(138, 155, 191); doc.setFont("helvetica", "normal");
-    const summaryText = "Bottom Line Generation has identified $417,000 in annualized savings opportunities across 5 parent accounts and 17 managed properties. Current pipeline stage is Qualification with 3 active proposals pending. Vendor analysis across 4 carriers recommends Lumen Technologies for lowest TCO over 36 and 60 month terms.";
+    const summaryText = "Bottom Line Generation — BLG Platform export. Add clients, properties, and vendor comparisons to generate a full portfolio summary.";
     const lines = doc.splitTextToSize(summaryText, W - margin * 2);
     doc.text(lines, margin, y); y += lines.length * 5 + 8;
 
@@ -1569,7 +2262,7 @@ async function generatePDF(sections) {
     });
     y += 10;
 
-    ACCOUNT_HIERARCHY.forEach((a, ri) => {
+    accounts.forEach((a, ri) => {
       checkY(8);
       if (ri % 2 === 0) { doc.setFillColor(16, 21, 32); doc.rect(margin, y - 3, W - margin * 2, 8, "F"); }
       const row = [a.name, a.type.split("·")[0].trim(), String(a.totalProps), a.stage, a.savings, String(a.score)];
@@ -1737,7 +2430,7 @@ async function generateExcel(sections) {
 
   if (sections.portfolio) {
     const rows = [["Parent Account", "Type", "HQ", "Properties", "Stage", "Savings ID'd", "Score", "PM"]];
-    ACCOUNT_HIERARCHY.forEach(a => {
+    accounts.forEach(a => {
       rows.push([a.name, a.type, a.hq, a.totalProps, a.stage, a.savings, a.score, a.pm]);
       a.children.forEach(c => {
         rows.push([`  └ ${c.name}`, c.type, c.address, c.units ? `${c.units} units` : c.sqft, c.stage, c.savings, "", c.service]);
@@ -1827,7 +2520,7 @@ async function generatePPT(sections) {
   slide1.addText("Portfolio Intelligence Report", { x: 0.5, y: 2.4, w: 8, h: 0.8, fontSize: 32, bold: true, color: TEXT, fontFace: "Arial" });
   slide1.addText(`Generated: ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`, { x: 0.5, y: 3.4, w: 6, h: 0.3, fontSize: 12, color: MID });
   slide1.addText("Prepared by: Byron M., President & Founder", { x: 0.5, y: 3.75, w: 6, h: 0.3, fontSize: 12, color: MID });
-  [["$417K", "Total Savings ID'd"], ["5", "Parent Accounts"], ["17", "Properties"], ["14", "Active Contracts"]].forEach(([v, l], i) => {
+  [["$20,507", "Feb 2026 Commission"], ["59", "Active Clients"], ["0", "Properties Loaded"], ["0", "Vendor Projects"]].forEach(([v, l], i) => {
     const x = 0.5 + i * 2.45;
     slide1.addShape(pptx.ShapeType.roundRect, { x, y: 4.5, w: 2.2, h: 0.9, fill: { color: "161C2D" }, rectRadius: 0.08 });
     slide1.addText(v, { x, y: 4.55, w: 2.2, h: 0.45, fontSize: 22, bold: true, color: ACCENT, align: "center" });
@@ -1840,8 +2533,8 @@ async function generatePPT(sections) {
     s2.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: "100%", h: 0.06, fill: { color: ACCENT } });
     s2.addText("EXECUTIVE SUMMARY", { x: 0.5, y: 0.3, w: 9, h: 0.4, fontSize: 10, color: DIM, bold: true });
     s2.addText("Portfolio Overview", { x: 0.5, y: 0.7, w: 9, h: 0.55, fontSize: 26, bold: true, color: TEXT });
-    s2.addText("Bottom Line Generation has identified $417,000 in annualized savings opportunities across 5 parent accounts and 17 managed properties. Current pipeline stage is Qualification with 3 active proposals pending. Vendor analysis recommends Lumen Technologies for lowest TCO.", { x: 0.5, y: 1.5, w: 9.5, h: 1, fontSize: 12, color: MID, paraSpaceAfter: 4 });
-    const kpis = [["$417K", "Annual Savings", GREEN], ["81/100", "Portfolio Score", ACCENT], ["94%", "Doc Confidence", GOLD], ["1,927%", "Deal ROI", GREEN]];
+    s2.addText("Bottom Line Generation platform — add clients, properties, and vendor comparisons to generate a full portfolio summary.", { x: 0.5, y: 1.5, w: 9.5, h: 1, fontSize: 12, color: MID, paraSpaceAfter: 4 });
+    const kpis = [["$20,507", "Feb Commission", GREEN], ["59", "Clients", ACCENT], ["0", "Properties", GOLD], ["0", "Contracts", GREEN]];
     kpis.forEach(([v, l, col], i) => {
       const x = 0.5 + i * 2.45;
       s2.addShape(pptx.ShapeType.roundRect, { x, y: 2.9, w: 2.2, h: 1.2, fill: { color: "161C2D" }, rectRadius: 0.1 });
@@ -1858,7 +2551,7 @@ async function generatePPT(sections) {
     s3.addText("Parent & Child Accounts", { x: 0.5, y: 0.7, w: 9, h: 0.55, fontSize: 26, bold: true, color: TEXT });
     const tblData = [
       [{ text: "Account", options: { bold: true, color: DIM, fontSize: 9 } }, { text: "Type", options: { bold: true, color: DIM, fontSize: 9 } }, { text: "Props", options: { bold: true, color: DIM, fontSize: 9 } }, { text: "Stage", options: { bold: true, color: DIM, fontSize: 9 } }, { text: "Savings ID'd", options: { bold: true, color: DIM, fontSize: 9 } }],
-      ...ACCOUNT_HIERARCHY.map(a => ([
+      ...accounts.map(a => ([
         { text: a.name, options: { bold: true, color: TEXT, fontSize: 10 } },
         { text: a.type.split("·")[0].trim(), options: { color: MID, fontSize: 9 } },
         { text: String(a.totalProps), options: { color: ACCENT, fontSize: 10, align: "center" } },
@@ -2268,14 +2961,344 @@ function CommissionsDashboard() {
 }
 
 // ── ROOT APP ───────────────────────────────────────────────────────────────────
-const TABS = [
-  { id: "doc", label: "Document Intelligence", icon: "📄" },
-  { id: "contract", label: "Contract Terms", icon: "📑" },
-  { id: "matrix", label: "Vendor Matrix", icon: "📊" },
-  { id: "finance", label: "Financial Validation", icon: "💰" },
-  { id: "ai", label: "AI Chat", icon: "🤖" },
-  { id: "portal", label: "Client Portal", icon: "🏢" },
+
+// ── Portfolio Score Engine — INTERNAL ─────────────────────────────────────────
+// Per service category. Each category scored 0–100 across 5 factors.
+// ── BLG Portfolio Scoring Engine ───────────────────────────────────────────────
+// Score is per service category per client.
+// Deal stage is NOT part of the score — it drives Action Items separately.
+// Service status (incumbent/new/disconnected) is record-keeping only — NOT scored.
+// Factors: Savings Identified (35), BLG Work Completed (35), Contract Risk (30)
+
+const SERVICE_CATEGORIES = ["Telecom", "Energy", "IoT", "EV Charging", "Network / SD-WAN", "Water"];
+
+// Service status options — for record-keeping only, not scoring
+const SERVICE_STATUS_OPTIONS = [
+  { value: "",                    label: "— Set Status —" },
+  { value: "active-incumbent",    label: "Active — Incumbent (existing service)" },
+  { value: "active-new",         label: "Active — New/Installed (replaced service)" },
+  { value: "proposed",           label: "Proposed — Pending client approval" },
+  { value: "pending-install",    label: "Pending Install — Ordered, not yet live" },
+  { value: "disconnected",       label: "Disconnected — Replaced by new service" },
+  { value: "cancelled",          label: "Cancelled — Not moving forward" },
 ];
+
+const SERVICE_STATUS_LABELS = {
+  "active-incumbent":  { label: "Incumbent",      color: "#66d9e8", bg: "rgba(102,217,232,.12)" },
+  "active-new":        { label: "Installed",       color: "#00e5a0", bg: "rgba(0,229,160,.12)"  },
+  "proposed":          { label: "Proposed",        color: "#f5a623", bg: "rgba(245,166,35,.12)" },
+  "pending-install":   { label: "Pending Install", color: "#a855f7", bg: "rgba(168,85,247,.12)" },
+  "disconnected":      { label: "Disconnected",    color: "#94a3b8", bg: "rgba(148,163,184,.1)" },
+  "cancelled":         { label: "Cancelled",       color: "#ef4444", bg: "rgba(239,68,68,.1)"   },
+};
+
+// Days until contract expiration (positive = future, negative = past)
+function daysUntilExp(expStr) {
+  if (!expStr) return null;
+  const d = new Date(expStr);
+  if (isNaN(d)) return null;
+  return Math.floor((d - Date.now()) / 86400000);
+}
+
+// Score one service category for a client
+// Returns { score, grade, gradeLabel, factors, flags, renewalAlerts, contracts, vendorProjects, analyses }
+function scoreCategory(client, category) {
+  if (!client) return null;
+
+  const cat = category.toLowerCase();
+  // Only score against active/incumbent contracts — disconnected are historical record only
+  const allContracts   = (client.contracts        || []).filter(c => (c.serviceCategory || c.service || c.name || "").toLowerCase().includes(cat));
+  const contracts      = allContracts.filter(c => c.status !== "disconnected" && c.status !== "cancelled");
+  const vendorProjects = (client.vendorProjects   || []).filter(p => (p.serviceType || p.project || "").toLowerCase().includes(cat));
+  const analyses       = (client.financialAnalyses|| []).filter(a => (a.serviceType || a.name || "").toLowerCase().includes(cat));
+  const properties     = (client.children         || []).filter(p => (p.service || "").toLowerCase().includes(cat));
+
+  if (!allContracts.length && !vendorProjects.length && !analyses.length && !properties.length) return null;
+
+  const flags = [];
+  const renewalAlerts = [];
+  const disconnectedCount = allContracts.filter(c => c.status === "disconnected").length;
+
+  // ── Factor 1: Savings Identified (0–35 pts) ───────────────────────────────────
+  let savingsScore = 0;
+  if (analyses.length > 0) {
+    const best = analyses.reduce((b, a) => (a.results?.netSavings || 0) > (b.results?.netSavings || 0) ? a : b, analyses[0]);
+    const savings    = best.results?.netSavings   || 0;
+    const currentMRC = parseFloat(best.inputs?.currentMRC) || 0;
+    const termMo     = parseInt(best.inputs?.termMonths)   || 36;
+    if (currentMRC > 0 && savings > 0) {
+      const pct = savings / (currentMRC * termMo);
+      savingsScore = Math.min(Math.round(pct * 140), 35);
+    } else if (savings > 0) {
+      savingsScore = 20;
+    }
+  } else if (vendorProjects.length > 0) {
+    const hasVendors = vendorProjects.some(p => (p.vendors || []).length >= 2);
+    savingsScore = hasVendors ? 14 : 6;
+  }
+
+  // ── Factor 2: BLG Work Completed (0–35 pts) ──────────────────────────────────
+  let workScore = 0;
+  const vendorDone   = vendorProjects.some(p => (p.vendors || []).length >= 2);
+  const analysisDone = analyses.length > 0;
+  const hasBaseline  = analyses.some(a => parseFloat(a.inputs?.currentMRC) > 0);
+  if (vendorDone)   workScore += 15;
+  if (analysisDone) workScore += 12;
+  if (hasBaseline)  workScore += 8;
+  workScore = Math.min(workScore, 35);
+
+  // ── Factor 3: Contract Risk (0–30 pts) ────────────────────────────────────────
+  // Only active/incumbent contracts contribute to risk score
+  let contractScore = 0;
+  if (contracts.length > 0) {
+    contractScore = 30;
+    contracts.forEach(c => {
+      const ri = effectiveRisk(c);
+      if (ri.level === "high")        { contractScore -= 12; flags.push(`⚠️ High-risk: ${c.name}`); }
+      else if (ri.level === "medium") { contractScore -= 4; }
+
+      // Use opt-out deadline as the real action date if available, otherwise fall back to expiration
+      const optOutDays = parseInt(c.optOutDays) || 0;
+      const expDays = daysUntilExp(c.exp);
+      const actionDays = (expDays !== null && optOutDays > 0) ? expDays - optOutDays : expDays;
+
+      if (actionDays !== null) {
+        if (actionDays <= 0)       { renewalAlerts.push({ label: c.name, days: actionDays, level: "expired"  }); contractScore -= 8;  flags.push(`🔴 Opt-out window passed: ${c.name}`); }
+        else if (actionDays <= 30) { renewalAlerts.push({ label: c.name, days: actionDays, level: "critical" }); contractScore -= 6;  flags.push(`🔴 ${actionDays}d to act on: ${c.name}`); }
+        else if (actionDays <= 60) { renewalAlerts.push({ label: c.name, days: actionDays, level: "urgent"   }); contractScore -= 3;  flags.push(`🟡 ${actionDays}d to act on: ${c.name}`); }
+        else if (actionDays <= 90) { renewalAlerts.push({ label: c.name, days: actionDays, level: "warning"  }); flags.push(`🔔 ${actionDays}d until action needed: ${c.name}`); }
+      }
+    });
+    contractScore = Math.max(contractScore, 0);
+  } else if (allContracts.length > 0 && disconnectedCount === allContracts.length) {
+    // All contracts are disconnected — historical only, no active risk to score
+    contractScore = 30;
+    flags.push(`ℹ️ All ${category} services replaced — ${disconnectedCount} historical record(s)`);
+  } else {
+    contractScore = 0;
+    flags.push(`No active ${category} contracts — add to track risk`);
+  }
+
+  // Note disconnected services as informational only
+  if (disconnectedCount > 0 && contracts.length > 0) {
+    flags.push(`ℹ️ ${disconnectedCount} historical service(s) disconnected — replaced by new`);
+  }
+
+  const total      = Math.min(savingsScore + workScore + contractScore, 100);
+  const grade      = total >= 80 ? "A" : total >= 65 ? "B" : total >= 50 ? "C" : total >= 35 ? "D" : "F";
+  const gradeLabel = total >= 80 ? "Optimized" : total >= 65 ? "On Track" : total >= 50 ? "In Progress" : total >= 35 ? "Early Stage" : "Not Started";
+
+  return {
+    category, score: total, grade, gradeLabel, renewalAlerts, flags,
+    factors: {
+      savings:     { pts: savingsScore, max: 35, label: "Savings Identified" },
+      work:        { pts: workScore,    max: 35, label: "BLG Analysis Complete" },
+      contractRisk:{ pts: contractScore,max: 30, label: "Contract Risk" },
+    },
+    contracts: allContracts, vendorProjects, analyses,
+  };
+}
+
+function calcAllCategoryScores(client) {
+  if (!client) return [];
+  return SERVICE_CATEGORIES.map(cat => scoreCategory(client, cat)).filter(Boolean);
+}
+
+function calcOverallScore(client) {
+  const cats = calcAllCategoryScores(client);
+  if (!cats.length) return null;
+  return Math.round(cats.reduce((s, c) => s + c.score, 0) / cats.length);
+}
+
+const calcPortfolioScore = calcOverallScore;
+
+function getAllRenewalAlerts(client) {
+  return calcAllCategoryScores(client).flatMap(c => c.renewalAlerts.map(a => ({ ...a, category: c.category })));
+}
+
+function scoreColor(s) {
+  if (s == null) return C.textDim;
+  return s >= 80 ? C.green : s >= 60 ? "#66d9e8" : s >= 40 ? C.gold : C.red;
+}
+
+// ── Action Items / Next Steps Engine ───────────────────────────────────────────
+// Driven by deal stage + what work has / hasn't been completed per client.
+// Returns array of { priority, category, action, detail, type }
+// type: "required" | "recommended" | "alert"
+
+const STAGE_ORDER = ["Discovery", "Qualification", "Proposal", "Negotiation", "Closed Won", "Installed"];
+
+function getActionItems(client) {
+  if (!client) return [];
+  const stage        = client.stage || "Discovery";
+  const stageIdx     = STAGE_ORDER.indexOf(stage);
+  const items        = [];
+  const contracts    = client.contracts        || [];
+  const vendorProjs  = client.vendorProjects   || [];
+  const analyses     = client.financialAnalyses|| [];
+  const properties   = client.children         || [];
+  const docs         = client.documents        || [];
+
+  const hasVendorComp   = vendorProjs.some(p => (p.vendors || []).length >= 2);
+  const hasFinAnalysis  = analyses.length > 0;
+  const hasBaseline     = analyses.some(a => parseFloat(a.inputs?.currentMRC) > 0);
+  const hasContracts    = contracts.length > 0;
+  const hasProperties   = properties.length > 0;
+  const highRisk        = contracts.filter(c => effectiveRisk(c).level === "high");
+  const expiringContracts = contracts.filter(c => { const d = daysUntilExp(c.exp); return d !== null && d <= 90; });
+  const expiredContracts  = contracts.filter(c => { const d = daysUntilExp(c.exp); return d !== null && d <= 0; });
+  const installedServices = contracts.filter(c => ["installed","active"].includes((c.disposition||"").toLowerCase()));
+  const pendingServices   = contracts.filter(c => ["pending","in progress","proposed","ordered"].includes((c.disposition||"").toLowerCase()));
+
+  // ── ALERTS — always surface these regardless of stage ──────────────────────
+  expiredContracts.forEach(c => items.push({
+    priority: 1, type: "alert", category: "Contract",
+    action: `Expired contract requires immediate action`,
+    detail: `${c.name} — ${c.vendor || "vendor unknown"}. Confirm if service is still active and negotiate new terms or disconnect.`,
+  }));
+
+  expiringContracts.filter(c => { const d = daysUntilExp(c.exp); return d > 0 && d <= 30; }).forEach(c => items.push({
+    priority: 1, type: "alert", category: "Contract",
+    action: `Contract renews in ${daysUntilExp(c.exp)} days — decision required`,
+    detail: `${c.name}. Options: renegotiate terms, switch vendors, or allow auto-renewal. Run vendor comparison if not done.`,
+  }));
+
+  highRisk.forEach(c => items.push({
+    priority: 2, type: "alert", category: "Contract Risk",
+    action: `High-risk contract terms flagged`,
+    detail: `${c.name}: ${c.notes || "Review auto-renewal clause, ETF, and rate escalation terms."}`,
+  }));
+
+  expiringContracts.filter(c => { const d = daysUntilExp(c.exp); return d > 30 && d <= 90; }).forEach(c => items.push({
+    priority: 2, type: "alert", category: "Contract",
+    action: `Contract renewal window approaching — ${daysUntilExp(c.exp)} days`,
+    detail: `${c.name}. Begin vendor comparison now to have alternatives ready before the opt-out deadline.`,
+  }));
+
+  // ── DISCOVERY STAGE ────────────────────────────────────────────────────────
+  if (stageIdx <= 0) {
+    if (!hasProperties) items.push({
+      priority: 2, type: "required", category: "Data Collection",
+      action: "Add properties / locations to this client account",
+      detail: "Load all properties or sites under this client in the Client Portal to establish scope of work.",
+    });
+    if (!hasContracts) items.push({
+      priority: 2, type: "required", category: "Data Collection",
+      action: "Collect and upload current service contracts",
+      detail: "Obtain current service agreements, MSAs, and billing statements for all active services. Upload to Contract Terms module.",
+    });
+    if (!hasBaseline) items.push({
+      priority: 2, type: "required", category: "Data Collection",
+      action: "Establish current monthly spend baseline (MRC)",
+      detail: "Collect actual current invoices for each service category. Enter baseline MRC in Financial Engine to enable savings calculations.",
+    });
+    if (docs.length === 0) items.push({
+      priority: 3, type: "recommended", category: "Data Collection",
+      action: "Upload billing statements and service invoices",
+      detail: "Upload current invoices to Document Intelligence for AI-assisted data extraction.",
+    });
+    items.push({
+      priority: 3, type: "required", category: "Discovery",
+      action: "Identify all active service categories",
+      detail: `Confirm which services are active: ${SERVICE_CATEGORIES.join(", ")}. Tag each contract with its service category.`,
+    });
+  }
+
+  // ── QUALIFICATION STAGE ────────────────────────────────────────────────────
+  if (stageIdx <= 1) {
+    if (!hasVendorComp) items.push({
+      priority: 2, type: "required", category: "Analysis",
+      action: "Build vendor comparison matrix",
+      detail: "Run proposals from at least 2–3 alternative vendors for each active service. Enter proposals in Vendor Matrix to compare MRC, TCO, NPS, and terms.",
+    });
+    if (!hasFinAnalysis) items.push({
+      priority: 2, type: "required", category: "Analysis",
+      action: "Complete financial validation analysis",
+      detail: "Use Financial Engine to calculate net savings, ROI, and payback period for the best vendor option vs. current spend.",
+    });
+    if (hasVendorComp && !hasFinAnalysis) items.push({
+      priority: 2, type: "required", category: "Analysis",
+      action: "Run financial analysis on vendor comparison results",
+      detail: "Vendor comparison is complete. Now validate the savings by entering current MRC vs. proposed MRC in the Financial Engine.",
+    });
+  }
+
+  // ── PROPOSAL STAGE ─────────────────────────────────────────────────────────
+  if (stageIdx <= 2) {
+    if (hasVendorComp && hasFinAnalysis) items.push({
+      priority: 2, type: "required", category: "Proposal",
+      action: "Prepare and deliver client-facing proposal",
+      detail: "Analysis is complete. Build executive summary with BLG recommendation, savings summary, and TCO comparison. Schedule presentation meeting.",
+    });
+    if (!hasVendorComp || !hasFinAnalysis) items.push({
+      priority: 1, type: "required", category: "Proposal",
+      action: "Complete analysis before presenting proposal",
+      detail: `Missing: ${!hasVendorComp ? "vendor comparison " : ""}${!hasFinAnalysis ? "financial analysis" : ""}. Complete these before presenting to client.`,
+    });
+    items.push({
+      priority: 3, type: "recommended", category: "Proposal",
+      action: "Confirm decision-maker and presentation format",
+      detail: "Identify who approves the decision. Prepare executive summary for C-suite and detailed breakdown for operations/finance.",
+    });
+  }
+
+  // ── NEGOTIATION STAGE ──────────────────────────────────────────────────────
+  if (stageIdx === 3) {
+    items.push({
+      priority: 2, type: "required", category: "Negotiation",
+      action: "Follow up on open proposal items",
+      detail: "Document outstanding questions or objections from the client. Provide clarifications and updated analysis if needed.",
+    });
+    items.push({
+      priority: 2, type: "required", category: "Negotiation",
+      action: "Confirm vendor selection and finalize contract terms",
+      detail: "Once vendor is selected, review final contract against proposal terms. Flag any deviations from quoted pricing or SLA.",
+    });
+    items.push({
+      priority: 3, type: "recommended", category: "Negotiation",
+      action: "Set implementation timeline and go-live date",
+      detail: "Align on installation schedule, cutover date, and port-out/disconnect timeline for incumbent service.",
+    });
+  }
+
+  // ── CLOSED WON / INSTALLED ─────────────────────────────────────────────────
+  if (stageIdx >= 4) {
+    if (pendingServices.length > 0) items.push({
+      priority: 2, type: "required", category: "Implementation",
+      action: `Monitor ${pendingServices.length} service(s) pending installation`,
+      detail: `Services in progress: ${pendingServices.map(c => c.name).join(", ")}. Confirm install dates and track provisioning status.`,
+    });
+    if (installedServices.length > 0) items.push({
+      priority: 3, type: "recommended", category: "Post-Install",
+      action: "Verify installed services are billing correctly",
+      detail: `${installedServices.length} service(s) marked installed. Confirm first invoice matches contracted MRC and all credits/waivers applied.`,
+    });
+    items.push({
+      priority: 3, type: "recommended", category: "Post-Install",
+      action: "Schedule 30/60/90 day check-in with client",
+      detail: "Follow up after installation to confirm satisfaction, catch billing errors early, and identify additional optimization opportunities.",
+    });
+    if (contracts.some(c => (c.disposition || "") === "")) items.push({
+      priority: 3, type: "recommended", category: "Post-Install",
+      action: "Update contract disposition for all services",
+      detail: "Mark each service as Installed, Pending, Disconnected, or Cancelled to keep the portfolio score accurate.",
+    });
+  }
+
+  // ── UNIVERSAL RECOMMENDATIONS ──────────────────────────────────────────────
+  if (hasContracts && contracts.some(c => !c.disposition)) items.push({
+    priority: 3, type: "recommended", category: "Data Quality",
+    action: "Set disposition status on all contracts",
+    detail: `${contracts.filter(c => !c.disposition).length} contract(s) have no disposition set. Mark each as: Installed, Pending, Proposed, Disconnected, or Cancelled.`,
+  });
+
+  // Sort: alerts first, then by priority
+  return items.sort((a, b) => {
+    const typeOrder = { alert: 0, required: 1, recommended: 2 };
+    if (typeOrder[a.type] !== typeOrder[b.type]) return typeOrder[a.type] - typeOrder[b.type];
+    return a.priority - b.priority;
+  });
+}
 
 const NAV = [
   { label: "Dashboard", icon: "⬡", id: "dash" },
@@ -2284,7 +3307,7 @@ const NAV = [
   { label: "Vendor Matrix", icon: "📊", id: "matrix" },
   { label: "Financial Engine", icon: "💰", id: "finance" },
   { label: "AI Assistant", icon: "🤖", id: "ai", badge: "AI" },
-  { label: "Client Portal", icon: "🏢", id: "portal", badge: "5" },
+  { label: "Client Portal", icon: "🏢", id: "portal" },
   { label: "Commissions", icon: "💵", id: "commissions", badge: "LIVE" },
 ];
 
@@ -2292,15 +3315,44 @@ export default function BLGPlatform() {
   const [active, setActive] = useState("dash");
   const [showExport, setShowExport] = useState(false);
 
+  // ── Global Client State ──────────────────────────────────────────────────────
+  // Single source of truth — all modules read/write here keyed by client id
+  const [clients, setClients] = useState([]); // Array of client objects
+  const [activeClientId, setActiveClientId] = useState(null);
+  const [showClientPicker, setShowClientPicker] = useState(false);
+  const [newClientQuick, setNewClientQuick] = useState({ name: "", type: "" });
+
+  const activeClient = clients.find(c => c.id === activeClientId) || null;
+
+  // Mutate helpers — always keep data tied to correct client
+  const updateClient = (id, updater) => setClients(prev => prev.map(c => c.id === id ? { ...c, ...updater(c) } : c));
+
+  const addClientQuick = () => {
+    if (!newClientQuick.name.trim()) return;
+    const id = newClientQuick.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+    const newClient = {
+      id, name: newClientQuick.name.trim(), type: newClientQuick.type.trim(),
+      stage: "Discovery", hq: "", pm: "Byron Braun",
+      children: [], vendorProjects: [], financialAnalyses: [], contracts: [], documents: [],
+      createdAt: new Date().toLocaleDateString(),
+    };
+    setClients(prev => [...prev, newClient]);
+    setActiveClientId(id);
+    setNewClientQuick({ name: "", type: "" });
+    setShowClientPicker(false);
+  };
+
+  const clientCtx = { clients, setClients, activeClientId, activeClient, updateClient, setActiveClientId };
+
   const PAGES = {
-    doc: { title: "Document Intelligence", sub: "AI-powered extraction · 12 document types supported", comp: <DocumentIntelligence /> },
-    contract: { title: "Contract Terms Extraction", sub: "Automated risk scoring & term analysis", comp: <ContractTerms /> },
-    matrix: { title: "Vendor Proposal Matrix", sub: "36 / 60 Month TCO Comparison Engine", comp: <VendorMatrix /> },
-    finance: { title: "Financial Validation Engine", sub: "ROI calculator · Savings verification · Deal scoring", comp: <FinancialEngine /> },
-    ai: { title: "AI Chat Assistant", sub: "Claude-powered · Full portfolio context", comp: <AIChat /> },
-    portal: { title: "Client Portal", sub: "Account management · Pipeline tracking · Deliverables", comp: <ClientPortal /> },
-    dash: { title: "BLG Platform Dashboard", sub: "Executive overview · Bottom Line Generation v5", comp: <Dashboard setActive={setActive} /> },
-    commissions: { title: "Commission Intelligence", sub: "Real data · Feb 2026 · 59 clients · $20,506.93 earned", comp: <CommissionsDashboard /> },
+    doc:         { title: "Document Intelligence",       sub: activeClient ? `${activeClient.name} · AI-powered extraction` : "Select a client to begin",           comp: <DocumentIntelligence clientCtx={clientCtx} /> },
+    contract:    { title: "Contract Terms",              sub: activeClient ? `${activeClient.name} · Contracts & risk scoring` : "Select a client to begin",         comp: <ContractTerms clientCtx={clientCtx} /> },
+    matrix:      { title: "Vendor Matrix",               sub: activeClient ? `${activeClient.name} · Proposal comparison engine` : "Select a client to begin",       comp: <VendorMatrix clientCtx={clientCtx} /> },
+    finance:     { title: "Financial Validation Engine", sub: activeClient ? `${activeClient.name} · ROI · Savings · Deal scoring` : "Select a client to begin",     comp: <FinancialEngine clientCtx={clientCtx} /> },
+    ai:          { title: "AI Chat Assistant",           sub: "Claude-powered · Full portfolio context",                                                              comp: <AIChat clientCtx={clientCtx} /> },
+    portal:      { title: "Client Portal",               sub: "Account management · Properties · Pipeline",                                                          comp: <ClientPortal clientCtx={clientCtx} setActivePage={setActive} /> },
+    dash:        { title: "BLG Platform Dashboard",      sub: "Executive overview · Bottom Line Generation v5",                                                      comp: <Dashboard setActive={setActive} clientCtx={clientCtx} /> },
+    commissions: { title: "Commission Intelligence",     sub: "Real data · Feb 2026 · 59 clients · $20,506.93 earned",                                               comp: <CommissionsDashboard /> },
   };
 
   const page = PAGES[active] || PAGES.dash;
@@ -2374,6 +3426,56 @@ export default function BLGPlatform() {
         </aside>
 
         <div className="main-content">
+          {/* ── Global Client Context Bar ─────────────────────────────────────────── */}
+          <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "8px 20px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", position: "sticky", top: 0, zIndex: 50 }}>
+            <span style={{ fontSize: 10, fontFamily: "'IBM Plex Mono',monospace", color: C.textDim, textTransform: "uppercase", letterSpacing: ".1em", whiteSpace: "nowrap" }}>Active Client:</span>
+
+            {/* Client pills */}
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1 }}>
+              {clients.map(c => {
+                const score = calcPortfolioScore(c);
+                return (
+                  <button key={c.id} onClick={() => setActiveClientId(c.id)}
+                    style={{ padding: "4px 12px", borderRadius: 20, border: `1px solid ${activeClientId === c.id ? C.accent : C.border}`, background: activeClientId === c.id ? "rgba(0,212,255,.12)" : "transparent", color: activeClientId === c.id ? C.accent : C.textMid, fontSize: 12, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" }}>
+                    {c.name}
+                    {score > 0 && <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 8, background: score >= 60 ? "rgba(0,229,160,.15)" : "rgba(245,166,35,.15)", color: score >= 60 ? C.green : C.gold, fontFamily: "'IBM Plex Mono',monospace" }}>{score}</span>}
+                    {activeClientId === c.id && <span style={{ fontSize: 10, color: C.accent }}>✓</span>}
+                  </button>
+                );
+              })}
+
+              {/* Add client inline */}
+              {!showClientPicker ? (
+                <button onClick={() => setShowClientPicker(true)}
+                  style={{ padding: "4px 12px", borderRadius: 20, border: `1px dashed ${C.border}`, background: "transparent", color: C.textDim, fontSize: 11, cursor: "pointer", whiteSpace: "nowrap" }}>
+                  + Add Client
+                </button>
+              ) : (
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <input autoFocus placeholder="Company name" value={newClientQuick.name} onChange={e => setNewClientQuick(p => ({ ...p, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addClientQuick()}
+                    style={{ padding: "4px 10px", borderRadius: 8, border: `1px solid ${C.accent}`, background: C.surfaceHigh, color: C.text, fontSize: 12, outline: "none", width: 160 }} />
+                  <input placeholder="Type (e.g. REIT, Multi-Family)" value={newClientQuick.type} onChange={e => setNewClientQuick(p => ({ ...p, type: e.target.value }))} onKeyDown={e => e.key === "Enter" && addClientQuick()}
+                    style={{ padding: "4px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.text, fontSize: 12, outline: "none", width: 180 }} />
+                  <button onClick={addClientQuick} style={{ padding: "4px 12px", borderRadius: 8, border: "none", background: C.accent, color: C.bg, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Add</button>
+                  <button onClick={() => setShowClientPicker(false)} style={{ padding: "4px 8px", borderRadius: 8, border: `1px solid ${C.border}`, background: "transparent", color: C.textDim, fontSize: 11, cursor: "pointer" }}>✕</button>
+                </div>
+              )}
+            </div>
+
+            {clients.length === 0 && (
+              <span style={{ fontSize: 11, color: C.textDim, fontStyle: "italic" }}>Add a client to associate all data — documents, contracts, vendor comparisons, and financial analyses are all client-scoped</span>
+            )}
+
+            {activeClient && (
+              <div style={{ display: "flex", gap: 12, alignItems: "center", marginLeft: "auto", flexShrink: 0 }}>
+                <span style={{ fontSize: 11, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>
+                  {activeClient.type && <span style={{ marginRight: 8 }}>{activeClient.type}</span>}
+                  {(activeClient.children?.length || 0)} props · {(activeClient.contracts?.length || 0)} contracts · {(activeClient.vendorProjects?.length || 0)} vendor projects
+                </span>
+              </div>
+            )}
+          </div>
+
           <div className="topbar">
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <img src={BLG_LOGO_SM} alt="BLG" style={{ height: 36, width: "auto", flexShrink: 0 }} />
@@ -2383,10 +3485,12 @@ export default function BLGPlatform() {
               </div>
             </div>
             <div className="topbar-right">
-              <div className="status-chip qual">
-                <div className="pipeline-dot" />
-                Qualification Stage
-              </div>
+              {activeClient && (
+                <div className="status-chip qual">
+                  <div className="pipeline-dot" />
+                  {activeClient.stage || "Discovery"}
+                </div>
+              )}
               <div className="status-chip active">
                 <span>●</span> Live
               </div>
@@ -2407,16 +3511,243 @@ export default function BLGPlatform() {
 }
 
 // ── Dashboard ──────────────────────────────────────────────────────────────────
-function Dashboard({ setActive }) {
+function Dashboard({ setActive, clientCtx }) {
+  const { clients, activeClient, setActiveClientId, updateClient, activeClientId } = clientCtx;
+  const [actionFilter, setActionFilter] = useState("all"); // all | alert | required | recommended
+
+  const totalProps        = clients.reduce((s, c) => s + (c.children?.length || 0), 0);
+  const totalContracts    = clients.reduce((s, c) => s + (c.contracts?.length || 0), 0);
+  const totalVendorProj   = clients.reduce((s, c) => s + (c.vendorProjects?.length || 0), 0);
+  const highRiskContracts = clients.reduce((s, c) => s + ((c.contracts || []).filter(ct => ct.risk === "high").length), 0);
+  const allAlertsCount    = clients.reduce((s, c) => s + getAllRenewalAlerts(c).length, 0);
+
+  const categoryScores    = calcAllCategoryScores(activeClient);
+  const overallScore      = calcOverallScore(activeClient);
+  const allRenewalAlerts  = categoryScores.flatMap(c => c.renewalAlerts.map(r => ({ ...r, category: c.category })));
+  const actionItems       = getActionItems(activeClient);
+  const filteredActions   = actionFilter === "all" ? actionItems : actionItems.filter(a => a.type === actionFilter);
+
+  const STAGES = ["Discovery", "Qualification", "Proposal", "Negotiation", "Closed Won", "Installed"];
+  const stageIdx = STAGES.indexOf(activeClient?.stage || "Discovery");
+
+  const gradeColor = (g) => g === "A" ? C.green : g === "B" ? C.accent : g === "C" ? C.gold : g === "D" ? "#f97316" : C.red;
+  const actionColor = (t) => t === "alert" ? C.red : t === "required" ? C.gold : C.textMid;
+  const actionBg    = (t) => t === "alert" ? "rgba(239,68,68,.08)" : t === "required" ? "rgba(245,166,35,.06)" : "rgba(255,255,255,.03)";
+  const actionIcon  = (t) => t === "alert" ? "🔴" : t === "required" ? "⚡" : "💡";
+
+  const scoreBar = (pts, max) => {
+    const pct = Math.min((pts / max) * 100, 100);
+    const col = pct >= 80 ? C.green : pct >= 50 ? C.gold : C.red;
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ flex: 1, height: 5, borderRadius: 3, background: "rgba(255,255,255,.08)" }}>
+          <div style={{ width: `${pct}%`, height: "100%", borderRadius: 3, background: col, transition: "width .4s" }} />
+        </div>
+        <span style={{ fontSize: 10, fontFamily: "'IBM Plex Mono',monospace", color: col, minWidth: 32, textAlign: "right" }}>{pts}/{max}</span>
+      </div>
+    );
+  };
+
   return (
     <div>
+      {/* ── KPI Bar ── */}
       <div className="grid-4 mb-16">
-        <MetricTile label="Total Savings ID'd" value="$386K" delta="↑ $47K this month" color="green" />
-        <MetricTile label="Active Proposals" value="3" delta="2 due this week" color="gold" />
-        <MetricTile label="Docs Analyzed" value="47" delta="↑ 12 this month" color="cyan" />
-        <MetricTile label="Portfolio Score" value="81" suffix="/100" delta="↑ 3 pts" color="purple" />
+        <MetricTile label="Total Clients" value={clients.length || "0"} delta={clients.length ? `${totalProps} properties` : "Add clients in Client Portal"} color="cyan" />
+        <MetricTile label="Vendor Projects" value={totalVendorProj || "0"} delta="Across all clients" color="gold" />
+        <MetricTile label="Contracts" value={totalContracts || "0"} delta={highRiskContracts > 0 ? `⚠️ ${highRiskContracts} high-risk` : allAlertsCount > 0 ? `🔔 ${allAlertsCount} renewal alerts` : totalContracts ? "No alerts" : "Add in Contract Terms"} color={highRiskContracts > 0 ? "red" : allAlertsCount > 0 ? "gold" : "green"} />
+        <MetricTile
+          label={activeClient ? `Overall Score · ${activeClient.name}` : "Portfolio Score"}
+          value={overallScore != null ? overallScore : "—"}
+          suffix={overallScore != null ? "/100" : ""}
+          delta={overallScore != null ? (overallScore >= 65 ? "On Track" : overallScore >= 35 ? "In Progress" : "Early Stage") : "Select a client above"}
+          color={overallScore == null ? "cyan" : overallScore >= 65 ? "green" : overallScore >= 35 ? "gold" : "red"}
+        />
       </div>
 
+      {activeClient ? (<>
+
+        {/* ── Deal Stage Pipeline — status display, not part of score ── */}
+        <div className="card mb-16" style={{ padding: "14px 16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{activeClient.name}</div>
+              <div style={{ fontSize: 11, color: C.textDim }}>{activeClient.type || "Client"} · Deal Stage</div>
+            </div>
+            <select
+              value={activeClient.stage || "Discovery"}
+              onChange={e => updateClient(activeClientId, () => ({ stage: e.target.value }))}
+              style={{ padding: "5px 10px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.surfaceHigh, color: C.accent, fontSize: 12, fontWeight: 700, cursor: "pointer", outline: "none" }}
+            >
+              {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+            {STAGES.map((s, i) => {
+              const done   = i < stageIdx;
+              const active = i === stageIdx;
+              const isLast = i === STAGES.length - 1;
+              return (
+                <div key={s} style={{ display: "flex", alignItems: "center", flex: isLast ? "initial" : 1 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: "50%", border: `2px solid ${done || active ? (active ? C.accent : C.green) : C.border}`, background: done ? C.green : active ? "rgba(0,212,255,.15)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: done ? C.bg : active ? C.accent : C.textDim, fontWeight: 800 }}>
+                      {done ? "✓" : i + 1}
+                    </div>
+                    <span style={{ fontSize: 9, fontFamily: "'IBM Plex Mono',monospace", color: active ? C.accent : done ? C.green : C.textDim, whiteSpace: "nowrap" }}>{s}</span>
+                  </div>
+                  {!isLast && <div style={{ flex: 1, height: 2, background: done ? C.green : C.border, margin: "0 4px", marginBottom: 14, transition: "background .3s" }} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Two column: Category Scores + Action Items ── */}
+        <div className="grid-2 gap-20 mb-16">
+
+          {/* LEFT: Per-Category Scorecard */}
+          <div className="card">
+            <div className="card-header">
+              <div>
+                <div className="card-title">Service Category Scores</div>
+                <div className="card-sub">{activeClient.name} · {categoryScores.length > 0 ? `${categoryScores.length} active categor${categoryScores.length > 1 ? "ies" : "y"}` : "No service data yet"}</div>
+              </div>
+              {overallScore != null && (
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 9, color: C.textDim, textTransform: "uppercase", letterSpacing: ".1em" }}>Overall</div>
+                  <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 32, color: overallScore >= 65 ? C.green : overallScore >= 35 ? C.gold : C.red, lineHeight: 1 }}>{overallScore}</div>
+                  <div style={{ fontSize: 9, color: C.textDim }}>/100</div>
+                </div>
+              )}
+            </div>
+
+            {categoryScores.length === 0 ? (
+              <div style={{ padding: "20px", textAlign: "center", color: C.textDim, fontSize: 12 }}>
+                No service data yet for <strong>{activeClient.name}</strong>. Add contracts, vendor comparisons, or financial analyses tagged to a service category.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {categoryScores.map(cat => (
+                  <div key={cat.category} style={{ padding: "12px 14px", borderRadius: 10, border: `1px solid ${C.border}`, background: C.surfaceHigh }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 8, background: gradeColor(cat.grade) + "18", border: `1px solid ${gradeColor(cat.grade)}33`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 16, color: gradeColor(cat.grade) }}>{cat.grade}</span>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 2 }}>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{cat.category}</span>
+                          <span style={{ fontSize: 12, fontFamily: "'IBM Plex Mono',monospace", color: gradeColor(cat.grade), fontWeight: 700 }}>{cat.score}/100</span>
+                          <span style={{ fontSize: 10, color: C.textDim }}>{cat.gradeLabel}</span>
+                        </div>
+                        <div style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,.08)" }}>
+                          <div style={{ width: `${cat.score}%`, height: "100%", borderRadius: 3, background: gradeColor(cat.grade), transition: "width .5s" }} />
+                        </div>
+                      </div>
+                    </div>
+                    {/* Factor bars */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 12px", paddingTop: 8, borderTop: `1px solid ${C.border}` }}>
+                      {Object.values(cat.factors).map(f => (
+                        <div key={f.label}>
+                          <div style={{ fontSize: 9, color: C.textDim, marginBottom: 3 }}>{f.label}</div>
+                          {scoreBar(f.pts, f.max)}
+                        </div>
+                      ))}
+                    </div>
+                    {/* Renewal alerts */}
+                    {cat.renewalAlerts.map((r, i) => (
+                      <div key={i} style={{ marginTop: 6, fontSize: 10, padding: "3px 8px", borderRadius: 6, background: r.level === "expired" || r.level === "critical" ? "rgba(239,68,68,.12)" : "rgba(245,166,35,.1)", color: r.level === "expired" || r.level === "critical" ? C.red : C.gold }}>
+                        {r.level === "expired" ? "🔴 EXPIRED" : r.level === "critical" ? "🔴 CRITICAL" : r.level === "urgent" ? "🟡 URGENT" : "🔔 UPCOMING"} — {r.label} {r.days > 0 ? `· ${r.days} days` : ""}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Score legend */}
+            <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.border}`, display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 9, color: C.textDim, fontWeight: 700, textTransform: "uppercase", alignSelf: "center" }}>Score Components:</span>
+              {[["Savings Found","35"], ["BLG Analysis","35"], ["Contract Risk","30"]].map(([l, m]) => (
+                <span key={l} style={{ fontSize: 10, color: C.textDim }}><span style={{ color: C.gold, fontWeight: 700, fontFamily: "'IBM Plex Mono',monospace" }}>{m}pts</span> {l}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT: Action Items */}
+          <div className="card">
+            <div className="card-header">
+              <div>
+                <div className="card-title">Action Items & Next Steps</div>
+                <div className="card-sub">{activeClient.name} · Stage: <strong style={{ color: C.accent }}>{activeClient.stage || "Discovery"}</strong> · {actionItems.length} item{actionItems.length !== 1 ? "s" : ""}</div>
+              </div>
+            </div>
+
+            {/* Filter tabs */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+              {[["all", "All", actionItems.length], ["alert", "🔴 Alerts", actionItems.filter(a => a.type === "alert").length], ["required", "⚡ Required", actionItems.filter(a => a.type === "required").length], ["recommended", "💡 Recommended", actionItems.filter(a => a.type === "recommended").length]].map(([key, label, count]) => (
+                count > 0 || key === "all" ? (
+                  <button key={key} onClick={() => setActionFilter(key)}
+                    style={{ padding: "3px 10px", borderRadius: 16, border: `1px solid ${actionFilter === key ? C.accent : C.border}`, background: actionFilter === key ? "rgba(0,212,255,.1)" : "transparent", color: actionFilter === key ? C.accent : C.textDim, fontSize: 11, cursor: "pointer", fontWeight: actionFilter === key ? 700 : 400 }}>
+                    {label} {count > 0 ? <span style={{ fontFamily: "'IBM Plex Mono',monospace" }}>({count})</span> : ""}
+                  </button>
+                ) : null
+              ))}
+            </div>
+
+            {filteredActions.length === 0 ? (
+              <div style={{ padding: "20px", textAlign: "center", color: C.textDim, fontSize: 12 }}>
+                {actionItems.length === 0 ? `No action items for ${activeClient.name} yet — add service data to generate recommendations.` : "No items match this filter."}
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {filteredActions.map((item, i) => (
+                  <div key={i} style={{ padding: "12px 14px", borderRadius: 10, background: actionBg(item.type), border: `1px solid ${item.type === "alert" ? "rgba(239,68,68,.2)" : item.type === "required" ? "rgba(245,166,35,.2)" : C.border}` }}>
+                    <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                      <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{actionIcon(item.type)}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", gap: 8, alignItems: "baseline", flexWrap: "wrap", marginBottom: 4 }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: actionColor(item.type) }}>{item.action}</span>
+                          <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 5, background: "rgba(255,255,255,.06)", color: C.textDim, fontFamily: "'IBM Plex Mono',monospace", whiteSpace: "nowrap" }}>{item.category}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.5 }}>{item.detail}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+      </>) : (
+        <div className="card mb-16" style={{ padding: "28px", textAlign: "center", border: `1px dashed ${C.border}` }}>
+          <div style={{ fontSize: 28, marginBottom: 10 }}>📊</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: C.textMid, marginBottom: 6 }}>Select a client to see scores and action items</div>
+          <div style={{ fontSize: 12, color: C.textDim }}>Each service category (Telecom, Energy, IoT, etc.) is scored separately.<br />Deal stage drives a tailored action plan showing exactly what BLG needs to do next.</div>
+        </div>
+      )}
+
+      {/* ── Renewal Alerts — all clients ── */}
+      {allRenewalAlerts.length > 0 && (
+        <div className="card mb-16" style={{ border: `1px solid rgba(239,68,68,.3)`, background: "rgba(239,68,68,.03)" }}>
+          <div className="card-header">
+            <div><div className="card-title" style={{ color: C.red }}>⚠️ Contract Renewal Alerts — {activeClient?.name}</div><div className="card-sub">{allRenewalAlerts.length} contract(s) require attention</div></div>
+          </div>
+          {allRenewalAlerts.map((r, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < allRenewalAlerts.length - 1 ? `1px solid ${C.border}` : "none" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: r.level === "expired" || r.level === "critical" ? C.red : C.gold, flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{r.label}</div>
+                <div style={{ fontSize: 10, color: C.textDim, fontFamily: "'IBM Plex Mono',monospace" }}>{r.category} · {r.days <= 0 ? "EXPIRED" : `${r.days} days remaining`}</div>
+              </div>
+              <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 6, background: r.level === "expired" || r.level === "critical" ? "rgba(239,68,68,.15)" : "rgba(245,166,35,.15)", color: r.level === "expired" || r.level === "critical" ? C.red : C.gold, fontFamily: "'IBM Plex Mono',monospace" }}>
+                {r.level === "expired" ? "EXPIRED" : r.level === "critical" ? "< 30 DAYS" : r.level === "urgent" ? "< 60 DAYS" : "< 90 DAYS"}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Quick Access + Activity ── */}
       <div className="grid-2 gap-20 mb-16">
         <div className="card">
           <div className="card-header"><div className="card-title">Quick Access</div><div className="card-sub">Navigate to any module</div></div>
@@ -2429,18 +3760,9 @@ function Dashboard({ setActive }) {
               { id: "ai", icon: "🤖", label: "AI Assistant", color: C.accent },
               { id: "portal", icon: "🏢", label: "Client Portal", color: C.gold },
             ].map(m => (
-              <button key={m.id} onClick={() => setActive(m.id)} style={{
-                padding: "14px",
-                borderRadius: 10,
-                border: `1px solid ${C.border}`,
-                background: C.surfaceHigh,
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "all .15s",
-              }}
+              <button key={m.id} onClick={() => setActive(m.id)} style={{ padding: "14px", borderRadius: 10, border: `1px solid ${C.border}`, background: C.surfaceHigh, cursor: "pointer", textAlign: "left", transition: "all .15s" }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = m.color + "66"; e.currentTarget.style.background = m.color + "08"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.background = C.surfaceHigh; }}
-              >
+                onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.background = C.surfaceHigh; }}>
                 <div style={{ fontSize: 20, marginBottom: 6 }}>{m.icon}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{m.label}</div>
               </button>
@@ -2450,6 +3772,9 @@ function Dashboard({ setActive }) {
 
         <div className="card">
           <div className="card-header"><div className="card-title">Recent Activity</div></div>
+          {ACTIVITIES.length === 0 && (
+            <div style={{ padding: "24px", textAlign: "center", color: C.textDim, fontSize: 12, fontStyle: "italic" }}>No activity yet — start loading client data to see actions here</div>
+          )}
           {ACTIVITIES.map((a, i) => (
             <div key={i} className="activity-item">
               <div className="activity-icon" style={{ background: a.color }}>{a.icon}</div>
@@ -2463,27 +3788,41 @@ function Dashboard({ setActive }) {
         </div>
       </div>
 
+      {/* Client Pipeline Snapshot */}
       <div className="card">
-        <div className="card-header"><div className="card-title">Client Pipeline Snapshot</div><div className="card-sub">Bigin CRM · Qualification stage active</div></div>
+        <div className="card-header">
+          <div><div className="card-title">Client Pipeline Snapshot</div><div className="card-sub">{clients.length} clients · click any row to set active client</div></div>
+          <button className="btn btn-ghost btn-sm" onClick={() => setActive("portal")}>Manage Clients →</button>
+        </div>
         <table className="data-table w-full">
-          <thead><tr><th>Client</th><th>Type</th><th>Properties</th><th>Stage</th><th>Savings ID'd</th><th>Score</th></tr></thead>
+          <thead><tr><th>Client</th><th>Type</th><th>Stage</th><th>Contracts</th><th>Vendor Projects</th><th>Renewal Alerts</th><th>Overall Score</th></tr></thead>
           <tbody>
-            {[
-              ["Kairoi Residential", "REIT · Multi-Family", 11, "Qualification", "$187,400", 87, "gold"],
-              ["Pegasus Residential", "Multi-Family", 8, "Proposal", "$94,200", 74, "cyan"],
-              ["Highwoods Properties", "REIT · Commercial", 6, "Qualification", "$62,800", 81, "gold"],
-              ["Jamestown LP", "Mixed-Use REIT", 4, "Discovery", "$41,500", 68, "gray"],
-              ["Stonemont Financial", "Industrial/Flex", 3, "Discovery", "$31,200", 71, "gray"],
-            ].map(([n, t, p, s, sv, sc, bc], i) => (
-              <tr key={i}>
-                <td style={{ fontWeight: 600 }}>{n}</td>
-                <td className="text-sm text-dim">{t}</td>
-                <td className="text-mono">{p}</td>
-                <td><span className={`badge badge-${bc}`}>{s}</span></td>
-                <td className="text-mono text-green">{sv}</td>
-                <td><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 700, color: sc >= 80 ? C.green : sc >= 70 ? C.gold : C.red }}>{sc}/100</span></td>
-              </tr>
-            ))}
+            {clients.length === 0 ? (
+              <tr><td colSpan={7} style={{ textAlign: "center", padding: "24px", color: C.textDim, fontStyle: "italic" }}>
+                No clients yet — click <strong style={{ color: C.accent, cursor: "pointer" }} onClick={() => setActive("portal")}>Client Portal</strong> to add your first account
+              </td></tr>
+            ) : clients.map(c => {
+              const overall = calcOverallScore(c);
+              const cats = calcAllCategoryScores(c);
+              const alerts = cats.flatMap(cat => cat.renewalAlerts).length;
+              return (
+                <tr key={c.id} onClick={() => setActiveClientId(c.id)} style={{ cursor: "pointer" }}>
+                  <td style={{ fontWeight: 600, color: activeClient?.id === c.id ? C.accent : C.text }}>
+                    {c.name}{activeClient?.id === c.id && <span style={{ fontSize: 10, color: C.accent, marginLeft: 6 }}>●</span>}
+                  </td>
+                  <td style={{ color: C.textDim, fontSize: 11 }}>{c.type || "—"}</td>
+                  <td><span className={`badge ${c.stage === "Qualification" ? "badge-gold" : c.stage === "Proposal" ? "badge-cyan" : c.stage === "Closed Won" ? "badge-green" : "badge-gray"}`}>{c.stage}</span></td>
+                  <td style={{ fontFamily: "'IBM Plex Mono',monospace" }}>{c.contracts?.length || 0}</td>
+                  <td style={{ fontFamily: "'IBM Plex Mono',monospace" }}>{c.vendorProjects?.length || 0}</td>
+                  <td>{alerts > 0 ? <span style={{ color: C.red, fontFamily: "'IBM Plex Mono',monospace", fontWeight: 700 }}>⚠️ {alerts}</span> : <span style={{ color: C.textDim, fontSize: 11 }}>—</span>}</td>
+                  <td>
+                    {overall != null ? (
+                      <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontWeight: 700, color: overall >= 65 ? C.green : overall >= 35 ? C.gold : C.red }}>{overall}/100</span>
+                    ) : <span style={{ color: C.textDim, fontSize: 11 }}>No data</span>}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
